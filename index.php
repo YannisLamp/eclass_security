@@ -84,6 +84,7 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 	include 'include/shib_login.php';
 } else { // normal authentication
 	if (isset($_POST['uname'])) {
+		// EDO ME TO TRIM TI PAIZEI??
 		$uname = escapeSimple(preg_replace('/ +/', ' ', trim($_POST['uname'])));
 	} else {
 		$uname = '';
@@ -96,6 +97,8 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 
 	if(!empty($submit)) {
 		unset($uid);
+		// EDO GINETAI POLI EUKOLA NA KOLLISEIS SQL ENTOLI PX INSERT
+		// '; INSERT INTO eclass.admin (idUser) VALUES ('5'); --  KANE TO USER SOU ADMIN PX??
 		$sqlLogin= "SELECT user_id, nom, username, password, prenom, statut, email, perso, lang
 			FROM user WHERE username='".$uname."'";
 		$result = mysql_query($sqlLogin);
