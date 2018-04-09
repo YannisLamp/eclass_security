@@ -99,6 +99,8 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 		unset($uid);
 		// EDO GINETAI POLI EUKOLA NA KOLLISEIS SQL ENTOLI PX INSERT
 		// '; INSERT INTO eclass.admin (idUser) VALUES ('5'); --  KANE TO USER SOU ADMIN PX??
+		// DEN DOULEUEI OMWS GIA KAPOIO LOGO
+		// ALLA The only reliable way to prevent SQL injection is to use parameterized queries!!!!
 		$sqlLogin= "SELECT user_id, nom, username, password, prenom, statut, email, perso, lang
 			FROM user WHERE username='".$uname."'";
 		$result = mysql_query($sqlLogin);
