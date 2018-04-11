@@ -39,6 +39,8 @@
  ==============================================================================
  */
 
+// VULNERABLE SE SCRIPTS KAI INJECTIONS EDIGEI STA NEWUSER KAI CHANGE USER??
+
 include '../../include/baseTheme.php';
 include 'auth.inc.php';
 

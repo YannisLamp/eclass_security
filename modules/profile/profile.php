@@ -24,6 +24,9 @@
 *  			eMail: info@openeclass.org
 * =========================================================================*/
 
+
+// OLO AUTO EINAI VULNERABLE MAIZ ME TIN EGGRAFI XRISTI SCRIPTS KAI INJECTIONS
+
 $require_help = TRUE;
 $require_login = true;
 $helpTopic = 'Profile';
