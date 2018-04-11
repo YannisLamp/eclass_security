@@ -34,7 +34,7 @@ work.php
 ==============================================================================
 */
 
-
+// ERGASIES SCRIPT ATTACKS NA DOUME GIA INJECTIONS
 $require_current_course = TRUE;
 $require_login = true;
 $require_help = TRUE;
