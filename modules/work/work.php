@@ -247,7 +247,7 @@ function add_assignment($title, $comments, $desc, $deadline, $group_submissions)
 }
 
 
-
+// FILE INJECTION XSS SCRIPT <IMG> SQL INJECTION
 function submit_work($id) {
 
 	global $tool_content, $workPath, $uid, $stud_comments, $group_sub, $REMOTE_ADDR, $langUploadSuccess,
@@ -312,6 +312,8 @@ function submit_work($id) {
         $ext = get_file_extension($_FILES['userfile']['name']);
 	$filename = "$secret/$local_name" . (empty($ext)? '': '.' . $ext);
 	if (move_uploaded_file($_FILES['userfile']['tmp_name'], "$workPath/$filename")) {
+		// Chmod so that included file cannot execute
+		chmod($workPath/$filename, '744');
 		$msg2 = "$langUploadSuccess";//to message
 		$group_id = user_group($uid, FALSE);
 		if ($group_sub == 'yes' and !was_submitted(-1, $group_id, $id)) {
