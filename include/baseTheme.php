@@ -41,9 +41,9 @@
 include ('init.php');
 if ($is_adminOfCourse and isset($currentCourseID)) {
 	if (isset($_GET['hide']) and $_GET['hide'] == 0) {
-		db_query("UPDATE accueil SET visible = 0 WHERE id='$eclass_module_id'", $currentCourseID);
+		db_query("UPDATE accueil SET visible = 0 WHERE id='".escapeSimple($eclass_module_id)."'", $currentCourseID);
 	} else if (isset($_GET['hide']) and $_GET['hide'] == 1) {
-		db_query("UPDATE accueil SET visible = 1 WHERE id='$eclass_module_id'", $currentCourseID);
+		db_query("UPDATE accueil SET visible = 1 WHERE id='".escapeSimple($eclass_module_id)."'", $currentCourseID);
 	}
 }
 //template path for logged out + logged in (ex., when session expires)

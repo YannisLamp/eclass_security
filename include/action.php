@@ -35,7 +35,7 @@ class action {
         $sql = "INSERT INTO actions SET
                     module_id = ".escapeSimple($module_id).",
                     user_id = ".escapeSimple($uid).",
-                    action_type_id = "escapeSimple($action_type_id).",
+                    action_type_id = ".escapeSimple($action_type_id).",
                     date_time = NOW(),
                     duration = " . escapeSimple($duration);
         db_query($sql, $currentCourseID);

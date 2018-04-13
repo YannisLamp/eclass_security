@@ -429,7 +429,7 @@ function check_admin() {
 function check_guest() {
 	global $mysqlMainDb, $uid;
 	if (isset($uid)) {
-		$res = db_query("SELECT statut FROM user WHERE user_id = '"escapeSimple($uid)."'", $mysqlMainDb);
+		$res = db_query("SELECT statut FROM user WHERE user_id = '".escapeSimple($uid)."'", $mysqlMainDb);
 		$g = mysql_fetch_row($res);
 
 		if ($g[0] == 10) {
@@ -581,7 +581,7 @@ function parse_tex($textext)
 // Returns the code of a faculty given its name
 function find_faculty_by_name($name) {
 	$code = mysql_fetch_row(db_query("SELECT code FROM faculte
-		WHERE name = '"escapeSimple($name)."'"));
+		WHERE name = '".escapeSimple($name)."'"));
 	if (!$code) {
 		return FALSE;
 	} else {
