@@ -173,13 +173,14 @@ function q($s)
 */
 function escapeSimple($str)
 {
+	// AUTO EINAI LIGO ANTE GEIA
 	global $db;
-	if (get_magic_quotes_gpc())
-	{
-		return $str;
-	}
-	else
-	{
+	//if (get_magic_quotes_gpc())
+	//{
+	//	return $str;
+	//}
+	//else
+	//{
 		if (function_exists('mysql_real_escape_string'))
 		{
 			return @mysql_real_escape_string($str, $db);
@@ -188,7 +189,7 @@ function escapeSimple($str)
 		{
 			return @mysql_escape_string($str);
 		}
-	}
+	//}
 }
 
 function escapeSimpleSelect($str)
@@ -224,7 +225,7 @@ function uid_to_username($uid)
 	global $mysqlMainDb;
 
 	if ($r = mysql_fetch_row(db_query(
-	"SELECT username FROM user WHERE user_id = '".mysql_real_escape_string($uid)."'",
+	"SELECT username FROM user WHERE user_id = '".escapeSimple($uid)."'",
 	$mysqlMainDb))) {
 		return $r[0];
 	} else {
@@ -238,7 +239,7 @@ function uid_to_name($uid)
 	global $mysqlMainDb;
 
 	if ($r = mysql_fetch_row(db_query("SELECT CONCAT(nom, ' ', prenom)
-		FROM user WHERE user_id = '".mysql_real_escape_string($uid)."'", $mysqlMainDb))) {
+		FROM user WHERE user_id = '".escapeSimple($uid)."'", $mysqlMainDb))) {
 		return $r[0];
 	} else {
 		return FALSE;
@@ -250,7 +251,7 @@ function uid_to_firstname($uid)
         global $mysqlMainDb;
 
         if ($r = mysql_fetch_row(db_query("SELECT prenom
-		FROM user WHERE user_id = '".mysql_real_escape_string($uid)."'", $mysqlMainDb))) {
+		FROM user WHERE user_id = '".escapeSimple($uid)."'", $mysqlMainDb))) {
                 return $r[0];
         } else {
                 return FALSE;
@@ -264,7 +265,7 @@ function uid_to_surname($uid)
         global $mysqlMainDb;
 
         if ($r = mysql_fetch_row(db_query("SELECT nom
-		FROM user WHERE user_id = '".mysql_real_escape_string($uid)."'", $mysqlMainDb))) {
+		FROM user WHERE user_id = '".escapeSimple($uid)."'", $mysqlMainDb))) {
                 return $r[0];
         } else {
                 return FALSE;
@@ -277,7 +278,7 @@ function uid_to_email($uid)
         global $mysqlMainDb;
 
         if ($r = mysql_fetch_row(db_query("SELECT email
-		FROM user WHERE user_id = '".mysql_real_escape_string($uid)."'", $mysqlMainDb))) {
+		FROM user WHERE user_id = '".escapeSimple($uid)."'", $mysqlMainDb))) {
                 return $r[0];
         } else {
                 return FALSE;
@@ -291,7 +292,7 @@ function uid_to_am($uid)
 	global $mysqlMainDb;
 
 	if ($r = mysql_fetch_array(db_query("SELECT am from user
-		WHERE user_id = '$uid'", $mysqlMainDb))) {
+		WHERE user_id = '".escapeSimple($uid)."'", $mysqlMainDb))) {
 	return $r[0];
 		} else {
 			return FALSE;
@@ -306,7 +307,7 @@ function user_group($uid, $required = TRUE)
 {
 	global $currentCourseID;
 
-	$res = db_query("SELECT team FROM user_group WHERE user = '$uid'",
+	$res = db_query("SELECT team FROM user_group WHERE user = '".escapeSimple($uid)."'",
 	$currentCourseID);
 	if ($res) {
 		$secret = mysql_fetch_row($res);
@@ -325,7 +326,7 @@ function gid_to_name($gid)
 {
 	global $currentCourseID;
 	if ($r = mysql_fetch_row(db_query("SELECT name FROM student_group
-		WHERE id = '".mysql_real_escape_string($gid)."'", $currentCourseID))) {
+		WHERE id = '".escapeSimple($gid)."'", $currentCourseID))) {
                 return $r[0];
 	} else {
                 return FALSE;
@@ -338,7 +339,7 @@ function group_secret($gid)
 {
 	global $currentCourseID;
 
-	$res = db_query("SELECT secretDirectory FROM student_group WHERE id = '$gid'",
+	$res = db_query("SELECT secretDirectory FROM student_group WHERE id = '".escapeSimple($gid)."'",
 	$currentCourseID);
 	if ($res) {
 		$secret = mysql_fetch_row($res);
@@ -413,7 +414,7 @@ function check_admin() {
 	else unset($uid);
 
 	if (isset($uid)) {
-		$res = db_query("SELECT * FROM admin WHERE idUser='$uid'");
+		$res = db_query("SELECT * FROM admin WHERE idUser='".escapeSimple($uid)."'");
 	}
 	if (!isset($uid) or !$res or mysql_num_rows($res) == 0) {
 		return false;
@@ -428,7 +429,7 @@ function check_admin() {
 function check_guest() {
 	global $mysqlMainDb, $uid;
 	if (isset($uid)) {
-		$res = db_query("SELECT statut FROM user WHERE user_id = '$uid'", $mysqlMainDb);
+		$res = db_query("SELECT statut FROM user WHERE user_id = '"escapeSimple($uid)."'", $mysqlMainDb);
 		$g = mysql_fetch_row($res);
 
 		if ($g[0] == 10) {
@@ -453,7 +454,7 @@ function check_prof()
                 if (isset($require_current_course) and $is_adminOfCourse) {
                         return true;
                 }
-		$res = db_query("SELECT statut FROM user WHERE user_id='$uid'", $mysqlMainDb);
+		$res = db_query("SELECT statut FROM user WHERE user_id='".escapeSimple($uid)."'", $mysqlMainDb);
 		$s = mysql_fetch_array($res);
 		if ($s['statut'] == 1)
 		return true;
@@ -491,7 +492,7 @@ function user_exists($login) {
   global $mysqlMainDb;
 
   $username_check = mysql_query("SELECT username FROM `$mysqlMainDb`.user
-	WHERE username='".mysql_real_escape_string($login)."'");
+	WHERE username='".escapeSimple($login)."'");
   if (mysql_num_rows($username_check) > 0)
     return TRUE;
   else
@@ -580,7 +581,7 @@ function parse_tex($textext)
 // Returns the code of a faculty given its name
 function find_faculty_by_name($name) {
 	$code = mysql_fetch_row(db_query("SELECT code FROM faculte
-		WHERE name = '$name'"));
+		WHERE name = '"escapeSimple($name)."'"));
 	if (!$code) {
 		return FALSE;
 	} else {
@@ -590,7 +591,7 @@ function find_faculty_by_name($name) {
 
 // Returns the name of a faculty given its code or its name
 function find_faculty_by_id($id) {
-	$req = mysql_query("SELECT name FROM faculte WHERE id = $id");
+	$req = mysql_query("SELECT name FROM faculte WHERE id = ".escapeSimple($id));
 	if ($req and mysql_num_rows($req)) {
 		$fac = mysql_fetch_row($req);
 		return $fac[0];
@@ -610,7 +611,7 @@ function new_code($fac) {
 
 	mysql_select_db($mysqlMainDb);
 	$gencode = mysql_fetch_row(db_query("SELECT code, generator
-		FROM faculte WHERE id = $fac"));
+		FROM faculte WHERE id = ".escapeSimple($fac)));
 	do {
 		$code = $gencode[0].$gencode[1];
 		$gencode[1] += 1;
@@ -672,7 +673,7 @@ function last_login($uid)
         global $mysqlMainDb;
 
         $q = mysql_query("SELECT DATE_FORMAT(MAX(`when`), '%Y-%m-%d') FROM loginout
-                          WHERE id_user = $uid AND action = 'LOGIN'");
+                          WHERE id_user = ".escapeSimple($uid)." AND action = 'LOGIN'");
         list($last_login) = mysql_fetch_row($q);
         if (!$last_login) {
                 $last_login = date('Y-m-d');
@@ -688,7 +689,7 @@ function check_new_announce() {
         $lastlogin = last_login($uid);
         $q = mysql_query("SELECT * FROM annonces, cours_user
                           WHERE annonces.cours_id = cours_user.cours_id AND
-                                cours_user.user_id = $uid AND
+                                cours_user.user_id = ".escapeSimple($uid)." AND
                                 annonces.temps >= '$lastlogin'
                           ORDER BY temps DESC LIMIT 1");
         if ($q and mysql_num_rows($q) > 0) {
@@ -743,7 +744,7 @@ function user_get_data($user_id)
                     `phone` AS `phone`,
                     `statut` AS `status`
 		      	FROM   `user`
-		            WHERE `user_id` = "' . (int) $user_id . '"';
+		            WHERE `user_id` = "' . (int) escapeSimple($user_id) . '"';
     $result = db_query($sql);
 
     if (mysql_num_rows($result)) {
@@ -1223,7 +1224,7 @@ function course_code_to_title($code)
 function course_code_to_id($code)
 {
         global $mysqlMainDb;
-        $r = db_query("SELECT cours_id FROM cours WHERE code='$code'", $mysqlMainDb);
+        $r = db_query("SELECT cours_id FROM cours WHERE code='".escapeSimple($code)."'", $mysqlMainDb);
         if ($r and mysql_num_rows($r) > 0) {
                 $row = mysql_fetch_row($r);
                 return $row[0];
@@ -1256,7 +1257,7 @@ function csv_escape($string, $force = false)
 // Return the value of a key from the config table, or false if not found
 function get_config($key)
 {
-        $r = db_query("SELECT value FROM config WHERE `key` = '$key'");
+        $r = db_query("SELECT value FROM config WHERE `key` = '".escapeSimple($key)."'");
         if ($r and mysql_num_rows($r) > 0) {
                 $row = mysql_fetch_row($r);
                 return $row[0];

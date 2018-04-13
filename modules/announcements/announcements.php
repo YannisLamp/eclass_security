@@ -244,7 +244,7 @@ hContent;
 
             $invalid = 0;
 	    $recipients = array();
-            $emailBody = html2text($emailContent);
+            $emailBody = htmlspecialchars($emailContent);
             $general_to = 'Members of course ' . $currentCourseID;
             while ($myrow = mysql_fetch_array($result)) {
                     $emailTo = $myrow["email"]; 

@@ -14,8 +14,7 @@ class action {
         ###ophelia -28-08-2006 : add duration to previous
         $sql = "SELECT id, TIME_TO_SEC(TIMEDIFF(NOW(), date_time)) AS diff, action_type_id
                 FROM actions
-                WHERE user_id = $uid
-                ORDER BY id DESC LIMIT 1";
+                WHERE user_id = ".escapeSimple($uid)." ORDER BY id DESC LIMIT 1";
         $last_id = $diff = $last_action = 0;
         $result = db_query($sql, $currentCourseID);
         if ($result and mysql_num_rows($result) > 0) {
@@ -24,8 +23,7 @@ class action {
                 # Update previous action with corect duration
                 if ($last_id and $last_action != $exit and $diff < DEFAULT_MAX_DURATION) {
                         $sql = "UPDATE actions
-                                SET duration = $diff
-                                WHERE id = $last_id";
+                                SET duration = ".escapeSimple($diff)." WHERE id = $last_id";
                         db_query($sql, $currentCourseID);
                 }
         }
@@ -35,11 +33,11 @@ class action {
                 $duration = DEFAULT_MAX_DURATION;
         }
         $sql = "INSERT INTO actions SET
-                    module_id = $module_id,
-                    user_id = $uid,
-                    action_type_id = $action_type_id,
+                    module_id = ".escapeSimple($module_id).",
+                    user_id = ".escapeSimple($uid).",
+                    action_type_id = "escapeSimple($action_type_id).",
                     date_time = NOW(),
-                    duration = " . $duration;
+                    duration = " . escapeSimple($duration);
         db_query($sql, $currentCourseID);
     }
 
@@ -75,9 +73,9 @@ class action {
                 $module_id = $row['module_id'];
 
                 $sql_2 = "SELECT count(id) as visits, sum(duration) as total_dur FROM actions ".
-                    " WHERE module_id = $module_id AND ".
-                    " date_time >= '$start_date' AND ".
-                    " date_time < '$end_date' ";
+                    " WHERE module_id = ".escapeSimple($module_id)." AND ".
+                    " date_time >= '".escapeSimple($start_date)."' AND ".
+                    " date_time < '".escapeSimple($end_date)."' ";
                     
                 $result_2 = db_query($sql_2, $currentCourseID);
                 while ($row2 = mysql_fetch_assoc($result_2)) {
@@ -86,18 +84,18 @@ class action {
                 }
                 mysql_free_result($result_2);
                 $sql_3 = "INSERT INTO actions_summary SET ".
-                    " module_id = $module_id, ".
-                    " visits = $visits, ".
-                    " start_date = '$start_date', ".
-                    " end_date = '$end_date', ".
-                    " duration = $total_dur";
+                    " module_id = ".escapeSimple($module_id).", ".
+                    " visits = ".escapeSimple($visits).", ".
+                    " start_date = '".escapeSimple($start_date)."', ".
+                    " end_date = '".escapeSimple($end_date)."', ".
+                    " duration = ".escapeSimple($total_dur);
                 $result_3 = db_query($sql_3, $currentCourseID);
                 @mysql_free_result($result_3);
             
                 $sql_4 = "DELETE FROM actions ".
-                    " WHERE module_id = $module_id ".
-                    " AND date_time >= '$start_date' AND ".
-                    " date_time < '$end_date'";
+                    " WHERE module_id = ".escapeSimple($module_id).
+                    " AND date_time >= '".escapeSimple($start_date)."' AND ".
+                    " date_time < '".escapeSimple($end_date)."'";
                 $result_4 = db_query($sql_4, $currentCourseID);
                 @mysql_free_result($result_4);
             
@@ -116,7 +114,7 @@ class action {
 
     function get_module_id($module_name) {
         global $currentCourseID;
-        $sql = "SELECT id FROM accueil WHERE define_var = '$module_name'";
+        $sql = "SELECT id FROM accueil WHERE define_var = '".escapeSimple($module_name)."'";
         $result = db_query($sql, $currentCourseID);
         if ($result and mysql_num_rows($result) > 0) {
                 list($id) = mysql_fetch_row($result);
@@ -132,7 +130,7 @@ class action {
 class action_type {
     function get_action_type_id($action_name) {
         global $currentCourseID;
-        $sql = "SELECT id FROM action_types WHERE name = '$action_name'";
+        $sql = "SELECT id FROM action_types WHERE name = '".escapeSimple($action_name)."'";
         $result = db_query($sql, $currentCourseID);
         if ($result and mysql_num_rows($result) > 0) {
                 list($id) = mysql_fetch_row($result);
