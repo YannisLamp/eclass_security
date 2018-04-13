@@ -63,11 +63,24 @@ $navigation[] = array("url" => "index.php", "name" => $langAdmin);
 // Initialise $tool_content
 $tool_content = "";
 
+//initialise session and csrf token
+session_start();
+
+if (empty($_SESSION['token'])) {
+    if (function_exists('mcrypt_create_iv')) {
+        $_SESSION['token'] = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
+    } else {
+        $_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32));
+    }
+}
+$token = $_SESSION['token'];
+
 /*****************************************************************************
 		MAIN BODY
 ******************************************************************************/
 // Save new config.php
-if (isset($submit))  {
+//added csrf protection :)
+if (isset($submit) and !empty($_POST['token']) and strcmp($_SESSION['token'], $_POST['token']) === 0)  {
 	// Make config directory writable
 	@chmod( "../../config",777 );
 	@chmod( "../../config", 0777 );
