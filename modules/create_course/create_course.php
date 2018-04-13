@@ -25,6 +25,15 @@
 * =========================================================================*/
 session_start();
 
+if (empty($_SESSION['token'])) {
+    if (function_exists('mcrypt_create_iv')) {
+        $_SESSION['token'] = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
+    } else {
+        $_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32));
+    }
+}
+$token = $_SESSION['token'];
+
 $require_login = TRUE;
 $require_prof = TRUE;
 $require_help = TRUE;
@@ -72,6 +81,8 @@ hContent;
 $titulaire_probable="$prenom $nom";
 
 $tool_content .= "<form method='post' name='createform' action='$_SERVER[PHP_SELF]' onsubmit=\"return checkrequired(this, 'intitule', 'titulaires');\">";
+
+$tool_content .= "<input type='hidden' name='token' value='$token' />";
 
 // Import from BetaCMS Bridge
 doImportFromBetaCMSBeforeCourseCreation();
@@ -333,6 +344,9 @@ if (isset($_POST['back1']) or !isset($_POST['visit'])) {
 
 // create the course and the course database
 if (isset($_POST['create_course'])) {
+				//CSRF protection
+				if (!empty($_POST['token']) and strcmp($_SESSION['token'], $_POST['token']) === 0) {
+
 
         $nameTools = $langCourseCreate;
         $facid = intval($faculte);
@@ -430,6 +444,12 @@ if (isset($_POST['create_course'])) {
                 <p class=\"success_small\">$langJustCreated: &nbsp;<b>$intitule</b></p>
                 <p><small>$langEnterMetadata</small></p><br />
                 <p align='center'>&nbsp;<a href='../../courses/$repertoire/index.php' class=mainpage>$langEnter</a>&nbsp;</p>";
+        }
+        else{
+          echo '<script type="text/javascript">
+                  window.location = "/"
+                  </script>';
+        }
 } // end of submit
 
 $tool_content .= "</form>";
