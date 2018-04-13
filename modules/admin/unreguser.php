@@ -39,6 +39,7 @@
 
 ==============================================================================
 */
+//edo thelei post na ginei allios ton fagame + csrf
 
 // BASETHEME, OTHER INCLUDES AND NAMETOOLS
 $require_admin = TRUE;

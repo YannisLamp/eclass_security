@@ -63,12 +63,24 @@ $navigation[] = array("url" => "index.php", "name" => $langAdmin);
 // Initialise $tool_content
 $tool_content = "";
 
+session_start();
+
+if (empty($_SESSION['token'])) {
+    if (function_exists('mcrypt_create_iv')) {
+        $_SESSION['token'] = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
+    } else {
+        $_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32));
+    }
+}
+$token = $_SESSION['token'];
+
 /*****************************************************************************
 		MAIN BODY
 ******************************************************************************/
 
 // Send email after form post
-if (isset($_POST['submit']) && ($_POST['body_mail'] != "") && ($_POST['submit'] == $langSend)) {
+//added csrf defense
+if (isset($_POST['submit']) && ($_POST['body_mail'] != "") && ($_POST['submit'] == $langSend) && !empty($_POST['token']) && (strcmp($_SESSION['token'], $_POST['token']) === 0)) {
 	// Where to send the email
 	if ($_POST['sendTo'] == "0") {
 		// All users
