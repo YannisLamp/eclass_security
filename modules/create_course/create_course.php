@@ -345,13 +345,9 @@ if (isset($_POST['back1']) or !isset($_POST['visit'])) {
 // create the course and the course database
 if (isset($_POST['create_course'])) {
 				//CSRF protection
-				if (!empty($_POST['token'])) {
-			    if (strcmp($_SESSION['token'], $_POST['token']) === 0 ) {
-			         // Proceed to process the form data
-			    } else {
-			         // Log this as a warning and keep an eye on these attempts
-			    }
-				}
+				if (!empty($_POST['token']) and strcmp($_SESSION['token'], $_POST['token']) === 0) {
+
+
         $nameTools = $langCourseCreate;
         $facid = intval($faculte);
         $facname = find_faculty_by_id($facid);
@@ -448,6 +444,12 @@ if (isset($_POST['create_course'])) {
                 <p class=\"success_small\">$langJustCreated: &nbsp;<b>$intitule</b></p>
                 <p><small>$langEnterMetadata</small></p><br />
                 <p align='center'>&nbsp;<a href='../../courses/$repertoire/index.php' class=mainpage>$langEnter</a>&nbsp;</p>";
+        }
+        else{
+          echo '<script type="text/javascript">
+                  window.location = "/"
+                  </script>';
+        }
 } // end of submit
 
 $tool_content .= "</form>";
