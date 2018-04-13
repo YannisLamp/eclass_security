@@ -25,6 +25,15 @@
 * =========================================================================*/
 session_start();
 
+if (empty($_SESSION['token'])) {
+    if (function_exists('mcrypt_create_iv')) {
+        $_SESSION['token'] = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
+    } else {
+        $_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32));
+    }
+}
+$token = $_SESSION['token'];
+
 $require_login = TRUE;
 $require_prof = TRUE;
 $require_help = TRUE;
@@ -72,6 +81,8 @@ hContent;
 $titulaire_probable="$prenom $nom";
 
 $tool_content .= "<form method='post' name='createform' action='$_SERVER[PHP_SELF]' onsubmit=\"return checkrequired(this, 'intitule', 'titulaires');\">";
+
+$tool_content .= "<input type='hidden' name='token' value='$token' />";
 
 // Import from BetaCMS Bridge
 doImportFromBetaCMSBeforeCourseCreation();
@@ -333,7 +344,14 @@ if (isset($_POST['back1']) or !isset($_POST['visit'])) {
 
 // create the course and the course database
 if (isset($_POST['create_course'])) {
-
+				//CSRF protection
+				if (!empty($_POST['token'])) {
+			    if (strcmp($_SESSION['token'], $_POST['token']) === 0 ) {
+			         // Proceed to process the form data
+			    } else {
+			         // Log this as a warning and keep an eye on these attempts
+			    }
+				}
         $nameTools = $langCourseCreate;
         $facid = intval($faculte);
         $facname = find_faculty_by_id($facid);
