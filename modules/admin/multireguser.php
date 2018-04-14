@@ -17,10 +17,21 @@ $nameTools = $langMultiRegUser;
 $navigation[]= array ("url"=>"index.php", "name"=> $langAdmin);
 $tool_content = "";
 
+session_start();
+
+if (empty($_SESSION['token'])) {
+    if (function_exists('mcrypt_create_iv')) {
+        $_SESSION['token'] = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
+    } else {
+        $_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32));
+    }
+}
+$token = $_SESSION['token'];
+
 $error = '';
 $acceptable_fields = array('first', 'last', 'email', 'id', 'phone', 'username');
 
-if (isset($_POST['submit'])) {
+if (isset($_POST['submit']) && !empty($_POST['token']) && (strcmp($_SESSION['token'], $_POST['token']) === 0)) {
         $send_mail = isset($_POST['send_mail']) && $_POST['send_mail'];
         $unparsed_lines = '';
         $new_users_info = array();
@@ -246,4 +257,3 @@ function register($uid, $course_code)
         }
         return false;
 }
-
