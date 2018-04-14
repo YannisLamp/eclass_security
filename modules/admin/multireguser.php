@@ -124,6 +124,7 @@ if (isset($_POST['submit']) && !empty($_POST['token']) && (strcmp($_SESSION['tok
         }
         $tool_content .= "$langMultiRegUserInfo
 <form method='post' action='$_SERVER[PHP_SELF]'>
+<input type='hidden' name='token' value='$token' />
 <table class='FormData'>
 <tr><th>$langMultiRegFields</th>
     <td><input type='text' name='fields' size='50' value='first last id email phone' /></td>

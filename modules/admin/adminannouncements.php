@@ -31,6 +31,18 @@ $navigation[] = array("url" => "index.php", "name" => $langAdmin);
 $nameTools = $langAdminAn;
 $tool_content = $head_content = "";
 
+//csrf protection
+session_start();
+
+if (empty($_SESSION['token'])) {
+    if (function_exists('mcrypt_create_iv')) {
+        $_SESSION['token'] = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
+    } else {
+        $_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32));
+    }
+}
+$token = $_SESSION['token'];
+
 $lang_editor = langname_to_code($language);
 
 $head_content .= "
@@ -70,6 +82,7 @@ foreach (array('title', 'title_en', 'newContent', 'newContent_en', 'comment', 'c
 }
 $visible = isset($_POST['visible'])? 'V': 'I';
 
+//na valo post edo
 if (isset($_GET['delete'])) {
         // delete announcement command
         $id = intval($_GET['delete']);
@@ -92,7 +105,7 @@ if (isset($_GET['delete'])) {
                 $visibleToModify = $myrow['visible'];
                 $displayAnnouncementList = true;
         }
-} elseif (isset($_POST['submitAnnouncement'])) {
+} elseif (isset($_POST['submitAnnouncement']) && !empty($_POST['token']) && (strcmp($_SESSION['token'], $_POST['token']) === 0)) {
 	// submit announcement command
         if (isset($_POST['id'])) {
                 // modify announcement
@@ -124,7 +137,8 @@ if (isset($message) && !empty($message)) {
 if ($displayForm && (@$addAnnouce==1 || isset($modify))) {
         $displayAnnouncementList = false;
         // display add announcement command
-        $tool_content .= "<form method='post' action='$_SERVER[PHP_SELF]?localize=$localize'>";
+        $tool_content .= "<form method='post' action='$_SERVER[PHP_SELF]?localize=$localize'>
+        <input type='hidden' name='token' value='$token' />";
         $tool_content .= "<table width='99%' class='FormData' align='left'><tbody>
                 <tr><th width='220'>&nbsp;</th><td><b>";
         if (isset($modify)) {

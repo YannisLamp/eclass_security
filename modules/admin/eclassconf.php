@@ -174,7 +174,7 @@ else {
 	$tool_content .= "
     <form action=\"".$_SERVER['PHP_SELF']."\" method=\"post\">";
 	$tool_content .= "
-
+  <input type='hidden' name='token' value='$token' />
   <table class=\"FormData\" width=\"99%\" align=\"left\">
   <tbody>
   <tr>
