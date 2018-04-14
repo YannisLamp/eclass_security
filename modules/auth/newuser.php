@@ -191,7 +191,7 @@ if (!isset($submit)) {
 	
 	// manage the store/encrypt process of password into database
 	$authmethods = array("2","3","4","5");
-	// escapeSimple uses mysql_real_escape_string
+	// escapeSimple uses mysql_real_escape_string TWRA PIA
 	$uname = escapeSimple($uname);  // escape the characters: simple and double quote
 	$password = escapeSimpleSelect($password);  // escape the characters: simple and double quote
 	if(!in_array($auth,$authmethods)) {
