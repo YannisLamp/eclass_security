@@ -54,14 +54,14 @@
 $require_admin = TRUE;
 // Include baseTheme
 include '../../include/baseTheme.php';
-if(!isset($_GET['c'])) { die(); }
+if(!isset($_POST['c'])) { die(); }
+//if(empty($_SESSION['token'])){ die();}
 // Define $nameTools
 $nameTools = $langCourseDel;
 $navigation[] = array("url" => "index.php", "name" => $langAdmin);
 $navigation[] = array("url" => "listcours.php", "name" => $langListCours);
 // Initialise $tool_content
 $tool_content = "";
-
 /*****************************************************************************
 		MAIN BODY
 ******************************************************************************/
@@ -73,10 +73,10 @@ if (isset($search) && ($search=="yes")) {
 	$searchurl = "&search=yes";
 }
 // Delete course
-if (isset($_GET['delete']) && isset($_GET['c']))  {
-	db_query("DROP DATABASE `".mysql_real_escape_string($_GET['c'])."`");
+if (isset($_POST['delete']) && isset($_POST['c']) && !empty($_POST['token']) && (strcmp($_SESSION['token'], $_POST['token']) === 0))  {
+	db_query("DROP DATABASE `".mysql_real_escape_string($_POST['c'])."`");
         mysql_select_db($mysqlMainDb);
-        $code = quote($_GET['c']);
+        $code = quote($_POST['c']);
 	db_query("DELETE FROM cours_faculte WHERE code = $code");
 	db_query("DELETE FROM cours_user WHERE cours_id =
                         (SELECT cours_id FROM cours WHERE code = $code)");
@@ -84,26 +84,34 @@ if (isset($_GET['delete']) && isset($_GET['c']))  {
                         (SELECT cours_id FROM cours WHERE code = $code)");
 	db_query("DELETE FROM cours WHERE code = $code");
 	@mkdir("../../courses/garbage");
-	rename("../../courses/".$_GET['c'], "../../courses/garbage/".$_GET['c']);
+	rename("../../courses/".$_POST['c'], "../../courses/garbage/".$_POST['c']);
 	$tool_content .= "<p>".$langCourseDelSuccess."</p>";
 }
 // Display confirmatiom message for course deletion
 else {
-	$row = mysql_fetch_array(mysql_query("SELECT * FROM cours WHERE code='".mysql_real_escape_string($_GET['c'])."'"));
+	$row = mysql_fetch_array(mysql_query("SELECT * FROM cours WHERE code='".mysql_real_escape_string($_POST['c'])."'"));
 
 	$tool_content .= "<table><caption>".$langCourseDelConfirm."</caption><tbody>";
 	$tool_content .= "  <tr>
-    <td><br />".$langCourseDelConfirm2." <em>".htmlspecialchars($_GET['c'])."</em>;<br /><br /><i>".$langNoticeDel."</i><br /><br /></td>
+    <td><br />".$langCourseDelConfirm2." <em>".htmlspecialchars($_POST['c'])."</em>;<br /><br /><i>".$langNoticeDel."</i><br /><br /></td>
   </tr>";
 	$tool_content .= "  <tr>
-    <td><ul><li><a href=\"".$_SERVER['PHP_SELF']."?c=".htmlspecialchars($_GET['c'])."&amp;delete=yes".$searchurl."\"><b>$langYes</b></a><br />&nbsp;</li>
-  <li><a href=\"listcours.php?c=".htmlspecialchars($_GET['c'])."".$searchurl."\"><b>$langNo</b></a></li></ul></td>
+    <td><ul><li>
+		<form id='myform".htmlspecialchars($_POST['c'])."' action='delcours.php' method='post'>
+			<a href='javascript:;' onclick=\"document.getElementById('myform".htmlspecialchars($_POST['c'])."').submit();\">
+			<b>$langYes</b></a>
+			<input type='hidden' name='c' value='".htmlspecialchars($_POST['c'])."'/>
+			<input type='hidden' name='delete' value='yes' />
+			<input type='hidden' name='token' value='$token'/>
+		</form>
+		<br />&nbsp;</li>
+  <li><a href=\"listcours.php?c=".htmlspecialchars($_POST['c'])."".$searchurl."\"><b>$langNo</b></a></li></ul></td>
   </tr>";
 	$tool_content .= "</tbody></table><br />";
 }
 // If course deleted go back to listcours.php
-if (isset($_GET['c']) && !isset($delete)) {
-	$tool_content .= "<center><p><a href=\"listcours.php?c=".htmlspecialchars($_GET['c'])."".$searchurl."\">".$langBack."</a></p></center>";
+if (isset($_POST['c']) && !isset($delete)) {
+	$tool_content .= "<center><p><a href=\"listcours.php?c=".htmlspecialchars($_POST['c'])."".$searchurl."\">".$langBack."</a></p></center>";
 }
 // Go back to listcours.php
 else {
