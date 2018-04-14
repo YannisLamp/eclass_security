@@ -192,7 +192,7 @@ if (!isset($submit)) {
 	// manage the store/encrypt process of password into database
 	$authmethods = array("2","3","4","5");
 	// escapeSimple uses mysql_real_escape_string TWRA PIA
-	$uname = escapeSimple($uname);  // escape the characters: simple and double quote
+	$uname = escapeSimple($uname);  // escape the characters: simple and double quote\
 	$password = escapeSimpleSelect($password);  // escape the characters: simple and double quote
 	if(!in_array($auth,$authmethods)) {
 		$password_encrypted = md5($password);
@@ -201,7 +201,7 @@ if (!isset($submit)) {
 	}
 	$q1 = "INSERT INTO `$mysqlMainDb`.user
 	(user_id, nom, prenom, username, password, email, statut, department, am, registered_at, expires_at, lang)
-	VALUES ('NULL', '".escapeSimple(htmlspecialchars($nom_form))."', 
+	VALUES ('NULL', '".escapeSimple($nom_form)."', 
 		'".escapeSimple($prenom_form)."', '$uname', '$password_encrypted', 
 		'".escapeSimple($email)."','5', 
 		'".escapeSimple($department)."','".escapeSimple($am)."',"

@@ -62,7 +62,7 @@ $query = " AGAINST ('".$or_search_terms." ";
 //ean yparxoun oroi NOT na prostethoun sto erwthma
 if(!@empty($not_search_terms))
 {
-	$tmp = explode(" ", $not_search_terms);
+	$tmp = explode(" ", mysql_real_escape_string($not_search_terms));
 	$query .= "-".implode(" -", $tmp);
 }
 

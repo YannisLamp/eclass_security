@@ -85,7 +85,7 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 } else { // normal authentication
 	if (isset($_POST['uname'])) {
 		// EDO ME TO TRIM TI PAIZEI??
-		$uname = escapeSimple(preg_replace('/ +/', ' ', trim($_POST['uname'])));
+		$uname = preg_replace('/ +/', ' ', trim($_POST['uname']));
 		//$uname = escapeSimple(trim($_POST['uname']));
 	} else {
 		$uname = '';
