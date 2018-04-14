@@ -54,6 +54,17 @@ $tool_content = "";
 $navigation[] = array("url" => "index.php", "name" => $langAdmin);
 $nameTools = $langListUsersActions;
 
+//initialise session and csrf token
+session_start();
+if (empty($_SESSION['token'])) {
+    if (function_exists('mcrypt_create_iv')) {
+        $_SESSION['token'] = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
+    } else {
+        $_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32));
+    }
+}
+$token = $_SESSION['token'];
+
 // initalize the incoming variables
 $search = isset($_GET['search'])? $_GET['search']: '';
 $c = isset($_GET['c'])? $_GET['c']: (isset($_POST['c'])? $_POST['c']: '');
@@ -297,8 +308,8 @@ if($view == 3) { // users per course
 } else {
 	// Count users, with or without criteria/filters
 	$qry = "SELECT user_id,nom,prenom,username,email,statut FROM user";
-	if((!empty($user_surname_qry)) || (!empty($user_firstname_qry)) || (!empty($user_username_qry)) 
-		|| (!empty($user_am_qry)) || (!empty($user_type_qry)) || (!empty($user_registered_at_qry)) 
+	if((!empty($user_surname_qry)) || (!empty($user_firstname_qry)) || (!empty($user_username_qry))
+		|| (!empty($user_am_qry)) || (!empty($user_type_qry)) || (!empty($user_registered_at_qry))
 		|| (!empty($user_email_qry)) || (!empty($users_active_qry)))
 	{
 		$qry .= " WHERE".$user_surname_qry.$user_firstname_qry.$user_username_qry.$user_am_qry.$user_type_qry.$user_email_qry.$user_registered_at_qry.$users_active_qry;
@@ -328,7 +339,7 @@ if($sql)
 	if($countUser>0)
 	{
 		$caption = "";
-		$caption .= "<i>$langThereAre: <b>$teachers</b> $langTeachers, <b>$students</b> $langStudents 
+		$caption .= "<i>$langThereAre: <b>$teachers</b> $langTeachers, <b>$students</b> $langStudents
 			$langAnd <b>$visitors</b> $langVisitors</i><br />";
 		$caption .= "<i>$langTotal: <b>$countUser</b> $langUsers</i><br />";
 
@@ -378,7 +389,7 @@ if($sql)
 
 		// Numerating the items in the list to show: starts at 1 and not 0
 		$i=$startList+1;
-		if ($countUser >= $endList) { // Do not show navigation buttons if less than 30 users	
+		if ($countUser >= $endList) { // Do not show navigation buttons if less than 30 users
 			$tool_content .= "<table class=\"FormData\" width=\"99%\" align=\"left\">
   			<thead><tr>
     			<td class=\"left\" width=\"20%\">
@@ -420,7 +431,7 @@ if($sql)
 			}
 			if(!((($countUser-$startList) <= $endList) OR ($endList == $countUser))) // if end of list or complete listing, do not show "next" button
 			{
-				if (isset($_REQUEST['ord'])) { 
+				if (isset($_REQUEST['ord'])) {
 					$tool_content .= "
       					<form method=post action=\"$_SERVER[PHP_SELF]?startList=$startList&numbList=more&ord=$_REQUEST[ord]\">
       					".keep_var()."
@@ -469,13 +480,13 @@ if($sql)
 		$qry .= " ORDER BY $order LIMIT $startList, $endList";
 		mysql_free_result($sql);
 		$sql = db_query($qry);
-	
+
 		/****************************************
 		Show users - Format the table for display
 		*****************************************/
 
 		@$str = "user_surname=$_REQUEST[user_surname]&user_firstname=$_REQUEST[user_firstname]&user_username=$_REQUEST[user_username]&user_am=$_REQUEST[user_am]&user_email=$_REQUEST[user_email]&user_type=$_REQUEST[user_type]&user_registered_at_flag=$_REQUEST[user_registered_at_flag]";
-		
+
 		$tool_content .= "<table class=\"FormData\" width=\"99%\" align=\"left\">
   			<tbody><tr><td class=\"odd\" colspan=\"9\"><div align=\"right\">".$caption."</div></td>
   			</tr>";
@@ -533,13 +544,26 @@ if($sql)
 				}
 				$tool_content .= "</td><td><a href=\"edituser.php?u=".$logs['user_id']."\">
 				<img src='../../template/classic/img/edit.gif' title='$langEdit' border='0'></a></td>
-      				<td><a href=\"unreguser.php?u=".$logs['user_id']."\">
-				<img src='../../images/delete.gif' title='$langDelete' border='0'></img></a></td>
+
+      				<td>
+							<form id='myform".$logs['user_id']."' action='unreguser.php' method='post'>
+    						<a href='javascript:;' onclick=\"document.getElementById('myform".$logs['user_id']."').submit();\">
+								<img src='../../images/delete.gif' title='$langDelete' border='0'></img></a>
+								<input type='hidden' name='u' value='".$logs['user_id']."'/>
+								<input type='hidden' name='c' value=''/>
+								<input type='hidden' name='doit' value='yes'/>
+								<input type='hidden' name='sub' value='yes'/>
+								<input type='hidden' name='token' value='$token' />
+							</form>
+							</td>
+
       				<td align='center'>
 				<a href=\"userstats.php?u=".$logs['user_id']."\">
 				<img src='../../template/classic/img/platform_stats.gif' border='0' title='$langStat'></img></a></td>\n";
 				$tool_content .= "</tr>";
 			}
+			//<img src='../../images/delete.gif' title='$langDelete' border='0'></img></a></td>
+			//<a href=\"unreguser.php?u=".$logs['user_id']."\">
  			$k++;
 		}
 		// end format / display
@@ -570,7 +594,7 @@ function keep_var() {
 		if (isset($_REQUEST['user_surname'])) {
 			$user_surname = $_REQUEST['user_surname'];
 			$retstring .= "<input type = 'hidden' name='user_surname' value='$user_surname'>";
-		} 
+		}
 		if (isset($_REQUEST['user_firstname'])) {
 			$user_firstname = $_REQUEST['user_firstname'];
 			$retstring .= "<input type='hidden' name='user_firstname' value='$user_firstname'>";
@@ -580,7 +604,7 @@ function keep_var() {
 			$retstring .= "<input type='hidden' name='user_username' value = '$user_username'>";
 		}
 		if (isset($_REQUEST['user_am'])) {
-			$user_am = $_REQUEST['user_am']; 
+			$user_am = $_REQUEST['user_am'];
 			$retstring .= "<input type='hidden' name='user_am' value = '$user_am'>";
 		}
 		if (isset($_REQUEST['user_type'])) {

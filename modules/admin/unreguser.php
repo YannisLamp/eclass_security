@@ -49,15 +49,18 @@ $navigation[]= array ("url"=>"index.php", "name"=> $langAdmin);
 $tool_content = "";
 
 // get the incoming values and initialize them
-$u = isset($_GET['u'])? intval($_GET['u']): false;
-$c = isset($_GET['c'])? intval($_GET['c']): false;
-$doit = isset($_GET['doit']);
+$u = isset($_POST['u'])? intval($_POST['u']): false;
+$c = isset($_POST['c'])? intval($_POST['c']): false;
+$doit = isset($_POST['doit']);
+$submit = isset($_POST['sub']);
 
 $u_account = $u? uid_to_username($u): '';
 $u_realname = $u? uid_to_name($u): '';
 $u_statut = get_uid_statut($u);
 $t = 0;
 
+if($submit && !empty($_POST['token']) && strcmp($_SESSION['token'], $_POST['token']) === 0)
+{
 if (!$doit) {
         $tool_content .= "<h4>$langConfirmDelete</h4><p>$langConfirmDeleteQuestion1 <em>$u_realname ($u_account)</em>";
         if($c) {
@@ -228,6 +231,7 @@ if (!$doit) {
                 $tool_content .= "<br><a href=\"edituser.php?u=".htmlspecialchars($u)."\">$langEditUser $u_account</a>&nbsp;&nbsp;&nbsp;";
         }
         $tool_content .= "<a href=\"./index.php\">$langBackAdmin</a>.<br />\n";
+}
 }
 
 function get_uid_statut($u)

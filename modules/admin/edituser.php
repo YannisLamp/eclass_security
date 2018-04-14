@@ -46,6 +46,17 @@ include 'admin.inc.php';
 include '../auth/auth.inc.php';
 include '../../include/jscalendar/calendar.php';
 
+session_start();
+
+if (empty($_SESSION['token'])) {
+    if (function_exists('mcrypt_create_iv')) {
+        $_SESSION['token'] = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
+    } else {
+        $_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32));
+    }
+}
+$token = $_SESSION['token'];
+
 if (isset($_GET['u']) or isset($_POST['u']))
 $_SESSION['u_tmp']=$u;
 if(!isset($_GET['u']) or !isset($_POST['u']))
@@ -86,6 +97,7 @@ if((!empty($u)) && ctype_digit($u) )	// validate the user id
   </div>";
 		$tool_content .= "
 <form name='edituser' method='post' action='$_SERVER[PHP_SELF]'>
+	<input type='hidden' name='token' value='$token' />
   <table class='FormData' width='99%' align='left'>
   <tbody>
   <tr>
@@ -254,16 +266,32 @@ $tool_content .= "
 						break;
 					case 5:
 						$tool_content .= $langStudent;
+						//edo form
 						$tool_content .= "</td><td align='center'>
-						<a href='unreguser.php?u=$u&amp;c=$logs[0]'>
-						<img src='../../template/classic/img/delete.gif' title='$langDelete'></img></a></td>
+						<form id='myform$u' action='unreguser.php' method='post'>
+							<a href='javascript:;' onclick=\"document.getElementById('myform$u').submit();\">
+							<img src='../../template/classic/img/delete.gif' title='$langDelete'></img></a>
+							<input type='hidden' name='u' value='$u'/>
+							<input type='hidden' name='c' value='$logs[0]'/>
+							<input type='hidden' name='doit' value='yes'/>
+							<input type='hidden' name='sub' value='yes'/>
+							<input type='hidden' name='token' value='$token' />
+						</form>
+						</td>
   						</tr>\n";
 						break;
 					default:
 						$tool_content .= $langVisitor;
 						$tool_content .= "</td><td align='center'>
-						<a href='unreguser.php?u=$u&amp;c=$logs[0]'>
-						<img src='../../template/classic/img/delete.gif' title='$langDelete'></img></a></td></tr>\n";
+						<form id='myform$u' action='unreguser.php' method='post'>
+							<a href='javascript:;' onclick=\"document.getElementById('myform$u').submit();\">
+							<img src='../../template/classic/img/delete.gif' title='$langDelete'></img></a>
+							<input type='hidden' name='u' value='$u'/>
+							<input type='hidden' name='c' value='$logs[0]'/>
+							<input type='hidden' name='doit' value='yes'/>
+							<input type='hidden' name='sub' value='yes'/>
+							<input type='hidden' name='token' value='$token' />
+						</form></td></tr>\n";
 						break;
 				}
 			}
@@ -276,17 +304,33 @@ $tool_content .= "
 			{
 				if (isset($logs))
 					$tool_content .= "<center>
-					<a href=\"unreguser.php?u=$u&c=$logs[0]\">$langDelete</a></center>";
+					<form id='myform$u' action='unreguser.php' method='post'>
+						<a href='javascript:;' onclick=\"document.getElementById('myform$u').submit();\">
+						$langDelete'></a>
+						<input type='hidden' name='u' value='$u'/>
+						<input type='hidden' name='c' value='$logs[0]'/>
+						<input type='hidden' name='doit' value='yes'/>
+						<input type='hidden' name='sub' value='yes'/>
+						<input type='hidden' name='token' value='$token' />
+					</form></center>";
 				else
 					$tool_content .= "<center>
-					<a href=\"unreguser.php?u=$u&c=\">$langDelete</a></center>";
+					<form id='myform$u' action='unreguser.php' method='post'>
+						<a href='javascript:;' onclick=\"document.getElementById('myform$u').submit();\">
+						$langDelete</a>
+						<input type='hidden' name='u' value='$u'/>
+						<input type='hidden' name='c' value=''/>
+						<input type='hidden' name='doit' value='yes'/>
+						<input type='hidden' name='sub' value='yes'/>
+						<input type='hidden' name='token' value='$token' />
+					</form></center>";
 			}
 			else
 			{
 				$tool_content .= $langCannotDeleteAdmin;
 			}
 		}
-	}  else { // if the form was submitted then update user
+	}  elseif (!empty($_POST['token']) and strcmp($_SESSION['token'], $_POST['token']) === 0) { // if the form was submitted then update user
 
 		// get the variables from the form and initialize them
 		$fname = isset($_POST['fname'])?$_POST['fname']:'';
@@ -337,7 +381,7 @@ if (mysql_num_rows($username_check) > 1) {
 		} else {
 			if ($u=='1') $department = 'NULL';
 			$sql = "UPDATE user SET nom = ".autoquote($lname).", prenom = ".autoquote($fname).",
-				username = ".autoquote($username).", email = ".autoquote($email).", 
+				username = ".autoquote($username).", email = ".autoquote($email).",
 				statut = ".intval($newstatut).", phone=".autoquote($phone).",
 				department = ".intval($department).", expires_at=".$expires_at.",
                                 am = ".autoquote($am)." WHERE user_id = ".intval($u);
