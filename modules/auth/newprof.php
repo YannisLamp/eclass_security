@@ -141,16 +141,16 @@ $registration_errors = array();
             }
 
             db_query('INSERT INTO prof_request SET
-                                profname = ' . autoquote($prenom_form). ',
-                                profsurname = ' . autoquote($nom_form). ',
-                                profuname = ' . autoquote($uname). ',
-                                profemail = ' . autoquote($email_form). ',
-                                proftmima = ' . autoquote($department). ',
-                                profcomm = ' . autoquote($userphone). ',
+                                profname = ' . autoquote(escapeSimple(htmlspecialchars($prenom_form))). ',
+                                profsurname = ' . autoquote(escapeSimple(htmlspecialchars($nom_form))). ',
+                                profuname = ' . autoquote(escapeSimple(htmlspecialchars($uname))). ',
+                                profemail = ' . autoquote(escapeSimple(htmlspecialchars($email_form))). ',
+                                proftmima = ' . autoquote(escapeSimple(htmlspecialchars($department))). ',
+                                profcomm = ' . autoquote(escapeSimple(htmlspecialchars($userphone))). ',
                                 status = 1,
                                 statut = 1,
                                 date_open = NOW(),
-                                comment = ' . autoquote($usercomment). ',
+                                comment = ' . autoquote(escapeSimple(htmlspecialchars($usercomment))). ',
                                 lang = ' . autoquote($proflang),
                      $mysqlMainDb);
 

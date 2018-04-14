@@ -227,7 +227,7 @@ function uid_to_username($uid)
 	if ($r = mysql_fetch_row(db_query(
 	"SELECT username FROM user WHERE user_id = '".escapeSimple($uid)."'",
 	$mysqlMainDb))) {
-		return $r[0];
+		return stripslashes($r[0]);
 	} else {
 		return FALSE;
 	}
@@ -240,7 +240,7 @@ function uid_to_name($uid)
 
 	if ($r = mysql_fetch_row(db_query("SELECT CONCAT(nom, ' ', prenom)
 		FROM user WHERE user_id = '".escapeSimple($uid)."'", $mysqlMainDb))) {
-		return $r[0];
+		return stripslashes($r[0]);
 	} else {
 		return FALSE;
 	}
@@ -252,7 +252,7 @@ function uid_to_firstname($uid)
 
         if ($r = mysql_fetch_row(db_query("SELECT prenom
 		FROM user WHERE user_id = '".escapeSimple($uid)."'", $mysqlMainDb))) {
-                return $r[0];
+                return stripslashes($r[0]);
         } else {
                 return FALSE;
         }
@@ -266,7 +266,7 @@ function uid_to_surname($uid)
 
         if ($r = mysql_fetch_row(db_query("SELECT nom
 		FROM user WHERE user_id = '".escapeSimple($uid)."'", $mysqlMainDb))) {
-                return $r[0];
+                return stripslashes($r[0]);
         } else {
                 return FALSE;
         }
@@ -279,7 +279,7 @@ function uid_to_email($uid)
 
         if ($r = mysql_fetch_row(db_query("SELECT email
 		FROM user WHERE user_id = '".escapeSimple($uid)."'", $mysqlMainDb))) {
-                return $r[0];
+                return stripslashes($r[0]);
         } else {
                 return FALSE;
         }
@@ -293,7 +293,7 @@ function uid_to_am($uid)
 
 	if ($r = mysql_fetch_array(db_query("SELECT am from user
 		WHERE user_id = '".escapeSimple($uid)."'", $mysqlMainDb))) {
-	return $r[0];
+	return stripslashes($r[0]);
 		} else {
 			return FALSE;
 		}

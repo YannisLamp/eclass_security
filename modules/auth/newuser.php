@@ -191,6 +191,7 @@ if (!isset($submit)) {
 	
 	// manage the store/encrypt process of password into database
 	$authmethods = array("2","3","4","5");
+	// escapeSimple uses mysql_real_escape_string
 	$uname = escapeSimple($uname);  // escape the characters: simple and double quote
 	$password = escapeSimpleSelect($password);  // escape the characters: simple and double quote
 	if(!in_array($auth,$authmethods)) {
@@ -200,11 +201,14 @@ if (!isset($submit)) {
 	}
 	$q1 = "INSERT INTO `$mysqlMainDb`.user
 	(user_id, nom, prenom, username, password, email, statut, department, am, registered_at, expires_at, lang)
-	VALUES ('NULL', '$nom_form', '$prenom_form', '$uname', '$password_encrypted', '$email','5',
-		'$department','$am',".$registered_at.",".$expires_at.",'$lang')";
+	VALUES ('NULL', '".escapeSimple(htmlspecialchars($nom_form))."', 
+		'".escapeSimple(htmlspecialchars($prenom_form))."', '".htmlspecialchars($uname)."', '$password_encrypted', 
+		'".escapeSimple(htmlspecialchars($email))."','5', 
+		'".escapeSimple(htmlspecialchars($department))."','".escapeSimple(htmlspecialchars($am))."',"
+		.$registered_at.",".$expires_at.",'$lang')";
 	$inscr_user = mysql_query($q1);
 	$last_id = mysql_insert_id();
-	$result=mysql_query("SELECT user_id, nom, prenom FROM `$mysqlMainDb`.user WHERE user_id='$last_id'");
+	$result=mysql_query("SELECT user_id, nom, prenom FROM `$mysqlMainDb`.user WHERE user_id='".escapeSimple($last_id)."'");
 	while ($myrow = mysql_fetch_array($result)) {
 		$uid=$myrow[0];
 		$nom=$myrow[1];

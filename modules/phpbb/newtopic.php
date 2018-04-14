@@ -145,7 +145,9 @@ if (isset($submit) && $submit) {
 		$message .= "\n[addsig]";
 	}
 	$sql = "INSERT INTO topics (topic_title, topic_poster, forum_id, topic_time, topic_notify, nom, prenom)
-			VALUES (" . autoquote($subject) . ", '$uid', '$forum', '$time', 1, '$nom', '$prenom')";
+			VALUES (" . autoquote(mysql_real_escape_string($subject)) . ", '".mysql_real_escape_string($uid)."',
+			 '".mysql_real_escape_string($forum)."', '".mysql_real_escape_string($time)."', 1, 
+			 '".mysql_real_escape_string($nom)."', '".mysql_real_escape_string($prenom)."')";
 	$result = db_query($sql, $currentCourseID);
 
 	$topic_id = mysql_insert_id();
