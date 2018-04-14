@@ -200,7 +200,7 @@ if(empty($or_search_terms) && empty($not_search_terms)) {
 				if($res['cours_id'] == $cours_id)
 				{
 					$c++;
-					$tmp_result .= "\n<li>".$res['contenu'].": ".$res['temps']."<br>";
+					$tmp_result .= "\n<li>".htmlspecialchars($res['contenu']).": ".htmlspecialchars($res['temps'])."<br>";
 				}
 			}
 		}
@@ -229,7 +229,7 @@ if(empty($or_search_terms) && empty($not_search_terms)) {
 			while(@$res = mysql_fetch_array($result))
 			{
 				$c++;
-				$tmp_result .= "\n<li>".$res['titre'].": ".$res['contenu']."</li>";
+				$tmp_result .= "\n<li>".htmlspecialchars($res['titre']).": ".htmlspecialchars($res['contenu'])."</li>";
 				}
 			}
 		if ($c != 0) {
@@ -252,7 +252,7 @@ if(empty($or_search_terms) && empty($not_search_terms)) {
 			while(@$res = mysql_fetch_array($result))
 			{
 				$c++;
-				$tmp_result .= "\n<li>".$res['title'].": ".$res['content']."</li>";
+				$tmp_result .= "\n<li>".htmlspecialchars($res['title']).": ".htmlspecialchars($res['content'])."</li>";
 			}
 		}
 		if ($c != 0) {
@@ -279,19 +279,20 @@ if(empty($or_search_terms) && empty($not_search_terms)) {
 				if (empty($res['comment']))  { 
 					$add_comment = "";
 				} else {
-					$add_comment = ": ($res[comment])";
+					$add_comment = ": (".htmlspecialchars($res[comment]).")";
 				}
+				// URLS EDW
 				$link_document = "{$urlServer}modules/document/document.php?action2=download&id=$res[path]";
 				//apokrypsh twn eggrafwn pou exoun dhkwthei san invisible apo ton aplo mathiti
 				if($is_adminOfCourse)
 				{
 					$c++;
 					$tmp_result .= "\n<li><b>
-					<a href='$link_document'>".$res['filename']."</a></b>$add_comment</li>";
+					<a href='$link_document'>".htmlspecialchars($res['filename'])."</a></b>$add_comment</li>";
 				} elseif ($res['visibility'] == "v") {
 					$c++;
 					$tmp_result .= "\n<li><b>
-					<a href='$link_document'>".$res['filename']."</a></b>$add_comment</li>";
+					<a href='$link_document'>".htmlspecialchars($res['filename'])."</a></b>$add_comment</li>";
 				}
 			}
 		}
@@ -316,12 +317,12 @@ if(empty($or_search_terms) && empty($not_search_terms)) {
 					if (empty($res['description'])) { 
 						$desc_text = "";
 					} else { 
-						$desc_text = ": ($res[description])";
+						$desc_text = ": (".htmlspecialchars($res[description]).")";
 					}
-					$link_exercise =" ${urlServer}/modules/exercice/exercice_submit.php?exerciseId=$res[id]";
+					$link_exercise =" ${urlServer}/modules/exercice/exercice_submit.php?exerciseId=".htmlspecialchars($res[id]);
 					$c++;
 					$tmp_result .= "\n<li>
-					<a href='$link_exercise'>".$res['titre']."</a>$desc_text</li>";
+					<a href='$link_exercise'>".htmlspecialchars($res['titre'])."</a>$desc_text</li>";
 				}
 			}
 		if ($c != 0) {
@@ -350,7 +351,7 @@ if(empty($or_search_terms) && empty($not_search_terms)) {
 				while($res = mysql_fetch_array($result))
 				{
 					$c++;
-					$tmp_result .= "\n<li>".$res['post_text']."</li>";
+					$tmp_result .= "\n<li>".htmlspecialchars($res['post_text'])."</li>";
 				}
 			}
 	
@@ -365,11 +366,11 @@ if(empty($or_search_terms) && empty($not_search_terms)) {
 				if (empty($res['forum_desc'])) { 
 						$desc_text = "";
 					} else { 
-						$desc_text = ": ($res[forum_desc])";
+						$desc_text = ": (".htmlspecialchars($res[forum_desc]).")";
 					}
-					$link_posts = "${urlServer}/modules/phpbb/viewforum.php?forum=$res[forum_id]";
+					$link_posts = "${urlServer}/modules/phpbb/viewforum.php?forum=".htmlspecialchars($res[forum_id]);
 					$c++;
-					$tmp_result .= "\n<li><a href='$link_posts'>".$res['forum_name']."</a> $desc_text</li>";
+					$tmp_result .= "\n<li><a href='$link_posts'>".htmlspecialchars($res['forum_name'])."</a> $desc_text</li>";
 				}
 			}
 		if ($c != 0) {
@@ -395,11 +396,12 @@ if(empty($or_search_terms) && empty($not_search_terms)) {
 				if (empty($res['description'])) { 
 					$desc_text = "";
 				} else { 
-					$desc_text = "($res[description])";
+					$desc_text = "(".htmlspecialchars($res[description]).")";
 				}
-				$link_url = "{$urlServer}modules/link/link_goto.php?link_id=$res[id]&link_url=$res[url]"; 
+				// URLS MPOREI NA GINEI VLAKIA
+				$link_url = "{$urlServer}modules/link/link_goto.php?link_id=".htmlspecialchars($res[id])."&link_url=$res[url]"; 
 				$c++;
-				$tmp_result .= "\n<li><a href='$link_url' target=_blank>".$res['url']."</a>: ".$res['titre']." $desc_text</li>";
+				$tmp_result .= "\n<li><a href='$link_url' target=_blank>".$res['url']."</a>: ".htmlspecialchars($res['titre']).htmlspecialchars($desc_text)."</li>";
 			}
 		}
 		if ($c != 0) {
@@ -424,8 +426,9 @@ if(empty($or_search_terms) && empty($not_search_terms)) {
 				if (empty($res['description'])) {
 					$desc_text = "";
 				} else {
-					$desc_text = "($res[description])";
+					$desc_text = "(".htmlspecialchars($res[description]).")";
 				}
+				// AUTO MPOREI NA KANEI VLAKIA
 				$link_video = "${urlServer}modules/video/video.php?action2=download&id=$res[path]";
 				$c++;
 				$tmp_result .= "\n<li><a href='$link_video'>".$res['titre']."</a> $desc_text</li>";
@@ -456,11 +459,12 @@ if(empty($or_search_terms) && empty($not_search_terms)) {
 				if (empty($res['description'])) {
 					$desc_text = "";
 				} else {
-					$desc_text = "($res[description])";
+					$desc_text = "(".htmlspecialchars($res[description]).")";
 				}
+				// URLS EDW
 				$link_video = $res['url'];
 				$c++;
-				$tmp_result .= "\n<li><a href='$link_video' target=_blank>".$res['titre']."</a> $desc_text</li>";
+				$tmp_result .= "\n<li><a href='$link_video' target=_blank>".htmlspecialchars($res['titre'])."</a>". htmlspecialchars($desc_text)."</li>";
 			}
 		}
 	if ($c != 0) {
