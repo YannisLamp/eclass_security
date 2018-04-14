@@ -1863,6 +1863,7 @@ function prepare_option_tags($elementList, $deepness = 0)
  * @author Thanos Kyritsis <atkyritsis@upnet.gr>
  */
 
+ // AYTO GIA PAGE LINKS??
 function get_limited_page_links($sql, $limiter, $stringPreviousPage, $stringNextPage)
 {
 	$totalnum = mysql_num_rows(db_query($sql));

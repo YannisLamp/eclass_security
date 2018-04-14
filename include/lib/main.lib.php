@@ -1183,7 +1183,7 @@ function add_units_navigation($entry_page = FALSE)
 			$unit_id = intval($_SESSION['unit']);
 		}
                 $q = db_query("SELECT title FROM course_units
-                       WHERE id=$unit_id AND course_id=$cours_id " .
+                       WHERE id=".escapeSimple($unit_id)." AND course_id=".escapeSimple($cours_id).
                        $visibility_check, $mysqlMainDb);
                 if ($q and mysql_num_rows($q) > 0) {
                         list($unit_name) = mysql_fetch_row($q);
