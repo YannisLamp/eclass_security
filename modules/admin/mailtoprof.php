@@ -112,6 +112,7 @@ $langEmail : $emailhelpdesk
         // Display form to administrator
         $tool_content .= "
 <form action='$_SERVER[PHP_SELF]' method='post'>
+  <input type='hidden' name='token' value='$token' />
   <table class='FormData'>
   <tbody>
   <tr>
