@@ -168,21 +168,21 @@ if (!isset($submit)) {
 			$uname = unescapeSimple($uname); // un-escape the characters: simple and double quote
 			$password = unescapeSimple($password);
 			if((!empty($auth_method_settings)) && ($auth!=1)) {
-				$emailbody = "$langDestination $prenom_form $nom_form\n" .
+				$emailbody = htmlspecialchars("$langDestination $prenom_form $nom_form\n" .
 					"$langYouAreReg $siteName $langSettings $uname\n" .
 					"$langPassSameAuth\n$langAddress $siteName: " .
 					"$urlServer\n$langProblem\n$langFormula" .
 					"$administratorName $administratorSurname" .
 					"$langManager $siteName \n$langTel $telephone \n" .
-					"$langEmail: $emailhelpdesk";
+					"$langEmail: $emailhelpdesk");
 		} else {
-			$emailbody = "$langDestination $prenom_form $nom_form\n" .
+			$emailbody = htmlspecialchars("$langDestination $prenom_form $nom_form\n" .
 				"$langYouAreReg $siteName $langSettings $uname\n" .
 				"$langPass: $password\n$langAddress $siteName: " .
 				"$urlServer\n$langProblem\n$langFormula" .
 				"$administratorName $administratorSurname" .
 				"$langManager $siteName \n$langTel $telephone \n" .
-				"$langEmail: $emailhelpdesk";
+				"$langEmail: $emailhelpdesk");
 		}
 	
 	send_mail('', '', '', $email, $emailsubject, $emailbody, $charset);
@@ -202,9 +202,9 @@ if (!isset($submit)) {
 	$q1 = "INSERT INTO `$mysqlMainDb`.user
 	(user_id, nom, prenom, username, password, email, statut, department, am, registered_at, expires_at, lang)
 	VALUES ('NULL', '".escapeSimple(htmlspecialchars($nom_form))."', 
-		'".escapeSimple(htmlspecialchars($prenom_form))."', '".htmlspecialchars($uname)."', '$password_encrypted', 
-		'".escapeSimple(htmlspecialchars($email))."','5', 
-		'".escapeSimple(htmlspecialchars($department))."','".escapeSimple(htmlspecialchars($am))."',"
+		'".escapeSimple($prenom_form)."', '$uname', '$password_encrypted', 
+		'".escapeSimple($email)."','5', 
+		'".escapeSimple($department)."','".escapeSimple($am)."',"
 		.$registered_at.",".$expires_at.",'$lang')";
 	$inscr_user = mysql_query($q1);
 	$last_id = mysql_insert_id();
