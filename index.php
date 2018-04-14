@@ -104,7 +104,7 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 		// ALLA The only reliable way to prevent SQL injection is to use parameterized queries!!!!
 		$sqlLogin= "SELECT user_id, nom, username, password, prenom, statut, email, perso, lang
 			FROM user WHERE username='".$uname."'";
-			print $sqlLogin;
+			//print $sqlLogin;
 		$result = mysql_query($sqlLogin);
 		$check_passwords = array("pop3","imap","ldap","db");
 		$warning = "";

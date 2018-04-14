@@ -202,8 +202,8 @@ if ($total_categories) {
 					$tool_content .= "<td width='2%' class='center'><img src='$folder_image' /></td>";
 				}
 				$name = stripslashes($forum_row[$x]["forum_name"]);
-				$last_post_nom = $forum_row[$x]["nom"];
-				$last_post_prenom = $forum_row[$x]["prenom"];
+				$last_post_nom = stripslashes($forum_row[$x]["nom"]);
+				$last_post_prenom = stripslashes($forum_row[$x]["prenom"]);
 				$last_post_topic_id = $forum_row[$x]["topic_id"];
 				$total_posts = $forum_row[$x]["forum_posts"];
 				$total_topics = $forum_row[$x]["forum_topics"];

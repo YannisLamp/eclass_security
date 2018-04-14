@@ -141,25 +141,25 @@ $registration_errors = array();
             }
 
             db_query('INSERT INTO prof_request SET
-                                profname = ' . autoquote(escapeSimple(htmlspecialchars($prenom_form))). ',
-                                profsurname = ' . autoquote(escapeSimple(htmlspecialchars($nom_form))). ',
-                                profuname = ' . autoquote(escapeSimple(htmlspecialchars($uname))). ',
-                                profemail = ' . autoquote(escapeSimple(htmlspecialchars($email_form))). ',
-                                proftmima = ' . autoquote(escapeSimple(htmlspecialchars($department))). ',
-                                profcomm = ' . autoquote(escapeSimple(htmlspecialchars($userphone))). ',
+                                profname = ' . autoquote(escapeSimple($prenom_form)). ',
+                                profsurname = ' . autoquote(escapeSimple($nom_form)). ',
+                                profuname = ' . autoquote(escapeSimple($uname)). ',
+                                profemail = ' . autoquote(escapeSimple($email_form)). ',
+                                proftmima = ' . autoquote(escapeSimple($department)). ',
+                                profcomm = ' . autoquote(escapeSimple($userphone)). ',
                                 status = 1,
                                 statut = 1,
                                 date_open = NOW(),
-                                comment = ' . autoquote(escapeSimple(htmlspecialchars($usercomment))). ',
+                                comment = ' . autoquote(escapeSimple($usercomment)). ',
                                 lang = ' . autoquote($proflang),
                      $mysqlMainDb);
 
             //----------------------------- Email Message --------------------------
-            $MailMessage = $mailbody1 . $mailbody2 . "$prenom_form $nom_form\n\n" . $mailbody3 .
+            $MailMessage = htmlspecialchars($mailbody1 . $mailbody2 . "$prenom_form $nom_form\n\n" . $mailbody3 .
                     $mailbody4 . $mailbody5 . "$mailbody6\n\n" . "$langFaculty: " .
                     find_faculty_by_id($department) . "\n$langComments: $usercomment\n" .
                     "$langProfUname: $uname\n$langProfEmail: $email_form\n" .
-                    "$contactphone: $userphone\n\n\n$logo\n\n";
+                    "$contactphone: $userphone\n\n\n$logo\n\n");
 
             if (!send_mail('', $emailhelpdesk, $gunet, $emailhelpdesk, $mailsubject, $MailMessage, $charset))
             {

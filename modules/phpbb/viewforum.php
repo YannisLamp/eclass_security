@@ -87,7 +87,7 @@ $tool_content .= "<li><a href='newtopic.php?forum=$forum'>$langNewTopic</a></li>
 
 $sql = "SELECT f.forum_type, f.forum_name
 	FROM forums f
-	WHERE forum_id = '$forum'";
+	WHERE forum_id = '".mysql_real_escape_string($forum)."'";
 
 $result = db_query($sql, $currentCourseID);
 $myrow = mysql_fetch_array($result);
@@ -95,7 +95,7 @@ $myrow = mysql_fetch_array($result);
 $forum_name = own_stripslashes($myrow["forum_name"]);
 $nameTools = $forum_name;
 
-$topic_count = mysql_fetch_row(db_query("SELECT COUNT(*) FROM topics WHERE forum_id = '$forum'"));
+$topic_count = mysql_fetch_row(db_query("SELECT COUNT(*) FROM topics WHERE forum_id = '".mysql_real_escape_string($forum)."'"));
 $total_topics = $topic_count[0];
 
 if ($total_topics > $topics_per_page) { 
@@ -144,13 +144,14 @@ if ($total_topics > $topics_per_page) { // navigation
 
 if(isset($topicnotify)) { // modify topic notification
 	$rows = mysql_num_rows(db_query("SELECT * FROM forum_notify 
-		WHERE user_id = $uid AND topic_id = $topic_id AND course_id = $cours_id", $mysqlMainDb));
+		WHERE user_id = $uid AND topic_id = ".mysql_real_escape_string($topic_id)." AND course_id = ".mysql_real_escape_string($cours_id), $mysqlMainDb));
 	if ($rows > 0) {
-		db_query("UPDATE forum_notify SET notify_sent = '$topicnotify' 
-			WHERE user_id = $uid AND topic_id = $topic_id AND course_id = $cours_id", $mysqlMainDb);
+		db_query("UPDATE forum_notify SET notify_sent = '".mysql_real_escape_string($topicnotify)."' 
+			WHERE user_id = $uid AND topic_id = ".mysql_real_escape_string($topic_id)." 
+			AND course_id = $cours_id", $mysqlMainDb);
 	} else {
 		db_query("INSERT INTO forum_notify SET user_id = $uid,
-		topic_id = $topic_id, notify_sent = 1, course_id = $cours_id", $mysqlMainDb);
+		topic_id = ".mysql_real_escape_string($topic_id).", notify_sent = 1, course_id = ".mysql_real_escape_string($cours_id), $mysqlMainDb);
 	}
 }
 
@@ -167,15 +168,15 @@ $tool_content .= "<table width='99%' class='ForumSum'><thead><tr>
 $sql = "SELECT t.*, p.post_time, p.nom AS nom1, p.prenom AS prenom1
         FROM topics t
         LEFT JOIN posts p ON t.topic_last_post_id = p.post_id
-        WHERE t.forum_id = '$forum' 
-        ORDER BY topic_time DESC LIMIT $first_topic, $topics_per_page";
+        WHERE t.forum_id = '".mysql_real_escape_string($forum)."' 
+        ORDER BY topic_time DESC LIMIT ".mysql_real_escape_string($first_topic).", $topics_per_page";
 
 $result = db_query($sql, $currentCourseID);
 
 if (mysql_num_rows($result) > 0) { // topics found
 	while($myrow = mysql_fetch_array($result)) {
 		$tool_content .= "<tr>";
-		$replys = $myrow["topic_replies"];
+		$replys = htmlspecialchars($myrow["topic_replies"]);
 		$last_post = $myrow["post_time"];
 		$last_post_datetime = $myrow["post_time"];
 		list($last_post_date, $last_post_time) = split(" ", $last_post_datetime);
@@ -204,7 +205,7 @@ if (mysql_num_rows($result) > 0) { // topics found
 		$topic_title = own_stripslashes($myrow["topic_title"]);
 		$pagination = '';
 		$start = '';
-		$topiclink = "viewtopic.php?topic=" . $myrow["topic_id"] . "&amp;forum=$forum";
+		$topiclink = "viewtopic.php?topic=" . $myrow["topic_id"] . "&amp;forum=".htmlspecialchars($forum);
 		if($replys+1 > $posts_per_page) {
 			$pagination .= "\n<strong class='pagination'><span>\n<img src='$posticon_more' />";
 			$pagenr = 1;
@@ -234,11 +235,11 @@ if (mysql_num_rows($result) > 0) { // topics found
 		}
 		$tool_content .= "<td><a href='$topiclink'>$topic_title</a>$pagination</td>\n";
 		$tool_content .= "<td class='Forum_leftside'>$replys</td>\n";
-		$tool_content .= "<td class='Forum_leftside1'>$myrow[prenom] $myrow[nom]</td>\n";
+		$tool_content .= "<td class='Forum_leftside1'>".stripslashes($myrow[prenom]).stripslashes($myrow[nom])."</td>\n";
 		$tool_content .= "<td class='Forum_leftside'>$myrow[topic_views]</td>\n";
-		$tool_content .= "<td class='Forum_leftside1'>$myrow[prenom1] $myrow[nom1]<br />$last_post</td>";
+		$tool_content .= "<td class='Forum_leftside1'>".stripslashes($myrow[prenom1]).stripslashes($myrow[nom1])."<br />$last_post</td>";
 		list($topic_action_notify) = mysql_fetch_row(db_query("SELECT notify_sent FROM forum_notify 
-			WHERE user_id = $uid AND topic_id = $myrow[topic_id] AND course_id = $cours_id", $mysqlMainDb));
+			WHERE user_id = $uid AND topic_id = ".mysql_real_escape_string($myrow[topic_id])." AND course_id = $cours_id", $mysqlMainDb));
 		if (!isset($topic_action_notify)) {
 			$topic_link_notify = FALSE;
 			$topic_icon = '_off';
@@ -248,10 +249,10 @@ if (mysql_num_rows($result) > 0) { // topics found
 		}
 		$tool_content .= "<td class='Forum_leftside' style='text-align:center'>";
 		if (isset($_GET['start']) and $_GET['start'] > 0) {
-			$tool_content .= "<a href='$_SERVER[PHP_SELF]?forum=$forum&start=$_GET[start]&amp;topicnotify=$topic_link_notify&amp;topic_id=$myrow[topic_id]'>
+			$tool_content .= "<a href='$_SERVER[PHP_SELF]?forum=".htmlspecialchars($forum)."&start=$_GET[start]&amp;topicnotify=$topic_link_notify&amp;topic_id=".htmlspecialchars($myrow[topic_id])."'>
 			<img src='../../template/classic/img/announcements$topic_icon.gif' title='$langNotify'></img></a>";
 		} else {
-			$tool_content .= "<a href='$_SERVER[PHP_SELF]?forum=$forum&amp;topicnotify=$topic_link_notify&amp;topic_id=$myrow[topic_id]'>
+			$tool_content .= "<a href='$_SERVER[PHP_SELF]?forum=".htmlspecialchars($forum)."&amp;topicnotify=$topic_link_notify&amp;topic_id=".htmlspecialchars($myrow[topic_id])."'>
 			<img src='../../template/classic/img/announcements$topic_icon.gif' title='$langNotify'></img></a>";
 		}
 		$tool_content .= "</td></tr>";
