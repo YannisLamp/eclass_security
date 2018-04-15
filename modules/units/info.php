@@ -25,7 +25,7 @@
 * =========================================================================*/
 
 /*
-Units module	
+Units module
 */
 
 $require_current_course = true;
@@ -35,6 +35,17 @@ include '../../include/baseTheme.php';
 
 $nameTools = $langEditUnit;
 $tool_content = $head_content = "";
+
+session_start();
+
+if (empty($_SESSION['token'])) {
+    if (function_exists('mcrypt_create_iv')) {
+        $_SESSION['token'] = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
+    } else {
+        $_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32));
+    }
+}
+$token = $_SESSION['token'];
 
 $head_content .= <<<hContent
 <script type="text/javascript">
@@ -81,7 +92,7 @@ _editor_lang = '$lang_editor';
 <script type='text/javascript' src='$urlAppend/include/xinha/my_config.js'></script>";
 
 if (isset($_GET['edit'])) { // display form for editing course unit
-        $id = intval($_GET['edit']); 
+        $id = intval($_GET['edit']);
         $sql = db_query("SELECT id, title, comments FROM course_units WHERE id='$id'");
         $cu = mysql_fetch_array($sql);
         $unittitle = " value='" . htmlspecialchars($cu['title'], ENT_QUOTES) . "'";
@@ -95,7 +106,8 @@ if (isset($_GET['edit'])) { // display form for editing course unit
 }
 
 $tool_content .= "<form method='post' action='${urlServer}courses/$currentCourseID/'
-        onsubmit=\"return checkrequired(this, 'unittitle');\">";
+        onsubmit=\"return checkrequired(this, 'unittitle');\">
+				<input type='hidden' name='token' value='$token'/>";
 if (isset($unit_id)) {
         $tool_content .= "<input type='hidden' name='unit_id' value='$unit_id'>";
 }
@@ -112,4 +124,3 @@ $tool_content .= "<table width='99%' class='FormData' align='center'><tbody>
 </tbody></table>
 </form>";
 draw($tool_content, 2, 'units', $head_content);
-

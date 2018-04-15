@@ -35,6 +35,16 @@ $require_help = TRUE;
 $helpTopic = 'Infocours';
 include '../../include/baseTheme.php';
 
+
+if (empty($_SESSION['token'])) {
+    if (function_exists('mcrypt_create_iv')) {
+        $_SESSION['token'] = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
+    } else {
+        $_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32));
+    }
+}
+$token = $_SESSION['token'];
+
 $nameTools = $langModifInfo;
 $tool_content = "";
 
@@ -56,7 +66,7 @@ $head_content = <<<hContent
 <script type="text/javascript" src="$urlAppend/include/xinha/my_config2.js"></script>
 hContent;
 
-if (isset($_POST['submit'])) {
+if (isset($_POST['submit']) && !empty($_POST['token']) && (strcmp($_SESSION['token'], $_POST['token']) === 0)) {
         if (empty($_POST['title'])) {
                 $tool_content .= "<p class='caution_small'>$langNoCourseTitle<br />
                                   <a href='$_SERVER[PHP_SELF]'>$langAgain</a></p><br />";
@@ -164,6 +174,7 @@ if (isset($_POST['submit'])) {
 
 		@$tool_content .="
 		<form method='post' action='$_SERVER[PHP_SELF]'>
+    <input type='hidden' name='token' value='$token' />
 		<table width='99%' align='left'>
 		<thead><tr>
 		<td>
@@ -287,6 +298,7 @@ if (isset($_POST['submit'])) {
       </tr>
       <tr>
         <th class='left' width='150'>&nbsp;</th>
+
         <td><input type='submit' name='submit' value='$langSubmit' /></td>
         <td>&nbsp;</td>
       </tr>

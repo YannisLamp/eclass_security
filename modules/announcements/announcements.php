@@ -61,6 +61,17 @@ $action->record('MODULE_ID_ANNOUNCE');
 $nameTools = $langAnnouncements;
 $tool_content = $head_content = "";
 
+session_start();
+
+if (empty($_SESSION['token'])) {
+    if (function_exists('mcrypt_create_iv')) {
+        $_SESSION['token'] = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
+    } else {
+        $_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32));
+    }
+}
+$token = $_SESSION['token'];
+
 if ($is_adminOfCourse and
     (isset($_GET['addAnnouce']) or isset($_GET['modify']))) {
 	$lang_editor = langname_to_code($language);
@@ -204,7 +215,7 @@ hContent;
 	SUBMIT ANNOUNCEMENT COMMAND
 	--------------------------------------*/
 
-    if (isset($_POST['submitAnnouncement'])) {
+    if (isset($_POST['submitAnnouncement']) && !empty($_POST['token']) && (strcmp($_SESSION['token'], $_POST['token']) === 0)) {
         // modify announcement
         $antitle = autoquote($_POST['antitle']);
         $newContent = autoquote($_POST['newContent']);
@@ -247,7 +258,7 @@ hContent;
             $emailBody = htmlspecialchars($emailContent);
             $general_to = 'Members of course ' . $currentCourseID;
             while ($myrow = mysql_fetch_array($result)) {
-                    $emailTo = $myrow["email"]; 
+                    $emailTo = $myrow["email"];
                     // check email syntax validity
                     if (!email_seems_valid($emailTo)) {
                             $invalid++;
@@ -312,6 +323,7 @@ hContent;
         (isset($_GET['addAnnouce']) or isset($_GET['modify']))) {
         // DISPLAY ADD ANNOUNCEMENT COMMAND
         $tool_content .= "<form method='post' action='$_SERVER[PHP_SELF]' onsubmit=\"return checkrequired(this, 'antitle');\">";
+        $tool_content .= "<input type='hidden' name='token' value='$token' />";
         // should not send email if updating old message
         if (isset ($modify) && $modify) {
             $tool_content .= "
