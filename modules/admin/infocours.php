@@ -67,6 +67,18 @@ $navigation[] = array("url" => "editcours.php?c=".htmlspecialchars($_GET['c']), 
 // Initialise $tool_content
 $tool_content = "";
 
+//initialise session and csrf token
+session_start();
+
+if (empty($_SESSION['token'])) {
+    if (function_exists('mcrypt_create_iv')) {
+        $_SESSION['token'] = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
+    } else {
+        $_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32));
+    }
+}
+$token = $_SESSION['token'];
+
 /*****************************************************************************
 		MAIN BODY
 ******************************************************************************/
@@ -75,7 +87,7 @@ if (isset($search) && ($search=="yes")) {
 	$searchurl = "&search=yes";
 }
 // Update cours basic information
-if (isset($submit))  {
+if (isset($submit) && !empty($_POST['token']) && (strcmp($_SESSION['token'], $_POST['token']) === 0))  {
   // Get faculte ID and faculte name for $faculte
   // $faculte example: 12--Tmima 1
   list($facid, $facname) = explode("--", $faculte);
@@ -99,6 +111,7 @@ else {
 	// Constract the edit form
 	$tool_content .= "
   <form action=".$_SERVER['PHP_SELF']."?c=".htmlspecialchars($_GET['c'])."".$searchurl." method=\"post\">
+	<input type='hidden' name='token' value='$token'/>
   <table class=\"FormData\" width=\"99%\" align=\"left\">
   <tbody>
   <tr>

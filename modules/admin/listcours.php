@@ -64,6 +64,18 @@ $navigation[] = array("url" => "index.php", "name" => $langAdmin);
 $tool_content = "";
 $caption = "";
 
+//initialise session and csrf token
+session_start();
+
+if (empty($_SESSION['token'])) {
+    if (function_exists('mcrypt_create_iv')) {
+        $_SESSION['token'] = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
+    } else {
+        $_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32));
+    }
+}
+$token = $_SESSION['token'];
+
 // Initialize some variables
 $searchurl = "";
 
@@ -106,11 +118,11 @@ if (isset($search) && $search=="yes") {
 	}
 	$query=join(' AND ',$searchcours);
 	if (!empty($query)) {
-		$sql=mysql_query("SELECT faculte, code, intitule, titulaires, visible, cours_id FROM cours 
+		$sql=mysql_query("SELECT faculte, code, intitule, titulaires, visible, cours_id FROM cours
 			WHERE $query ORDER BY faculte");
 		$caption .= "$langFound ".mysql_num_rows($sql)." $langCourses ";
 	} else {
-		$sql=mysql_query("SELECT faculte, code, intitule,titulaires, visible, cours_id FROM cours 
+		$sql=mysql_query("SELECT faculte, code, intitule,titulaires, visible, cours_id FROM cours
 				ORDER BY faculte");
 		$caption .= "$langFound ".mysql_num_rows($sql)." $langCourses ";
 	}
@@ -119,7 +131,7 @@ if (isset($search) && $search=="yes") {
 else {
 	$a=mysql_fetch_array(mysql_query("SELECT COUNT(*) FROM cours"));
 	$caption .= "".$langManyExist.": <b>".$a[0]." $langCourses</b>";
-	$sql = mysql_query("SELECT faculte, code, intitule, titulaires, visible, cours_id FROM cours 
+	$sql = mysql_query("SELECT faculte, code, intitule, titulaires, visible, cours_id FROM cours
 			ORDER BY faculte,code LIMIT ".$limit.",".$listsize."");
 
 	if ($fulllistsize > $listsize ) {
@@ -179,8 +191,13 @@ for ($j = 0; $j < mysql_num_rows($sql); $j++) {
 	// Add links to course users, delete course and course edit
 	$tool_content .= "<td align='center'><a href='listusers.php?c=".$logs['cours_id']."'>
 		<img src='../../template/classic/img/user_list.gif' title='$langUsers' border='0'></img></a></td>
-	<td align=\"center\" width='10'><a href='delcours.php?c=".$logs[1]."'>
-		<img src='../../images/delete.gif' title='$langDelete' border='0'></img></a></td>
+	<td align=\"center\" width='10'>
+	<form id='myform".$logs[1]."' action='delcours.php' method='post'>
+		<a href='javascript:;' onclick=\"document.getElementById('myform".$logs[1]."').submit();\">
+		<img src='../../images/delete.gif' title='$langDelete' border='0'></img></a>
+		<input type='hidden' name='c' value='$logs[1]'/>
+		<input type='hidden' name='token' value='$token' />
+	</form></td>
 	<td align=\"center\" width='20'><a href='editcours.php?c=".$logs[1]."".$searchurl."'>
 		<img src='../../template/classic/img/edit.gif' title='$langEdit' border='0'></img></a></td>";
 	$k++;

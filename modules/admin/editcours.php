@@ -76,6 +76,16 @@ $navigation[] = array("url" => "listcours.php", "name" => $langListCours);
 // Initialise $tool_content
 $tool_content = "";
 
+
+if (empty($_SESSION['token'])) {
+    if (function_exists('mcrypt_create_iv')) {
+        $_SESSION['token'] = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
+    } else {
+        $_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32));
+    }
+}
+$token = $_SESSION['token'];
+
 /*****************************************************************************
 		MAIN BODY
 ******************************************************************************/
@@ -242,7 +252,13 @@ if (isset($c)) {
   // Delete course
 	$tool_content .= "
   <tr>
-    <td><a href=\"delcours.php?c=".htmlspecialchars($c)."".$searchurl."\">".$langCourseDelFull."</a></td>
+    <td>
+		<form id='myform".htmlspecialchars($c)."' action='delcours.php' method='post'>
+			<a href='javascript:;' onclick=\"document.getElementById('myform".htmlspecialchars($c)."').submit();\">
+			<b>$langCourseDelFull</b></a>
+			<input type='hidden' name='c' value='".htmlspecialchars($c)."'/>
+			<input type='hidden' name='token' value='$token'/>
+		</form></td>
   </tr>";
 	$tool_content .= "
   </tbody>
