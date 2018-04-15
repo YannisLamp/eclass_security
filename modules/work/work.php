@@ -94,6 +94,18 @@ $action->record('MODULE_ID_ASSIGN');
 
 $tool_content = "";
 
+//initialise session and csrf token
+session_start();
+
+if (empty($_SESSION['token'])) {
+    if (function_exists('mcrypt_create_iv')) {
+        $_SESSION['token'] = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
+    } else {
+        $_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32));
+    }
+}
+$token = $_SESSION['token'];
+
 include('work_functions.php');
 
 $workPath = $webDir."courses/".$currentCourseID."/work";
@@ -166,7 +178,9 @@ if ($is_adminOfCourse) {
 				$nameTools = $m['WorkEdit'];
 				$navigation[] = array("url"=>"work.php", "name"=> $langWorks);
 				show_edit_assignment($id);
-			} elseif ($choice == 'do_edit') {
+        // && !empty($_POST['token']) && (strcmp($_SESSION['token'], $_POST['token']) === 0) na to valoume meta
+			} elseif (($choice == 'do_edit')) {
+        //fixed csrf for deface of course?
 				$nameTools = $m['WorkView'];
 				$navigation[] = array("url"=>"work.php", "name"=> $langWorks);
 				edit_assignment($id);
@@ -358,6 +372,7 @@ function new_assignment()
 
 	$tool_content .= "
   <form action='work.php' method='post' onsubmit='return checkrequired(this, \"title\");'>
+  <input type='hidden' name='token' value='$token' />
     <table width='99%' class='FormData'>
     <tbody>
     <tr>
@@ -454,6 +469,7 @@ function show_edit_assignment($id)
 	$description = q($row['description']);
 	$tool_content .= <<<cData
     <form action="$_SERVER[PHP_SELF]" method="post" onsubmit="return checkrequired(this, 'title');">
+    <input type='hidden' name='token' value='$token' />
     <input type="hidden" name="id" value="$id" />
     <input type="hidden" name="choice" value="do_edit" />
     <table width="99%" class="FormData">
@@ -805,7 +821,7 @@ function show_assignment($id, $message = FALSE)
 		WHERE assign.assignment_id='$id' AND user.user_id = assign.uid
 		ORDER BY $order $rev");
 
-	/*  The query is changed (AND assign.grade<>'' is appended) in order to constract the chart of 
+	/*  The query is changed (AND assign.grade<>'' is appended) in order to constract the chart of
 	 * grades distribution according to the graded works only (works that are not graded are omitted). */
 	$numOfResults = db_query("SELECT *
 		FROM `$GLOBALS[code_cours]`.assignment_submit AS assign,
@@ -813,7 +829,7 @@ function show_assignment($id, $message = FALSE)
 		WHERE assign.assignment_id='$id' AND user.user_id = assign.uid AND assign.grade<>''
 		ORDER BY $order $rev");
 	$num_resultsForChart = mysql_num_rows($numOfResults);
-	
+
 	$num_results = mysql_num_rows($result);
 	if ($num_results > 0) {
 		if ($num_results == 1) {
@@ -1176,7 +1192,7 @@ function submit_grade_comments($id, $sid, $grade, $comment)
 
 	$stupid_user = 0;
 
-	/*  If check expression is changed by nikos, in order to give to teacher the ability to 
+	/*  If check expression is changed by nikos, in order to give to teacher the ability to
 	 * assign comments to a work without assigning grade. */
 	if (!is_numeric($grade) && '' != $grade ) {
 		$tool_content .= $langWorkWrongInput;
