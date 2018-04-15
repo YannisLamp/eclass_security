@@ -530,10 +530,10 @@ if($sql)
 	            		}
 				$tool_content .= "<td width=\"1\">
 				<img style='border:0px;' src='${urlServer}/template/classic/img/arrow_grey.gif' title='bullet'></td>
-    				<td>".htmlspecialchars($logs['nom'])."</td>
-    				<td>".htmlspecialchars($logs['prenom'])."</td>
-    				<td>".htmlspecialchars($logs['username'])."</td>
-    				<td>".htmlspecialchars($logs['email'])."</td>
+    				<td>".htmlspecialchars(stripslashes($logs['nom']))."</td>
+    				<td>".htmlspecialchars(stripslashes($logs['prenom']))."</td>
+    				<td>".htmlspecialchars(stripslashes($logs['username']))."</td>
+    				<td>".htmlspecialchars(stripslashes($logs['email']))."</td>
     				<td align='center'>";
 				switch ($logs['statut'])
 				{

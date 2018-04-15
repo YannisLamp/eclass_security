@@ -157,15 +157,15 @@ $langEmail : $emailhelpdesk
 	</tr>
 	<tr>
 	<th class='left'><b>".$langSurname."</b></th>
-	<td><input class='FormData_InputText' type='text' name='nom_form' value='".@$ps."' >&nbsp;(*)</td>
+	<td><input class='FormData_InputText' type='text' name='nom_form' value='".@htmlspecialchars(stripslashes($ps))."' >&nbsp;(*)</td>
 	</tr>
 	<tr>
 	<th class='left'><b>".$langName."</b></th>
-	<td><input class='FormData_InputText' type='text' name='prenom_form' value='".@$pn."'>&nbsp;(*)</td>
+	<td><input class='FormData_InputText' type='text' name='prenom_form' value='".@htmlspecialchars(stripslashes($pn))."'>&nbsp;(*)</td>
 	</tr>
 	<tr>
 	<th class='left'><b>$langUsername</b></th>
-	<td><input class='FormData_InputText' type='text' name='uname' value='".@$pu."'>&nbsp;(*)</td>
+	<td><input class='FormData_InputText' type='text' name='uname' value='".@htmlspecialchars(stripslashes($pu))."'>&nbsp;(*)</td>
 	</tr>
 	<tr>
 	<th class='left'><b>$langPass</b></th>
@@ -173,7 +173,7 @@ $langEmail : $emailhelpdesk
 	</tr>
 	<tr>
 	<th class='left'><b>$langEmail</b></th>
-	<td><input class='FormData_InputText' type='text' name='email_form' value='".@$pe."'>&nbsp;(*)</b></td>
+	<td><input class='FormData_InputText' type='text' name='email_form' value='".@htmlspecialchars(stripslashes($pe))."'>&nbsp;(*)</b></td>
 	</tr>
 	<tr>
 	<th class='left'>$langFaculty</th>

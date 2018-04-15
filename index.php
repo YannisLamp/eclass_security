@@ -77,15 +77,15 @@ if (!isset($selectResult)) {
 if (isset($persoIsActive)) {
 	$_SESSION["perso_is_active"] = $persoIsActive;
 }
-
 // if we try to login... then authenticate user.
 $warning = '';
 if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 	include 'include/shib_login.php';
 } else { // normal authentication
 	if (isset($_POST['uname'])) {
-		// EDO ME TO TRIM TI PAIZEI??
+		// 	EDO ME IPIRXE APO PRIN
 		$uname = preg_replace('/ +/', ' ', trim($_POST['uname']));
+		// Already escaped ???
 		//$uname = escapeSimple(trim($_POST['uname']));
 	} else {
 		$uname = '';
@@ -95,7 +95,7 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 	$submit = isset($_POST['submit'])?$_POST['submit']:'';
 	$auth = get_auth_active_methods();
 	$is_eclass_unique = is_eclass_unique();
-
+	print($uname);
 	if(!empty($submit)) {
 		unset($uid);
 		// EDO GINETAI POLI EUKOLA NA KOLLISEIS SQL ENTOLI PX INSERT
@@ -104,7 +104,7 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 		// ALLA The only reliable way to prevent SQL injection is to use parameterized queries!!!!
 		$sqlLogin= "SELECT user_id, nom, username, password, prenom, statut, email, perso, lang
 			FROM user WHERE username='".$uname."'";
-			//print $sqlLogin;
+		//print $sqlLogin;
 		$result = mysql_query($sqlLogin);
 		$check_passwords = array("pop3","imap","ldap","db");
 		$warning = "";
