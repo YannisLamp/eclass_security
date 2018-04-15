@@ -202,7 +202,7 @@ if (!isset($submit)) {
 	$q1 = "INSERT INTO `$mysqlMainDb`.user
 	(user_id, nom, prenom, username, password, email, statut, department, am, registered_at, expires_at, lang)
 	VALUES ('NULL', '$nom_form', 
-		'$prenom_form', '$uname', '$password_encrypted', 
+		'$prenom_form', '".mysql_real_escape_string($uname)."', '$password_encrypted', 
 		'$email','5', 
 		'$department','$am',"
 		.$registered_at.",".$expires_at.",'$lang')";

@@ -173,11 +173,11 @@ if(isset($forumgo)) {
 		</tr>
 		<tr>
 		<th class='left'>$langForName</th>
-		<td><input type=text name=forum_name size=50 value='$forum_name' class='FormData_InputText'></td>
+		<td><input type=text name=forum_name size=50 value='".htmlspecialchars(stripslashes($forum_name))."' class='FormData_InputText'></td>
 		</tr>
 		<tr>
 		<th class='left'>$langDescription</th>
-		<td><textarea name=forum_desc cols=47 rows=3 class='FormData_InputText'>$forum_desc</textarea></td>
+		<td><textarea name=forum_desc cols=47 rows=3 class='FormData_InputText'>".htmlspecialchars(stripslashes($forum_desc))."</textarea></td>
 		</tr>
 		<tr>
 		<th class='left'>$langChangeCat</th>
@@ -213,7 +213,7 @@ if(isset($forumgo)) {
     		</tr>
     		<tr>
       		<th class='left'>$langCat</th>
-      		<td><input type=text name=cat_title size=55 value='$cat_title' class=\"FormData_InputText\"></td>
+      		<td><input type=text name=cat_title size=55 value='".htmlspecialchars(stripslashes($cat_title))."' class=\"FormData_InputText\"></td>
     		</tr>
     		<tr>
       		<th>&nbsp;</th>
