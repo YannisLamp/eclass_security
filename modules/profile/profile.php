@@ -46,6 +46,7 @@ if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
         }
 	// check if username exists
 	$username_check=mysql_query("SELECT username FROM user WHERE username='".escapeSimple($username_form)."'");
+
 	while ($myusername = mysql_fetch_array($username_check))
 	{
 		$user_exist=$myusername[0];
@@ -61,7 +62,7 @@ if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
 		header("location:". $_SERVER['PHP_SELF']."?msg=4");
 		exit();
 	}
-
+	// HERE THEY ARE NOT ACCEPTED??
 	elseif (strstr($username_form, "'") or strstr($username_form, '"') or strstr($username_form, '\\')){
 		header("location:". $_SERVER['PHP_SELF']."?msg=10");
 		exit();
@@ -87,9 +88,9 @@ if (isset($submit) && (!isset($ldap_submit)) && !isset($changePass)) {
 
 		$username_form = escapeSimple($username_form);
 		if(mysql_query("UPDATE user
-	        SET nom='$nom_form', prenom='$prenom_form',
-	        username='$username_form', email='$email_form', am='$am_form',
-	            perso='$persoStatus', lang='$langcode'
+	        SET nom='".escapeSimple($nom_form)."', prenom='".escapeSimple($prenom_form)."',
+	        username='$username_form', email='".escapeSimple($email_form)."', am='".escapeSimple($am_form)."',
+	            perso='".escapeSimple($persoStatus)."', lang='".escapeSimple($langcode)."'
 	        WHERE user_id='".$_SESSION["uid"]."'")) {
 			if (isset($_SESSION['user_perso_active']) and $persoStatus == "no") {
                 		unset($_SESSION['user_perso_active']);

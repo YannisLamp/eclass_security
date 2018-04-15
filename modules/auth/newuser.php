@@ -67,15 +67,15 @@ if (!isset($submit)) {
 	<thead>
 	<tr>
 	<th class='left' width='220'>$langName</th>
-	<td colspan='2'><input type='text' name='prenom_form' value='$prenom_form' class='FormData_InputText' />&nbsp;&nbsp;<small>(*)</small></td>
+	<td colspan='2'><input type='text' name='prenom_form' value='".htmlspecialchars(stripslashes($prenom_form))."' class='FormData_InputText' />&nbsp;&nbsp;<small>(*)</small></td>
 	</tr>
 	<tr>
 	<th class='left'>$langSurname</th>
-	<td colspan='2'><input type='text' name='nom_form' value='$nom_form' class='FormData_InputText' />&nbsp;&nbsp;<small>(*)</small></td>
+	<td colspan='2'><input type='text' name='nom_form' value='".htmlspecialchars(stripslashes($nom_form))."' class='FormData_InputText' />&nbsp;&nbsp;<small>(*)</small></td>
 	</tr>
 	<tr>
 	<th class='left'>$langUsername</th>
-	<td colspan='2'><input type='text' name='uname' value='$uname' size='20' maxlength='20' class='FormData_InputText' />&nbsp;&nbsp;<small>(*) $langUserNotice</small></td>
+	<td colspan='2'><input type='text' name='uname' value='".htmlspecialchars(stripslashes($uname))."' size='20' maxlength='20' class='FormData_InputText' />&nbsp;&nbsp;<small>(*) $langUserNotice</small></td>
 	</tr>
 	<tr>
 	<th class='left'>$langPass</th>
@@ -87,12 +87,12 @@ if (!isset($submit)) {
 	</tr>
 	<tr>
 	<th class='left'>$langEmail</th>
-	<td valign='top'><input type='text' name='email' value='$email' class='FormData_InputText' /></td>
+	<td valign='top'><input type='text' name='email' value='".htmlspecialchars(stripslashes($email))."' class='FormData_InputText' /></td>
 	<td><small>$langEmailNotice</small></td>
 	</tr>
 	<tr>
 	<th class='left'>$langAm</th>
-	<td colspan='2' valign='top'><input type='text' name='am' value='$am' class='FormData_InputText' /></td>
+	<td colspan='2' valign='top'><input type='text' name='am' value='".htmlspecialchars(stripslashes($am))."' class='FormData_InputText' /></td>
 	</tr>
 	<tr>
 	<th class='left'>$langFaculty</th>
@@ -127,7 +127,6 @@ if (!isset($submit)) {
 	</table>
 	</form>";
 } else {
-
 	// EDW GIA TO REGISTRATION SECURITY
 	// trim white spaces in the end and in the beginning of the word
 	$uname = preg_replace('/\ +/', ' ', trim(isset($_POST['uname'])?$_POST['uname']:''));
@@ -138,7 +137,7 @@ if (!isset($submit)) {
 		$registration_errors[] = $langEmptyFields;
 	} else {
 	// check if the username is already in use
-		$q2 = "SELECT username FROM `$mysqlMainDb`.user WHERE username='".escapeSimple($uname)."'";
+		$q2 = "SELECT username FROM `$mysqlMainDb`.user WHERE username='$uname'";
 		$username_check = mysql_query($q2);
 		if ($myusername = mysql_fetch_array($username_check)) {
 			$registration_errors[] = $langUserFree;
@@ -199,16 +198,17 @@ if (!isset($submit)) {
 	} else {
 		$password_encrypted = $password;
 	}
+	// ALREADY ESCAPED MAGIC QUOTES
 	$q1 = "INSERT INTO `$mysqlMainDb`.user
 	(user_id, nom, prenom, username, password, email, statut, department, am, registered_at, expires_at, lang)
-	VALUES ('NULL', '".escapeSimple($nom_form)."', 
-		'".escapeSimple($prenom_form)."', '$uname', '$password_encrypted', 
-		'".escapeSimple($email)."','5', 
-		'".escapeSimple($department)."','".escapeSimple($am)."',"
+	VALUES ('NULL', '$nom_form', 
+		'$prenom_form', '$uname', '$password_encrypted', 
+		'$email','5', 
+		'$department','$am',"
 		.$registered_at.",".$expires_at.",'$lang')";
 	$inscr_user = mysql_query($q1);
 	$last_id = mysql_insert_id();
-	$result=mysql_query("SELECT user_id, nom, prenom FROM `$mysqlMainDb`.user WHERE user_id='".escapeSimple($last_id)."'");
+	$result=mysql_query("SELECT user_id, nom, prenom FROM `$mysqlMainDb`.user WHERE user_id='$last_id'");
 	while ($myrow = mysql_fetch_array($result)) {
 		$uid=$myrow[0];
 		$nom=$myrow[1];
@@ -216,6 +216,7 @@ if (!isset($submit)) {
 	}
 	mysql_query("INSERT INTO `$mysqlMainDb`.loginout (loginout.idLog, loginout.id_user, loginout.ip, loginout.when, loginout.action)
 	VALUES ('', '".$uid."', '".$REMOTE_ADDR."', NOW(), 'LOGIN')");
+	// EXOUN ALLAKSEI
 	$_SESSION['uid'] = $uid;
 	$_SESSION['statut'] = 5;
 	$_SESSION['prenom'] = $prenom;
@@ -225,7 +226,7 @@ if (!isset($submit)) {
 	// registration form
 	$tool_content .= "<table width='99%'><tbody><tr>" .
 			"<td class='well-done' height='60'>" .
-			"<p>$langDear $prenom $nom,</p>" .
+			"<p>$langDear ".htmlspecialchars(stripslashes($prenom))." ".htmlspecialchars(stripslashes($nom)).",</p>" .
 			"<p>$langPersonalSettings</p></td>" .
 			"</tr></tbody></table><br /><br />" .
 			"<p>$langPersonalSettingsMore</p>";
