@@ -32,7 +32,7 @@ $nameTools = $langDelCourse;
 $tool_content = "";
 
 if($is_adminOfCourse) {
-	if(isset($delete)) {
+	if(isset($delete) && !empty($_POST['token']) && (strcmp($_SESSION['token'], $_POST['token']) === 0)) {
 		mysql_select_db("$mysqlMainDb",$db);
 		mysql_query("DROP DATABASE `$currentCourseID`");
 		mysql_query("DELETE FROM `$mysqlMainDb`.cours WHERE code='$currentCourseID'");
@@ -51,6 +51,7 @@ if($is_adminOfCourse) {
 		draw($tool_content, 1);
 		exit();
 	} else {
+		$token = !empty($_POST['token'])? $_POST['token'] : '';
 		$tool_content .= "
 		<table width=\"99%\">
 		<tbody>
@@ -61,7 +62,13 @@ if($is_adminOfCourse) {
 		</tr>
 		<tr>
 		<th rowspan='2' class='left' width='220'>$langConfirmDel :</th>
-		<td width='52' align='center'><a href=\"".$_SERVER['PHP_SELF']."?delete=yes\">$langYes</a></td>
+		<td width='52' align='center'>
+		<form id='myform5' action='delete_course.php' method='post'>
+		<a href='javascript:;' onclick=\"document.getElementById('myform5').submit();\">
+		<b>$langYes</b></a>
+		<input type='hidden' name='delete' value='yes'/>
+		<input type='hidden' name='token' value='$token'/>
+		</form></td>
 		<td><small>$langByDel</small></td>
 		</tr>
 		<tr>
@@ -70,7 +77,8 @@ if($is_adminOfCourse) {
 		</tr>
 		</tbody>
 		</table>";
-		
+		//<a href=\"".$_SERVER['PHP_SELF']."?delete=yes\">$langYes</a></td>
+
 		$tool_content .= "<p align=\"right\"><a href=\"infocours.php\">$langBack</a></p>
 		</ul>
 		</div>";

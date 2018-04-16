@@ -146,8 +146,14 @@ if (isset($_POST['submit']) && !empty($_POST['token']) && (strcmp($_SESSION['tok
 
 		$tool_content .= "<div id='operations_container'><ul id='opslist'>";
 		$tool_content .= "<li><a href='archive_course.php'>$langBackupCourse</a></li>
-  		<li><a href='delete_course.php'>$langDelCourse</a></li>
+  		<li>
+      <form id='myform' action='delete_course.php' method='post'>
+  			<a href='javascript:;' onclick=\"document.getElementById('myform').submit();\">
+  			<b>$langDelCourse</b></a>
+  			<input type='hidden' name='token' value='$token'/>
+  		</form>
     		<li><a href='refresh_course.php'>$langRefreshCourse</a></li></ul></div>";
+        //<a href='delete_course.php'>$langDelCourse</a></li>
 
 		$sql = "SELECT cours_faculte.faculte,
 			cours.intitule, cours.description, cours.course_keywords, cours.course_addon,

@@ -170,7 +170,7 @@ if ($is_adminOfCourse) {
 				show_assignments($langAssignmentActivated);
 			} elseif ($choice == 'delete') {
 				die("invalid option");
-			} elseif ($choice == "do_delete") {
+			} elseif ($choice == "do_delete" && !empty($_POST['token']) && (strcmp($_SESSION['token'], $_POST['token']) === 0)) {
 				$nameTools = $m['WorkDelete'];
 				$navigation[] = array("url"=>"work.php", "name"=> $langWorks);
 				delete_assignment($id);
@@ -179,7 +179,7 @@ if ($is_adminOfCourse) {
 				$navigation[] = array("url"=>"work.php", "name"=> $langWorks);
 				show_edit_assignment($id);
         // && !empty($_POST['token']) && (strcmp($_SESSION['token'], $_POST['token']) === 0) na to valoume meta
-			} elseif (($choice == 'do_edit')) {
+			} elseif (($choice == 'do_edit') && !empty($_POST['token']) && (strcmp($_SESSION['token'], $_POST['token']) === 0)) {
         //fixed csrf for deface of course?
 				$nameTools = $m['WorkView'];
 				$navigation[] = array("url"=>"work.php", "name"=> $langWorks);
@@ -360,7 +360,7 @@ function submit_work($id) {
 function new_assignment()
 {
 	global $tool_content, $m, $langAdd;
-	global $urlAppend;
+	global $urlAppend, $token;
 	global $desc;
 	global $end_cal_Work;
 	global $langBack;
@@ -454,7 +454,7 @@ function date_form($day, $month, $year)
 function show_edit_assignment($id)
 {
 	global $tool_content, $m, $langEdit, $langWorks, $langBack;
-	global $urlAppend;
+	global $urlAppend, $token;
 	global $end_cal_Work_db;
 
 	$res = db_query("SELECT * FROM assignments WHERE id = '$id'");
@@ -669,17 +669,26 @@ function assignment_details($id, $row, $message = null)
 {
 	global $tool_content, $m, $langDaysLeft, $langDays, $langWEndDeadline, $langNEndDeadLine, $langNEndDeadline, $langEndDeadline;
 	global $langDelAssign, $is_adminOfCourse, $langZipDownload, $langSaved ;
+  global $token;
 
 
 	if ($is_adminOfCourse) {
 	$tool_content .= "
     <div id=\"operations_container\">
       <ul id=\"opslist\">
-        <li><a href=\"work.php?id=$id&amp;choice=do_delete\" onClick=\"return confirmation('".addslashes($row['title'])."');\">$langDelAssign</a></li>
+        <li><form id='myform5' action='work.php?' method='post'>
+    		<a href='javascript:;' onclick=\"if(confirmation('".addslashes($row['title'])."'))document.getElementById('myform5').submit();\">
+    		<b>$langDelAssign</b></a>
+    		<input type='hidden' name='choice' value='do_delete'/>
+        <input type='hidden' name='id' value='$id' />
+    		<input type='hidden' name='token' value='$token'/>
+    		</form>
+        </li>
         <li><a href=\"work.php?download=$id\">$langZipDownload</a></li>
       </ul>
     </div>
 	";
+  //<a href=\"work.php?id=$id&amp;choice=do_delete\" onClick=\"return confirmation('".addslashes($row['title'])."');\">$langDelAssign</a>
 	}
 
 	if (isset($message)) {
@@ -1100,6 +1109,7 @@ cData;
 function show_assignments($message = null)
 {
 	global $tool_content, $m, $langNoAssign, $langNewAssign, $langCommands, $urlServer;
+  global $token;
 
 	$result = db_query("SELECT * FROM assignments ORDER BY id");
 
@@ -1159,7 +1169,14 @@ cData;
       <td align='right'>
          <a href='work.php?id=$row[id]&amp;choice=edit'><img src='../../template/classic/img/edit.gif' alt='$m[edit]' /></a>";
 			$tool_content .= "
-         <a href='work.php?id=$row[id]&amp;choice=do_delete' onClick='return confirmation(\"".addslashes($row_title)."\");'><img src='../../template/classic/img/delete.gif' alt='$m[delete]' /></a>";
+      <form id='myform".$row[id]."' action='work.php?' method='post'>
+      <a href='javascript:;' onclick=\"if(confirmation(\"".addslashes($row_title)."\")) document.getElementById('myform".$row[id]."').submit();\">
+      <img src='../../template/classic/img/delete.gif' alt='$m[delete]' /></a>
+      <input type='hidden' name='choice' value='do_delete'/>
+      <input type='hidden' name='id' value='".$row[id]."' />
+      <input type='hidden' name='token' value='$token'/>
+      </form>";
+         //<a href='work.php?id=$row[id]&amp;choice=do_delete' onClick='return confirmation(\"".addslashes($row_title)."\");'><img src='../../template/classic/img/delete.gif' alt='$m[delete]' /></a>";
 
 			if ($row['active']) {
 				$deactivate_temp = htmlspecialchars($m['deactivate']);
