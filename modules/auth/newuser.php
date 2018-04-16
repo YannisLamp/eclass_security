@@ -129,7 +129,7 @@ if (!isset($submit)) {
 } else {
 	// EDW GIA TO REGISTRATION SECURITY
 	// trim white spaces in the end and in the beginning of the word
-	$uname = preg_replace('/\ +/', ' ', trim(isset($_POST['uname'])?$_POST['uname']:''));
+	$uname = mysql_real_escape_string(preg_replace('/\ +/', ' ', trim(isset($_POST['uname'])?$_POST['uname']:'')));
 	// registration
 	$registration_errors = array();
 	// check if there are empty fields
@@ -216,7 +216,7 @@ if (!isset($submit)) {
 		$prenom=$myrow[2];
 	}
 	mysql_query("INSERT INTO `$mysqlMainDb`.loginout (loginout.idLog, loginout.id_user, loginout.ip, loginout.when, loginout.action)
-	VALUES ('', '".$uid."', '".$REMOTE_ADDR."', NOW(), 'LOGIN')");
+	VALUES ('', '".mysql_real_escape_string($uid)."', '".$REMOTE_ADDR."', NOW(), 'LOGIN')");
 	// EXOUN ALLAKSEI
 	$_SESSION['uid'] = $uid;
 	$_SESSION['statut'] = 5;

@@ -53,27 +53,27 @@ if (!isset($submit)) {
   <thead>
   <tr>
    <th class='left' width='220'>$langSurname</th>
-   <td><input size='35' type='text' name='nom_form' value='$nom_form' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
+   <td><input size='35' type='text' name='nom_form' value='".htmlspecialchars(stripslashes($nom_form))."' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
   </tr>
   <tr>
     <th class='left'>$langName</th>
-    <td><input size='35' type='text' name='prenom_form' value='$prenom_form' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
+    <td><input size='35' type='text' name='prenom_form' value='".htmlspecialchars(stripslashes($prenom_form))."' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
   </tr>
 	<tr>
     <th class='left'>$langPhone</th>
-    <td><input size='35' type='text' name='userphone' value='$userphone' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
+    <td><input size='35' type='text' name='userphone' value='".htmlspecialchars(stripslashes($userphone))."' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
   </tr>
   <tr>
     <th class='left'>$langUsername</th>
-    <td><input size='35' type='text' name='uname' value='$uname' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
+    <td><input size='35' type='text' name='uname' value='".htmlspecialchars(stripslashes($uname))."' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
   </tr>
   <tr>
     <th class='left'>$langEmail</th>
-    <td><input size='35' type='text' name='email_form' value='$email_form' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
+    <td><input size='35' type='text' name='email_form' value='".htmlspecialchars(stripslashes($email_form))."' class='FormData_InputText'>&nbsp;&nbsp;<small>(*)</small></td>
   </tr>
   <tr>
     <th class='left'>$langComments</td>
-    <td><textarea name='usercomment' COLS='32' ROWS='4' WRAP='SOFT' class='FormData_InputText'>$usercomment</textarea>&nbsp;&nbsp;<small>(*) $profreason</small></td>
+    <td><textarea name='usercomment' COLS='32' ROWS='4' WRAP='SOFT' class='FormData_InputText'>".htmlspecialchars(stripslashes($usercomment))."</textarea>&nbsp;&nbsp;<small>(*)".htmlspecialchars(stripslashes($profreason))."</small></td>
   </tr>
   <tr>
     <th class='left'>$langFaculty</th>

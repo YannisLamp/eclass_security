@@ -57,6 +57,7 @@ function check_password_editable($password)
 if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
 	$userUID = (int)$_REQUEST['u'];
 	$hash = $_REQUEST['h'];
+	// TO HASH DEN KSERW
 	$res = db_query("SELECT `user_id`, `hash`, `password`, `datetime` FROM passwd_reset
 			WHERE `user_id` = '" . mysql_real_escape_string($userUID) . "'
 			AND `hash` = '" . mysql_real_escape_string($hash) . "'
@@ -196,7 +197,7 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
                                         <tr>
                                                 <td class=\"caution\">
                                                 <p><strong>$langAccountEmailError1</strong></p>
-                                                <p>$langAccountEmailError2 ".htmlspecialchars($email).".</p>
+                                                <p>$langAccountEmailError2 ".htmlspecialchars(stripslashes($email)).".</p>
                                                 <p>$langAccountEmailError3 <a href='mailto:$emailhelpdesk'>$emailhelpdesk</a>.</p>
                                                 <p><a href=\"../../index.php\">$langHome</a></p>
                                         </td>
@@ -207,7 +208,7 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
                 } elseif (!isset($auth)) {
                     $tool_content .= "<table width=\"99%\">
                            <tbody><tr><td class=\"success\">
-                               $lang_pass_email_ok <strong>".htmlspecialchars($email)."</strong><br/><br/>
+                               $lang_pass_email_ok <strong>".htmlspecialchars(stripslashes($email))."</strong><br/><br/>
                                 <a href=\"../../index.php\">$langHome</a>
                                 </td></tr></tbody></table><br/>";
                         }
@@ -216,7 +217,7 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
        } else {
 		$tool_content .= "<table width=\"99%\"><tbody>
 		<tr><td class=\"caution\">
-		<p><strong>$langAccountNotFound1 (".htmlspecialchars($userName)." / ".htmlspecialchars($email).")</strong></p>
+		<p><strong>$langAccountNotFound1 (".htmlspecialchars(stripslashes($userName))." / ".htmlspecialchars(stripslashes($email)).")</strong></p>
 		<p>$langAccountNotFound2 <a href='mailto: $emailhelpdesk'>$emailhelpdesk</a>, $langAccountNotFound3</p>
 		<p><a href=\"../../index.php\">$langHome</a></p>
 		</td>
@@ -228,7 +229,7 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
 	<tbody><tr>
 	<td class=\"caution\">
 	<p><strong>$langAccountEmailError1</strong></p>
-	<p>$langAccountEmailError2 ".htmlspecialchars($email).".</p>
+	<p>$langAccountEmailError2 ".htmlspecialchars(stripslashes($email)).".</p>
 	<p>$langAccountEmailError3 <a href='mailto:$emailhelpdesk'>$emailhelpdesk</a>.</p>
 	<p><a href=\"../../index.php\">$langHome</a></p>
 	</td>

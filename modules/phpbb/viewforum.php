@@ -205,7 +205,7 @@ if (mysql_num_rows($result) > 0) { // topics found
 		$topic_title = own_stripslashes($myrow["topic_title"]);
 		$pagination = '';
 		$start = '';
-		$topiclink = "viewtopic.php?topic=" . $myrow["topic_id"] . "&amp;forum=".htmlspecialchars($forum);
+		$topiclink = "viewtopic.php?topic=" . $myrow["topic_id"] . "&amp;forum=".htmlspecialchars(stripslashes($forum));
 		if($replys+1 > $posts_per_page) {
 			$pagination .= "\n<strong class='pagination'><span>\n<img src='$posticon_more' />";
 			$pagenr = 1;
@@ -249,10 +249,10 @@ if (mysql_num_rows($result) > 0) { // topics found
 		}
 		$tool_content .= "<td class='Forum_leftside' style='text-align:center'>";
 		if (isset($_GET['start']) and $_GET['start'] > 0) {
-			$tool_content .= "<a href='$_SERVER[PHP_SELF]?forum=".htmlspecialchars($forum)."&start=$_GET[start]&amp;topicnotify=$topic_link_notify&amp;topic_id=".htmlspecialchars($myrow[topic_id])."'>
+			$tool_content .= "<a href='$_SERVER[PHP_SELF]?forum=".htmlspecialchars(stripslashes($forum))."&start=$_GET[start]&amp;topicnotify=$topic_link_notify&amp;topic_id=".htmlspecialchars(stripslashes($myrow[topic_id]))."'>
 			<img src='../../template/classic/img/announcements$topic_icon.gif' title='$langNotify'></img></a>";
 		} else {
-			$tool_content .= "<a href='$_SERVER[PHP_SELF]?forum=".htmlspecialchars($forum)."&amp;topicnotify=$topic_link_notify&amp;topic_id=".htmlspecialchars($myrow[topic_id])."'>
+			$tool_content .= "<a href='$_SERVER[PHP_SELF]?forum=".htmlspecialchars(stripslashes($forum))."&amp;topicnotify=$topic_link_notify&amp;topic_id=".htmlspecialchars(stripslashes($myrow[topic_id]))."'>
 			<img src='../../template/classic/img/announcements$topic_icon.gif' title='$langNotify'></img></a>";
 		}
 		$tool_content .= "</td></tr>";
