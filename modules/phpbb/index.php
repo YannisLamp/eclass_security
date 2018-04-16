@@ -155,7 +155,7 @@ if ($total_categories) {
 		if ($viewcat != -1) {
 			if ($categories[$i][cat_id] != $viewcat) {
 				$title = stripslashes($categories[$i][cat_title]);
-				$tool_content .= "<tr class='Forum'><td colspan='6' class='left'>&nbsp;$title</td></tr>";
+				$tool_content .= "<tr class='Forum'><td colspan='6' class='left'>&nbsp;".htmlspecialchars($title)."</td></tr>";
 				continue;
 			}
 		}
@@ -170,7 +170,7 @@ if ($total_categories) {
 			$link_notify = toggle_link($action_notify);
 			$icon = toggle_icon($action_notify);
 		}
-		$tool_content .= "<tr><td colspan='5' class='Forum'>&nbsp;$title</td>
+		$tool_content .= "<tr><td colspan='5' class='Forum'>&nbsp;".htmlspecialchars($title)."</td>
 			<td class='Forum' style='text-align:center'>
 			<a href='$_SERVER[PHP_SELF]?forumcatnotify=$link_notify&amp;cat_id=$catNum'>	
 			<img src='../../template/classic/img/announcements$icon.gif' title='$langNotify' alt='$langNotify' /></a></td></tr>";
@@ -215,24 +215,24 @@ if ($total_categories) {
 						WHERE forumId='$forum' AND tutor='$uid'", $currentCourseID );
 					$countTutor = mysql_num_rows($sqlTutor);
 					if ($countTutor == 0) {
-						$tool_content .= "<a href='viewforum.php?forum=" . $forum . "'>$name</a>";
+						$tool_content .= "<a href='viewforum.php?forum=" . $forum . "'>".htmlspecialchars($name)."</a>";
 					} else {
-						$tool_content .= "<a href='viewforum.php?forum=" . $forum . "'>$name</a>&nbsp;($langOneMyGroups)";
+						$tool_content .= "<a href='viewforum.php?forum=" . $forum . "'>".htmlspecialchars($name)."</a>&nbsp;($langOneMyGroups)";
 					}
 				} elseif ($catNum == 1) { // student view
 					if (@$forum == @$myGroupForum) {
-						$tool_content .= "<a href='viewforum.php?forum=".$forum."'>$name</a>&nbsp;&nbsp;($langMyGroup)";
+						$tool_content .= "<a href='viewforum.php?forum=".$forum."'>".htmlspecialchars($name)."</a>&nbsp;&nbsp;($langMyGroup)";
 					} else {
 						if(@$privProp == 1) {
-							$tool_content .= "$name";
+							$tool_content .= "".htmlspecialchars($name)."";
 						} else {
-							$tool_content .= "<a href='viewforum.php?forum=".$forum."'>$name</a>";
+							$tool_content .= "<a href='viewforum.php?forum=".$forum."'>".htmlspecialchars($name)."</a>";
 						}
 					}
 				} else { // OTHER FORUMS
-					$tool_content .= "<a href='viewforum.php?forum=".$forum."'>$name</a>";
+					$tool_content .= "<a href='viewforum.php?forum=".$forum."'>".htmlspecialchars($name)."</a>";
 				}
-				$tool_content .= "<br />$desc";
+				$tool_content .= "<br />".htmlspecialchars($desc)."";
 				$tool_content .= "</td>";
 				$tool_content .= "<td width='65' class='Forum_leftside'>$total_topics</td>";
 				$tool_content .= "<td width='65' class='Forum_leftside'>$total_posts</td>";

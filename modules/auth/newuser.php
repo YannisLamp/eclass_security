@@ -129,7 +129,7 @@ if (!isset($submit)) {
 } else {
 	// EDW GIA TO REGISTRATION SECURITY
 	// trim white spaces in the end and in the beginning of the word
-	$uname = preg_replace('/\ +/', ' ', trim(isset($_POST['uname'])?$_POST['uname']:''));
+	$uname = mysql_real_escape_string(preg_replace('/\ +/', ' ', trim(isset($_POST['uname'])?$_POST['uname']:'')));
 	// registration
 	$registration_errors = array();
 	// check if there are empty fields
@@ -201,11 +201,12 @@ if (!isset($submit)) {
 	// ALREADY ESCAPED MAGIC QUOTES
 	$q1 = "INSERT INTO `$mysqlMainDb`.user
 	(user_id, nom, prenom, username, password, email, statut, department, am, registered_at, expires_at, lang)
-	VALUES ('NULL', '$nom_form', 
-		'$prenom_form', '$uname', '$password_encrypted', 
-		'$email','5', 
-		'$department','$am',"
+	VALUES ('NULL', '.".mysql_real_escape_string($nom_form)."', 
+		'".mysql_real_escape_string($prenom_form)."', '".mysql_real_escape_string($uname)."', '".mysql_real_escape_string($password_encrypted)."', 
+		'".mysql_real_escape_string($email)."','5', 
+		'".mysql_real_escape_string($department)."','".mysql_real_escape_string($am)."',"
 		.$registered_at.",".$expires_at.",'$lang')";
+	print($q1);
 	$inscr_user = mysql_query($q1);
 	$last_id = mysql_insert_id();
 	$result=mysql_query("SELECT user_id, nom, prenom FROM `$mysqlMainDb`.user WHERE user_id='$last_id'");
@@ -215,7 +216,7 @@ if (!isset($submit)) {
 		$prenom=$myrow[2];
 	}
 	mysql_query("INSERT INTO `$mysqlMainDb`.loginout (loginout.idLog, loginout.id_user, loginout.ip, loginout.when, loginout.action)
-	VALUES ('', '".$uid."', '".$REMOTE_ADDR."', NOW(), 'LOGIN')");
+	VALUES ('', '".mysql_real_escape_string($uid)."', '".$REMOTE_ADDR."', NOW(), 'LOGIN')");
 	// EXOUN ALLAKSEI
 	$_SESSION['uid'] = $uid;
 	$_SESSION['statut'] = 5;

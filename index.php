@@ -83,10 +83,8 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 	include 'include/shib_login.php';
 } else { // normal authentication
 	if (isset($_POST['uname'])) {
-		// 	EDO ME IPIRXE APO PRIN
-		$uname = preg_replace('/ +/', ' ', trim($_POST['uname']));
-		// Already escaped ???
-		//$uname = escapeSimple(trim($_POST['uname']));
+		// 	EDO ME IPIRXE APO PRIN EPISIS ESCAPE??
+		$uname = escapeSimple(preg_replace('/ +/', ' ', trim($_POST['uname'])));
 	} else {
 		$uname = '';
 	}
@@ -160,7 +158,7 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 			$_SESSION['is_admin'] = $is_admin;
 			$_SESSION['uid'] = $uid;
 			mysql_query("INSERT INTO loginout (loginout.idLog, loginout.id_user, loginout.ip, loginout.when, loginout.action)
-			VALUES ('', '$uid', '$_SERVER[REMOTE_ADDR]', NOW(), 'LOGIN')");
+			VALUES ('', '".escapeSimple($uid)."', '$_SERVER[REMOTE_ADDR]', NOW(), 'LOGIN')");
 		}
 	
 		##[BEGIN personalisation modification]############
@@ -213,7 +211,7 @@ if (isset($uid) AND !isset($logout)) {
 			//if the user is a guest send him straight to the corresponding lesson
 			$guestSQL = db_query("SELECT code FROM cours_user, cours
 				              WHERE cours.cours_id = cours_user.cours_id AND
-                                                    user_id = $uid", $mysqlMainDb);
+                                                    user_id = ".escapeSimple($uid)."", $mysqlMainDb);
 			if (mysql_num_rows($guestSQL) > 0) {
 				$sql_row = mysql_fetch_row($guestSQL);
 				$dbname=$sql_row[0];
@@ -239,7 +237,7 @@ elseif ((isset($logout) && isset($uid)) OR (1==1)) {
 	if (isset($logout) && isset($uid)) {
 		mysql_query("INSERT INTO loginout (loginout.idLog, loginout.id_user,
 			loginout.ip, loginout.when, loginout.action)
-			VALUES ('', '$uid', '$REMOTE_ADDR', NOW(), 'LOGOUT')");
+			VALUES ('', '".escapeSimple($uid)."', '$REMOTE_ADDR', NOW(), 'LOGOUT')");
 		unset($prenom);
 		unset($nom);
 		unset($statut);
