@@ -201,11 +201,12 @@ if (!isset($submit)) {
 	// ALREADY ESCAPED MAGIC QUOTES
 	$q1 = "INSERT INTO `$mysqlMainDb`.user
 	(user_id, nom, prenom, username, password, email, statut, department, am, registered_at, expires_at, lang)
-	VALUES ('NULL', '$nom_form', 
-		'$prenom_form', '".mysql_real_escape_string($uname)."', '$password_encrypted', 
-		'$email','5', 
-		'$department','$am',"
+	VALUES ('NULL', '.".mysql_real_escape_string($nom_form)."', 
+		'".mysql_real_escape_string($prenom_form)."', '".mysql_real_escape_string($uname)."', '".mysql_real_escape_string($password_encrypted)."', 
+		'".mysql_real_escape_string($email)."','5', 
+		'".mysql_real_escape_string($department)."','".mysql_real_escape_string($am)."',"
 		.$registered_at.",".$expires_at.",'$lang')";
+	print($q1);
 	$inscr_user = mysql_query($q1);
 	$last_id = mysql_insert_id();
 	$result=mysql_query("SELECT user_id, nom, prenom FROM `$mysqlMainDb`.user WHERE user_id='$last_id'");
