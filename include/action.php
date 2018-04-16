@@ -23,7 +23,7 @@ class action {
                 # Update previous action with corect duration
                 if ($last_id and $last_action != $exit and $diff < DEFAULT_MAX_DURATION) {
                         $sql = "UPDATE actions
-                                SET duration = ".mysql_real_escape_string($diff)." WHERE id = $last_id";
+                                SET duration = ".mysql_real_escape_string($diff)." WHERE id = ".mysql_real_escape_string($last_id)."";
                         db_query($sql, $currentCourseID);
                 }
         }

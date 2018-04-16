@@ -175,12 +175,12 @@ function escapeSimple($str)
 {
 	// AUTO EINAI LIGO ANTE GEIA
 	global $db;
-	//if (get_magic_quotes_gpc())
-	//{
-	//	return $str;
-	//}
-	//else
-	//{
+	if (get_magic_quotes_gpc())
+	{
+		return $str;
+	}
+	else
+	{
 		if (function_exists('mysql_real_escape_string'))
 		{
 			return @mysql_real_escape_string($str, $db);
@@ -189,7 +189,7 @@ function escapeSimple($str)
 		{
 			return @mysql_escape_string($str);
 		}
-	//}
+	}
 }
 
 function escapeSimpleSelect($str)
@@ -363,7 +363,7 @@ function group_secret($gid)
 function selection($entries, $name, $default = '', $extra = '')
 {
 	$retString = "";
-	$retString .= "\n<select name='$name' $extra class='auth_input'>\n";
+	$retString .= "\n<select name='".htmlspecialchars($name)."'". htmlspecialchars($extra)." class='auth_input'>\n";
 	foreach ($entries as $value => $label) {
 		if ($value == $default) {
 			$retString .= "<option selected value='" . htmlspecialchars($value) . "'>" .
@@ -386,7 +386,7 @@ $name: the name of the selection element
 $default: if it matches one of the values, specifies the default entry
  ***********************************************************************/
 function selection3($entries, $name, $default = '') {
-	$select_box = "<select name='$name'>\n";
+	$select_box = "<select name='".htmlspecialchars($name)."'>\n";
 	foreach ($entries as $value => $label)  {
 	    if ($value == $default) {
 		$select_box .= "<option selected value='" . htmlspecialchars($value) . "'>" .
@@ -491,7 +491,7 @@ function check_uid() {
 function user_exists($login) {
   global $mysqlMainDb;
 
-  $username_check = mysql_query("SELECT username FROM `$mysqlMainDb`.user
+  $username_check = mysql_query("SELECT username FROM `".escapeSimple($mysqlMainDb)."`.user
 	WHERE username='".escapeSimple($login)."'");
   if (mysql_num_rows($username_check) > 0)
     return TRUE;
@@ -615,8 +615,8 @@ function new_code($fac) {
 	do {
 		$code = $gencode[0].$gencode[1];
 		$gencode[1] += 1;
-		db_query("UPDATE $mysqlMainDb.faculte SET generator = '$gencode[1]'
-			WHERE id = '$fac'");
+		db_query("UPDATE $mysqlMainDb.faculte SET generator = '"..escapeSimple($gencode[1])."'
+			WHERE id = '"..escapeSimple($fac)."'");
 	} while (mysql_select_db($code));
 	mysql_select_db($mysqlMainDb);
 
@@ -690,7 +690,7 @@ function check_new_announce() {
         $q = mysql_query("SELECT * FROM annonces, cours_user
                           WHERE annonces.cours_id = cours_user.cours_id AND
                                 cours_user.user_id = ".escapeSimple($uid)." AND
-                                annonces.temps >= '$lastlogin'
+                                annonces.temps >= '".escapeSimple($lastlogin)."'
                           ORDER BY temps DESC LIMIT 1");
         if ($q and mysql_num_rows($q) > 0) {
                 return true;
@@ -853,11 +853,11 @@ function warnIfExtNotLoaded($extensionName) {
 
 	global $tool_content, $langModuleNotInstalled, $langReadHelp, $langHere;
 	if (extension_loaded ($extensionName)) {
-		$tool_content .= "<li> $extensionName - <b>ok!</b> </li> ";
+		$tool_content .= "<li> ".htmlspecialchars($extensionName)." - <b>ok!</b> </li> ";
 	} else {
 		$tool_content .= "
                 <li>$extensionName
-                <font color=\"#FF0000\"> - <b>$langModuleNotInstalled</b></font>
+                <font color=\"#FF0000\"> - <b>".htmlspecialchars($langModuleNotInstalled)."</b></font>
                 (<a href=\"http://www.php.net/$extensionName\" target=_blank>$langReadHelp $langHere)</a>
                 </li>";
 	}
@@ -893,9 +893,8 @@ function mkpath($path)  {
 function display_activation_link($module_id) {
 
 	global $currentCourseID;
-
 	$v = mysql_fetch_array(db_query("SELECT lien FROM accueil
-		WHERE id ='$module_id'", $currentCourseID));
+		WHERE id ='".escapeSimple($module_id)."'", $currentCourseID));
 	$newlien = str_replace("../..","","$v[lien]");
 
 	if (strpos($_SERVER['PHP_SELF'],$newlien) === FALSE) {
@@ -911,7 +910,7 @@ function visible_module($module_id) {
 	global $currentCourseID;
 
 	$v = mysql_fetch_array(db_query("SELECT visible FROM accueil
-		WHERE id ='$module_id'", $currentCourseID));
+		WHERE id ='".escapeSimple($module_id)."'", $currentCourseID));
 
 	if ($v['visible'] == 1) {
 		return TRUE;
@@ -1141,21 +1140,21 @@ function move_order($table, $id_field, $id, $order_field, $direction, $condition
                 $op = '<';
                 $desc = 'DESC';
         }
-        $sql = db_query("SELECT `$order_field` FROM `$table`
-                         WHERE `$id_field` = '$id'");
+        $sql = db_query("SELECT `".escapeSimple($order_field)."` FROM `".escapeSimple($table)."`
+                         WHERE `".escapeSimple($id_field)."` = '".escapeSimple($id)."'");
         if (!$sql or mysql_num_rows($sql) == 0) {
                 return false;
         }
         list($current) = mysql_fetch_row($sql);
-        $sql = db_query("SELECT `$id_field`, `$order_field` FROM `$table`
-                        WHERE `order` $op '$current' $condition
-                        ORDER BY `$order_field` $desc LIMIT 1");
+        $sql = db_query("SELECT `".escapeSimple($id_field)."`, `".escapeSimple($order_field)."` FROM `".escapeSimple($table)."`
+                        WHERE `order` ".escapeSimple($op)." '."escapeSimple($current)."' ".escapeSimple($condition)."
+                        ORDER BY `."escapeSimple($order_field)."` ".escapeSimple($desc)." LIMIT 1");
         if ($sql and mysql_num_rows($sql) > 0) {
                 list($next_id, $next) = mysql_fetch_row($sql);
-                db_query("UPDATE `$table` SET `$order_field` = $next
-                          WHERE `$id_field` = $id");
-                db_query("UPDATE `$table` SET `$order_field` = $current
-                          WHERE `$id_field` = $next_id");
+                db_query("UPDATE `".escapeSimple($table)."` SET `".escapeSimple($order_field)."` = ".escapeSimple($next)."
+                          WHERE `".escapeSimple($id_field)."` = ".escapeSimple($id)."");
+                db_query("UPDATE `".escapeSimple($table)."` SET `".escapeSimple($order_field)."` = ".escapeSimple($current)."
+                          WHERE `".escapeSimple($id_field)."` = ".escapeSimple($next_id)."");
                 return true;
         }
         return false;
@@ -1186,7 +1185,8 @@ function add_units_navigation($entry_page = FALSE)
                        WHERE id=".escapeSimple($unit_id)." AND course_id=".escapeSimple($cours_id).
                        $visibility_check, $mysqlMainDb);
                 if ($q and mysql_num_rows($q) > 0) {
-                        list($unit_name) = mysql_fetch_row($q);
+			list($unit_name) = mysql_fetch_row($q);
+			// PROSOXI EDW
                         $navigation[] = array("url"=>"../units/index.php?id=$unit_id", "name"=> htmlspecialchars($unit_name));
                 }
 		return TRUE;
@@ -1210,7 +1210,7 @@ function ellipsize($string, $maxlen, $postfix = '...')
 function course_code_to_title($code)
 {
         global $mysqlMainDb;
-        $r = db_query("SELECT intitule FROM cours WHERE code='$code'", $mysqlMainDb);
+        $r = db_query("SELECT intitule FROM cours WHERE code='".escapeSimple($code)."'", $mysqlMainDb);
         if ($r and mysql_num_rows($r) > 0) {
                 $row = mysql_fetch_row($r);
                 return $row[0];
