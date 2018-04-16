@@ -67,15 +67,15 @@ if (!isset($submit)) {
 	<thead>
 	<tr>
 	<th class='left' width='220'>$langName</th>
-	<td colspan='2'><input type='text' name='prenom_form' value='".htmlspecialchars(stripslashes($prenom_form))."' class='FormData_InputText' />&nbsp;&nbsp;<small>(*)</small></td>
+	<td colspan='2'><input type='text' name='prenom_form' value='".htmlspecialchars($prenom_form)."' class='FormData_InputText' />&nbsp;&nbsp;<small>(*)</small></td>
 	</tr>
 	<tr>
 	<th class='left'>$langSurname</th>
-	<td colspan='2'><input type='text' name='nom_form' value='".htmlspecialchars(stripslashes($nom_form))."' class='FormData_InputText' />&nbsp;&nbsp;<small>(*)</small></td>
+	<td colspan='2'><input type='text' name='nom_form' value='".htmlspecialchars($nom_form)."' class='FormData_InputText' />&nbsp;&nbsp;<small>(*)</small></td>
 	</tr>
 	<tr>
 	<th class='left'>$langUsername</th>
-	<td colspan='2'><input type='text' name='uname' value='".htmlspecialchars(stripslashes($uname))."' size='20' maxlength='20' class='FormData_InputText' />&nbsp;&nbsp;<small>(*) $langUserNotice</small></td>
+	<td colspan='2'><input type='text' name='uname' value='".htmlspecialchars($uname)."' size='20' maxlength='20' class='FormData_InputText' />&nbsp;&nbsp;<small>(*) $langUserNotice</small></td>
 	</tr>
 	<tr>
 	<th class='left'>$langPass</th>
@@ -87,12 +87,12 @@ if (!isset($submit)) {
 	</tr>
 	<tr>
 	<th class='left'>$langEmail</th>
-	<td valign='top'><input type='text' name='email' value='".htmlspecialchars(stripslashes($email))."' class='FormData_InputText' /></td>
+	<td valign='top'><input type='text' name='email' value='".htmlspecialchars($email)."' class='FormData_InputText' /></td>
 	<td><small>$langEmailNotice</small></td>
 	</tr>
 	<tr>
 	<th class='left'>$langAm</th>
-	<td colspan='2' valign='top'><input type='text' name='am' value='".htmlspecialchars(stripslashes($am))."' class='FormData_InputText' /></td>
+	<td colspan='2' valign='top'><input type='text' name='am' value='".htmlspecialchars($am)."' class='FormData_InputText' /></td>
 	</tr>
 	<tr>
 	<th class='left'>$langFaculty</th>
@@ -129,7 +129,7 @@ if (!isset($submit)) {
 } else {
 	// EDW GIA TO REGISTRATION SECURITY
 	// trim white spaces in the end and in the beginning of the word
-	$uname = mysql_real_escape_string(preg_replace('/\ +/', ' ', trim(isset($_POST['uname'])?$_POST['uname']:'')));
+	$uname = preg_replace('/\ +/', ' ', trim(isset($_POST['uname'])?$_POST['uname']:''));
 	// registration
 	$registration_errors = array();
 	// check if there are empty fields
@@ -137,7 +137,7 @@ if (!isset($submit)) {
 		$registration_errors[] = $langEmptyFields;
 	} else {
 	// check if the username is already in use
-		$q2 = "SELECT username FROM `$mysqlMainDb`.user WHERE username='$uname'";
+		$q2 = "SELECT username FROM `$mysqlMainDb`.user WHERE username='".mysql_real_escape_string($uname)."'";
 		$username_check = mysql_query($q2);
 		if ($myusername = mysql_fetch_array($username_check)) {
 			$registration_errors[] = $langUserFree;
@@ -205,18 +205,18 @@ if (!isset($submit)) {
 		'".mysql_real_escape_string($prenom_form)."', '".mysql_real_escape_string($uname)."', '".mysql_real_escape_string($password_encrypted)."', 
 		'".mysql_real_escape_string($email)."','5', 
 		'".mysql_real_escape_string($department)."','".mysql_real_escape_string($am)."',"
-		.$registered_at.",".$expires_at.",'$lang')";
+		.mysql_real_escape_string($registered_at).",".mysql_real_escape_string($expires_at).",'".mysql_real_escape_string($lang)."')";
 	print($q1);
 	$inscr_user = mysql_query($q1);
 	$last_id = mysql_insert_id();
-	$result=mysql_query("SELECT user_id, nom, prenom FROM `$mysqlMainDb`.user WHERE user_id='$last_id'");
+	$result=mysql_query("SELECT user_id, nom, prenom FROM `$mysqlMainDb`.user WHERE user_id='".mysql_real_escape_string($last_id)."'");
 	while ($myrow = mysql_fetch_array($result)) {
 		$uid=$myrow[0];
 		$nom=$myrow[1];
 		$prenom=$myrow[2];
 	}
 	mysql_query("INSERT INTO `$mysqlMainDb`.loginout (loginout.idLog, loginout.id_user, loginout.ip, loginout.when, loginout.action)
-	VALUES ('', '".mysql_real_escape_string($uid)."', '".$REMOTE_ADDR."', NOW(), 'LOGIN')");
+	VALUES ('', '".mysql_real_escape_string($uid)."', '".mysql_real_escape_string($REMOTE_ADDR)."', NOW(), 'LOGIN')");
 	// EXOUN ALLAKSEI
 	$_SESSION['uid'] = $uid;
 	$_SESSION['statut'] = 5;
@@ -227,7 +227,7 @@ if (!isset($submit)) {
 	// registration form
 	$tool_content .= "<table width='99%'><tbody><tr>" .
 			"<td class='well-done' height='60'>" .
-			"<p>$langDear ".htmlspecialchars(stripslashes($prenom))." ".htmlspecialchars(stripslashes($nom)).",</p>" .
+			"<p>$langDear ".htmlspecialchars($prenom)." ".htmlspecialchars($nom).",</p>" .
 			"<p>$langPersonalSettings</p></td>" .
 			"</tr></tbody></table><br /><br />" .
 			"<p>$langPersonalSettingsMore</p>";
