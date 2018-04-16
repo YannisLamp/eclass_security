@@ -676,7 +676,7 @@ function assignment_details($id, $row, $message = null)
 	$tool_content .= "
     <div id=\"operations_container\">
       <ul id=\"opslist\">
-        <li><form id='myform5' action='work.php?' method='post'>
+        <li><form id='myform5' action='work.php?' style='display:inline;' method='post'>
     		<a href='javascript:;' onclick=\"if(confirmation('".addslashes($row['title'])."'))document.getElementById('myform5').submit();\">
     		<b>$langDelAssign</b></a>
     		<input type='hidden' name='choice' value='do_delete'/>
@@ -1169,8 +1169,8 @@ cData;
       <td align='right'>
          <a href='work.php?id=$row[id]&amp;choice=edit'><img src='../../template/classic/img/edit.gif' alt='$m[edit]' /></a>";
 			$tool_content .= "
-      <form id='myform".$row[id]."' action='work.php?' method='post'>
-      <a href='javascript:;' onclick=\"if(confirmation(\"".addslashes($row_title)."\")) document.getElementById('myform".$row[id]."').submit();\">
+      <form id='myform".$row[id]."' action='work.php?' style='display:inline;' method='post'>
+      <a href='javascript:;' onclick=\"if(confirmation('$row_title')) document.getElementById('myform".$row[id]."').submit();\">
       <img src='../../template/classic/img/delete.gif' alt='$m[delete]' /></a>
       <input type='hidden' name='choice' value='do_delete'/>
       <input type='hidden' name='id' value='".$row[id]."' />
