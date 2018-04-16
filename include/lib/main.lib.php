@@ -615,8 +615,8 @@ function new_code($fac) {
 	do {
 		$code = $gencode[0].$gencode[1];
 		$gencode[1] += 1;
-		db_query("UPDATE $mysqlMainDb.faculte SET generator = '"..escapeSimple($gencode[1])."'
-			WHERE id = '"..escapeSimple($fac)."'");
+		db_query("UPDATE $mysqlMainDb.faculte SET generator = '".escapeSimple($gencode[1])."'
+			WHERE id = '".escapeSimple($fac)."'");
 	} while (mysql_select_db($code));
 	mysql_select_db($mysqlMainDb);
 
@@ -1147,8 +1147,8 @@ function move_order($table, $id_field, $id, $order_field, $direction, $condition
         }
         list($current) = mysql_fetch_row($sql);
         $sql = db_query("SELECT `".escapeSimple($id_field)."`, `".escapeSimple($order_field)."` FROM `".escapeSimple($table)."`
-                        WHERE `order` ".escapeSimple($op)." '."escapeSimple($current)."' ".escapeSimple($condition)."
-                        ORDER BY `."escapeSimple($order_field)."` ".escapeSimple($desc)." LIMIT 1");
+                        WHERE `order` ".escapeSimple($op)." '".escapeSimple($current)."' ".escapeSimple($condition)."
+                        ORDER BY `.".escapeSimple($order_field)."` ".escapeSimple($desc)." LIMIT 1");
         if ($sql and mysql_num_rows($sql) > 0) {
                 list($next_id, $next) = mysql_fetch_row($sql);
                 db_query("UPDATE `".escapeSimple($table)."` SET `".escapeSimple($order_field)."` = ".escapeSimple($next)."
