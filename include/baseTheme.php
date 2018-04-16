@@ -195,12 +195,12 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 			$t->set_var ( 'ECLASS_HOME_EXTRAS_LEFT', $langExtrasLeft );
 			$t->set_var ( 'ECLASS_HOME_EXTRAS_RIGHT', $langExtrasRight );
 		}
-
+		
 		//show user's name and surname on the user bar
 		if (isset($_SESSION['uid']) && strlen ($nom) > 0) {
 			$t->set_var ( 'LANG_USER', $langUserHeader );
-			$t->set_var ( 'USER_NAME', htmlspecialchars(stripslashes($prenom)) );
-			$t->set_var ( 'USER_SURNAME', htmlspecialchars(stripslashes($nom)) . ", " );
+			$t->set_var ( 'USER_NAME', htmlspecialchars($prenom) );
+			$t->set_var ( 'USER_SURNAME', htmlspecialchars($nom) . ", " );
 		} else {
                         $t->set_var ( 'LANG_USER', '' );
 			$t->set_var ( 'USER_NAME', '&nbsp;' );
@@ -248,10 +248,10 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 				if (display_activation_link($module_id)) {
 					if (visible_module($module_id)) {
 						$message = $langDeactivate;
-						$mod_activation = "<a class='deactivate_module' href='$_SERVER[PHP_SELF]?eclass_module_id=$module_id&amp;hide=0'>($langDeactivate)</a>";
+						$mod_activation = "<a class='deactivate_module' href='"htmlspecialchars($_SERVER[PHP_SELF])."?eclass_module_id=".htmlspecialchars($module_id)."&amp;hide=0'>($langDeactivate)</a>";
 					} else {
 						$message = $langActivate;
-						$mod_activation = "<a class='activate_module' href='$_SERVER[PHP_SELF]?eclass_module_id=$module_id&amp;hide=1'>($langActivate)</a>";
+						$mod_activation = "<a class='activate_module' href='".htmlspecialchars($_SERVER[PHP_SELF])."?eclass_module_id=".htmlspecialchars($module_id)."&amp;hide=1'>($langActivate)</a>";
 					}
 				}
 			}

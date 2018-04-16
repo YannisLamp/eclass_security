@@ -102,22 +102,22 @@ if((!empty($u)) && ctype_digit($u) )	// validate the user id
   <tbody>
   <tr>
     <th width='220'>&nbsp;</th>
-    <td><b>$langEditUser ".q(stripslashes($info[2]))."</b></td>
+    <td><b>$langEditUser ".q($info[2])."</b></td>
   </tr>
   <tr>
     <th class='left'>$langSurname:</th>
-    <td><input type='text' name='lname' size='50' value='".q(stripslashes($info['nom']))."' /></td>
+    <td><input type='text' name='lname' size='50' value='".q($info['nom'])."' /></td>
   </tr>
   <tr>
     <th class='left'>$langName:</th>
-	<td><input type='text' name='fname' size='50' value='".q(stripslashes($info['prenom']))."' /></td>
+	<td><input type='text' name='fname' size='50' value='".q($info['prenom'])."' /></td>
   </tr>";
 
 if(!in_array($info['password'], $authmethods)) {
 		$tool_content .= "
   <tr>
     <th class='left'>$langUsername:</th>
-    <td><input type='text' name='username' size='50' value='".q(stripslashes($info['username']))."' /></td>
+    <td><input type='text' name='username' size='50' value='".q($info['username'])."' /></td>
   </tr>";
 	}
   else    // means that it is external auth method, so the user cannot change this password
@@ -134,8 +134,8 @@ if(!in_array($info['password'], $authmethods)) {
     $tool_content .= "
   <tr>
     <th class='left'>".$langUsername. "</th>
-    <td class='caution_small'>&nbsp;&nbsp;&nbsp;&nbsp;<b>".q(stripslashes($info['username']))."</b> [".$auth_text."]
-        <input type='hidden' name='username' value='".q(stripslashes($info['username']))."' />
+    <td class='caution_small'>&nbsp;&nbsp;&nbsp;&nbsp;<b>".q($info['username'])."</b> [".$auth_text."]
+        <input type='hidden' name='username' value='".q($info['username'])."' />
     </td>
   </tr>";
  }
@@ -143,15 +143,15 @@ if(!in_array($info['password'], $authmethods)) {
 $tool_content .= "
   <tr>
     <th class='left'>e-mail: </th>
-    <td><input type='text' name='email' size='50' value='".q(stripslashes($info['email']))."' /></td>
+    <td><input type='text' name='email' size='50' value='".q($info['email'])."' /></td>
   </tr>
   <tr>
     <th class='left'>$langAm: </th>
-    <td><input type='text' name='am' size='50' value='".q(stripslashes($info['am']))."' /></td>
+    <td><input type='text' name='am' size='50' value='".q($info['am'])."' /></td>
   </tr>
  <tr>
    <th class='left'>$langTel: </th>
-   <td><input type='text' name='phone' size='50' value='".q(stripslashes($info['phone']))."' /></td>
+   <td><input type='text' name='phone' size='50' value='".q($info['phone'])."' /></td>
   </tr>";
 	$tool_content .= "<tr>
     <th class='left'>$langFaculty:</th>
@@ -227,7 +227,7 @@ $tool_content .= "
   </table>
 </form>";
 
-		$sql = mysql_query("SELECT nom, prenom, username FROM user WHERE user_id = '$u'");
+		$sql = mysql_query("SELECT nom, prenom, username FROM user WHERE user_id = '".mysql_real_escape_string($u)."'");
 		$sql = mysql_query("SELECT a.code, a.intitule, b.reg_date, b.statut, a.cours_id
 			FROM cours AS a LEFT JOIN cours_user AS b ON a.cours_id = b.cours_id
 			WHERE b.user_id = '$u' ORDER BY b.statut, a.faculte");

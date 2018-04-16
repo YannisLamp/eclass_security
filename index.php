@@ -84,7 +84,7 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 } else { // normal authentication
 	if (isset($_POST['uname'])) {
 		// 	EDO ME IPIRXE APO PRIN EPISIS ESCAPE??
-		$uname = escapeSimple(preg_replace('/ +/', ' ', trim($_POST['uname'])));
+		$uname = preg_replace('/ +/', ' ', trim($_POST['uname']));
 	} else {
 		$uname = '';
 	}
@@ -101,7 +101,7 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 		// DEN DOULEUEI KANEI ESCAPE ' " \ OPWS KAI NA XEI PREPARED STATEMENTS
 		// ALLA The only reliable way to prevent SQL injection is to use parameterized queries!!!!
 		$sqlLogin= "SELECT user_id, nom, username, password, prenom, statut, email, perso, lang
-			FROM user WHERE username='".$uname."'";
+			FROM user WHERE username='".escapeSimple($uname)."'";
 		//print $sqlLogin;
 		$result = mysql_query($sqlLogin);
 		$check_passwords = array("pop3","imap","ldap","db");
@@ -158,7 +158,7 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 			$_SESSION['is_admin'] = $is_admin;
 			$_SESSION['uid'] = $uid;
 			mysql_query("INSERT INTO loginout (loginout.idLog, loginout.id_user, loginout.ip, loginout.when, loginout.action)
-			VALUES ('', '".escapeSimple($uid)."', '$_SERVER[REMOTE_ADDR]', NOW(), 'LOGIN')");
+			VALUES ('', '".escapeSimple($uid)."', '".escapeSimple($_SERVER[REMOTE_ADDR])."', NOW(), 'LOGIN')");
 		}
 	
 		##[BEGIN personalisation modification]############
@@ -237,7 +237,7 @@ elseif ((isset($logout) && isset($uid)) OR (1==1)) {
 	if (isset($logout) && isset($uid)) {
 		mysql_query("INSERT INTO loginout (loginout.idLog, loginout.id_user,
 			loginout.ip, loginout.when, loginout.action)
-			VALUES ('', '".escapeSimple($uid)."', '$REMOTE_ADDR', NOW(), 'LOGOUT')");
+			VALUES ('', '".escapeSimple($uid)."', '".escapeSimple($REMOTE_ADDR)."', NOW(), 'LOGOUT')");
 		unset($prenom);
 		unset($nom);
 		unset($statut);
