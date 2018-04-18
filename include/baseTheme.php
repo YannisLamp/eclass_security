@@ -40,9 +40,9 @@
  */
 include ('init.php');
 if ($is_adminOfCourse and isset($currentCourseID)) {
-	if (isset($_GET['hide']) and $_GET['hide'] == 0) {
+	if (isset($_POST['hide']) and $_POST['hide'] == 0 and !empty($_POST['token']) and (strcmp($_SESSION['token'], $_POST['token']) === 0)) {
 		db_query("UPDATE accueil SET visible = 0 WHERE id='".mysql_real_escape_string($eclass_module_id)."'", $currentCourseID);
-	} else if (isset($_GET['hide']) and $_GET['hide'] == 1) {
+	} else if (isset($_POST['hide']) and $_POST['hide'] == 1 and !empty($_POST['token']) and (strcmp($_SESSION['token'], $_POST['token']) === 0)) {
 		db_query("UPDATE accueil SET visible = 1 WHERE id='".mysql_real_escape_string($eclass_module_id)."'", $currentCourseID);
 	}
 }
@@ -187,15 +187,15 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 
 		$t->set_var ( 'TOOL_CONTENT', $toolContent );
 
-		// If we are on the login page we can define two optional variables 
+		// If we are on the login page we can define two optional variables
 		// in common.inc.php (to allow internationalizing messages)
 		// for extra content on the left and right bar.
-		
+
 		if ($homePage  && !isset($_SESSION['uid'])) {
 			$t->set_var ( 'ECLASS_HOME_EXTRAS_LEFT', htmlspecialchars($langExtrasLeft) );
 			$t->set_var ( 'ECLASS_HOME_EXTRAS_RIGHT', htmlspecialchars($langExtrasRight) );
 		}
-		
+
 		//show user's name and surname on the user bar
 		if (isset($_SESSION['uid']) && strlen ($nom) > 0) {
 			$t->set_var ( 'LANG_USER', htmlspecialchars($langUserHeader) );
@@ -246,12 +246,39 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 			if(file_exists($module_ini_dir = getcwd() . "/module.ini.php")) {
 				include $module_ini_dir;
 				if (display_activation_link($module_id)) {
+
+					if (empty($_SESSION['token'])) {
+					    if (function_exists('mcrypt_create_iv')) {
+					        $_SESSION['token'] = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
+					    } else {
+					        $_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32));
+					    }
+					}
+					$token = $_SESSION['token'];
+
 					if (visible_module($module_id)) {
 						$message = $langDeactivate;
-						$mod_activation = "<a class='deactivate_module' href='".htmlspecialchars($_SERVER[PHP_SELF])."?eclass_module_id=".htmlspecialchars($module_id)."&amp;hide=0'>(".htmlspecialchars($langDeactivate).")</a>";
+						$mod_activation = "
+						<form id='myform".htmlspecialchars($module_id)."' style='display:inline;' action='".htmlspecialchars($_SERVER[PHP_SELF])."' method='post'>
+							<a href='javascript:;' onclick=\"document.getElementById('myform".htmlspecialchars($module_id)."').submit();\">
+							".htmlspecialchars($langDeactivate)."</a>
+							<input type='hidden' name='eclass_module_id' value='".htmlspecialchars($module_id)."' />
+							<input type='hidden' name='hide' value='0'/>
+							<input type='hidden' name='token' value='$token'/>
+						</form>
+						";
+						//<a class='deactivate_module' href='".htmlspecialchars($_SERVER[PHP_SELF])."?eclass_module_id=".htmlspecialchars($module_id)."&amp;hide=0'>(".htmlspecialchars($langDeactivate).")</a>
 					} else {
 						$message = $langActivate;
-						$mod_activation = "<a class='activate_module' href='".htmlspecialchars($_SERVER[PHP_SELF])."?eclass_module_id=".htmlspecialchars($module_id)."&amp;hide=1'>(".htmlspecialchars($langActivate).")</a>";
+						$mod_activation = "
+						<form id='myform".htmlspecialchars($module_id)."' style='display:inline;' action='".htmlspecialchars($_SERVER[PHP_SELF])."' method='post'>
+							<a href='javascript:;' onclick=\"document.getElementById('myform".htmlspecialchars($module_id)."').submit();\">
+							".htmlspecialchars($langActivate)."</a>
+							<input type='hidden' name='eclass_module_id' value='".htmlspecialchars($module_id)."' />
+							<input type='hidden' name='hide' value='1'/>
+							<input type='hidden' name='token' value='$token'/>
+						</form>";
+						//<a class='activate_module' href='".htmlspecialchars($_SERVER[PHP_SELF])."?eclass_module_id=".htmlspecialchars($module_id)."&amp;hide=1'>(".htmlspecialchars($langActivate).")</a>";
 					}
 				}
 			}
@@ -510,4 +537,3 @@ function lang_select_options($name, $onchange_js = '', $default_langcode = false
         }
 	return selection($native_language_names, $name, $default_langcode, $onchange_js);
 }
-
