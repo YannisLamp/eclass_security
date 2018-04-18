@@ -63,7 +63,7 @@
  */
 function get_total_topics($forum_id, $thedb) {
 	global $langError;
-	$sql = "SELECT count(*) AS total FROM topics WHERE forum_id = '$forum_id'";
+	$sql = "SELECT count(*) AS total FROM topics WHERE forum_id = '".mysql_real_escape_string($forum_id)."'";
 	if(!$result = db_query($sql, $thedb))
 		return($langError);
 	if(!$myrow = mysql_fetch_array($result))
@@ -85,10 +85,10 @@ function get_total_posts($id, $thedb, $type) {
       $sql = "SELECT count(*) AS total FROM posts";
       break;
     case 'forum':
-      $sql = "SELECT count(*) AS total FROM posts WHERE forum_id = '$id'";
+      $sql = "SELECT count(*) AS total FROM posts WHERE forum_id = '".mysql_real_escape_string($id)."'";
       break;
     case 'topic':
-      $sql = "SELECT count(*) AS total FROM posts WHERE topic_id = '$id'";
+      $sql = "SELECT count(*) AS total FROM posts WHERE topic_id = '".mysql_real_escape_string($id)."'";
       break;
    // Old, we should never get this.   
     case 'user':
@@ -110,16 +110,16 @@ function get_last_post($id, $thedb, $type) {
    global $langError, $langNoPosts, $langFrom2;
    switch($type) {
     case 'time_fix':
-      $sql = "SELECT p.post_time FROM posts p WHERE p.topic_id = '$id' ORDER BY post_time DESC LIMIT 1";   
+      $sql = "SELECT p.post_time FROM posts p WHERE p.topic_id = '".mysql_real_escape_string($id)."' ORDER BY post_time DESC LIMIT 1";   
       break;
     case 'forum':
-      $sql = "SELECT p.post_time, p.poster_id FROM posts p WHERE p.forum_id = '$id' ORDER BY post_time DESC LIMIT 1";
+      $sql = "SELECT p.post_time, p.poster_id FROM posts p WHERE p.forum_id = '".mysql_real_escape_string($id)."' ORDER BY post_time DESC LIMIT 1";
       break;
     case 'topic':
-      $sql = "SELECT p.post_time FROM posts p WHERE p.topic_id = '$id' ORDER BY post_time DESC LIMIT 1";
+      $sql = "SELECT p.post_time FROM posts p WHERE p.topic_id = '".mysql_real_escape_string($id)."' ORDER BY post_time DESC LIMIT 1";
       break;
     case 'user':
-      $sql = "SELECT p.post_time FROM posts p WHERE p.poster_id = '$id' LIMIT 1";
+      $sql = "SELECT p.post_time FROM posts p WHERE p.poster_id = '".mysql_real_escape_string($id)."' LIMIT 1";
       break;
    }
    if(!$result = db_query($sql, $thedb))
@@ -141,10 +141,10 @@ function get_last_post($id, $thedb, $type) {
 function does_exists($id, $thedb, $type) {
 	switch($type) {
 		case 'forum':
-			$sql = "SELECT forum_id FROM forums WHERE forum_id = '$id'";
+			$sql = "SELECT forum_id FROM forums WHERE forum_id = '".mysql_real_escape_string($id)."'";
 		break;
 		case 'topic':
-			$sql = "SELECT topic_id FROM topics WHERE topic_id = '$id'";
+			$sql = "SELECT topic_id FROM topics WHERE topic_id = '".mysql_real_escape_string($id)."'";
 		break;
 	}
 	if(!$result = db_query($sql, $thedb))
@@ -766,7 +766,7 @@ function undo_htmlspecialchars($input) {
  * Check if this is the first post in a topic. Used in editpost.php
  */
 function is_first_post($topic_id, $post_id, $thedb) {
-   $sql = "SELECT post_id FROM posts WHERE topic_id = '$topic_id' ORDER BY post_id LIMIT 1";
+   $sql = "SELECT post_id FROM posts WHERE topic_id = '".mysql_real_escape_string($topic_id)."' ORDER BY post_id LIMIT 1";
    if(!$r = db_query($sql, $thedb))
      return(0);
    if(!$m = mysql_fetch_array($r))
@@ -783,7 +783,7 @@ function is_first_post($topic_id, $post_id, $thedb) {
  */
 function check_priv_forum_auth($userid, $forumid, $is_posting, $db)
 {
-	$sql = "SELECT count(*) AS user_count FROM forum_access WHERE (user_id = $userid) AND (forum_id = $forumid) ";
+	$sql = "SELECT count(*) AS user_count FROM forum_access WHERE (user_id = ".mysql_real_escape_string($userid)." AND (forum_id = ".mysql_real_escape_string($forumid).") ";
 	
 	if ($is_posting)
 	{
@@ -822,12 +822,12 @@ function error_die($msg){
 		$tool_content = "";
 	}
 	$tool_content .= "<br>
-		<TABLE BORDER=\"0\" CELLPADDING=\"1\" CELLSPACING=\"0\" ALIGN=\"CENTER\" VALIGN=\"TOP\" WIDTH=\"$tablewidth\">
-		<TR><TD BGCOLOR=\"$table_bgcolor\">
+		<TABLE BORDER=\"0\" CELLPADDING=\"1\" CELLSPACING=\"0\" ALIGN=\"CENTER\" VALIGN=\"TOP\" WIDTH=\"".htmlspecialchars($tablewidth)."\">
+		<TR><TD BGCOLOR=\"".htmlspecialchars($table_bgcolor)."\">
 			<TABLE BORDER=\"0\" CALLPADDING=\"1\" CELLSPACEING=\"1\" WIDTH=\"100%\">
 			<TR ALIGN=\"LEFT\">
 			<TD>
-			<p><font face=\"Verdana\" size=\"2\"><ul>$msg</ul></font></P>
+			<p><font face=\"Verdana\" size=\"2\"><ul>".htmlspecialchars($msg)."</ul></font></P>
 			</TD>
 			</TR>
 			</TABLE>
@@ -847,7 +847,7 @@ function get_syslang_string($sys_lang, $string) {
 function sync($thedb, $id, $type) {
    switch($type) {
    	case 'forum':
-   		$sql = "SELECT max(post_id) AS last_post FROM posts WHERE forum_id = $id";
+   		$sql = "SELECT max(post_id) AS last_post FROM posts WHERE forum_id = ".mysql_real_escape_string($id)."";
    		if(!$result = db_query($sql, $thedb))
    		{
    			error_die("Could not get post ID");
@@ -857,7 +857,7 @@ function sync($thedb, $id, $type) {
    			$last_post = $row["last_post"];
    		}
    		
-   		$sql = "SELECT count(post_id) AS total FROM posts WHERE forum_id = $id";
+   		$sql = "SELECT count(post_id) AS total FROM posts WHERE forum_id = ".mysql_real_escape_string($id)."";
    		if(!$result = db_query($sql, $thedb))
    		{
    			error_die("Could not get post count");
@@ -867,7 +867,7 @@ function sync($thedb, $id, $type) {
    			$total_posts = $row["total"];
    		}
    		
-   		$sql = "SELECT count(topic_id) AS total FROM topics WHERE forum_id = $id";
+   		$sql = "SELECT count(topic_id) AS total FROM topics WHERE forum_id = ".mysql_real_escape_string($id)."";
    		if(!$result = db_query($sql, $thedb))
    		{
    			error_die("Could not get topic count");
@@ -878,8 +878,8 @@ function sync($thedb, $id, $type) {
    		}
    		
    		$sql = "UPDATE forums
-			SET forum_last_post_id = '$last_post', forum_posts = $total_posts, forum_topics = $total_topics
-			WHERE forum_id = $id";
+			SET forum_last_post_id = '".mysql_real_escape_string($last_post)."', forum_posts = ".mysql_real_escape_string($total_posts).", forum_topics = ".mysql_real_escape_string($total_topics)."
+			WHERE forum_id = ".mysql_real_escape_string($id)."";
    		if(!$result = db_query($sql, $thedb))
    		{
    			error_die("Could not update forum $id");
@@ -887,7 +887,7 @@ function sync($thedb, $id, $type) {
    	break;
 
    	case 'topic':
-   		$sql = "SELECT max(post_id) AS last_post FROM posts WHERE topic_id = $id";
+   		$sql = "SELECT max(post_id) AS last_post FROM posts WHERE topic_id = ".mysql_real_escape_string($id)."";
    		if(!$result = db_query($sql, $thedb))
    		{
    			error_die("Could not get post ID");
@@ -897,7 +897,7 @@ function sync($thedb, $id, $type) {
    			$last_post = $row["last_post"];
    		}
    		
-   		$sql = "SELECT count(post_id) AS total FROM posts WHERE topic_id = $id";
+   		$sql = "SELECT count(post_id) AS total FROM posts WHERE topic_id = ".mysql_real_escape_string($id)."";
    		if(!$result = db_query($sql, $thedb))
    		{
    			error_die("Could not get post count");
@@ -907,7 +907,7 @@ function sync($thedb, $id, $type) {
    			$total_posts = $row["total"];
    		}
    		$total_posts -= 1;
-   		$sql = "UPDATE topics SET topic_replies = $total_posts, topic_last_post_id = $last_post WHERE topic_id = $id";
+   		$sql = "UPDATE topics SET topic_replies = ".mysql_real_escape_string($total_posts).", topic_last_post_id = ".mysql_real_escape_string($last_post)." WHERE topic_id = ".mysql_real_escape_string($id)."";
    		if(!$result = db_query($sql, $thedb))
    		{
    			error_die("Could not update topic $id");
@@ -988,7 +988,7 @@ function forum_category($id) {
 	
 	global $currentCourseID;
 	
-	if ($r = mysql_fetch_row(db_query("SELECT cat_id FROM forums WHERE forum_id=$id", $currentCourseID))) {
+	if ($r = mysql_fetch_row(db_query("SELECT cat_id FROM forums WHERE forum_id=".mysql_real_escape_string($id)."", $currentCourseID))) {
 		return $r[0];
 	} else {
 		return FALSE;
@@ -1000,7 +1000,7 @@ function category_name($id) {
 	
 	global $currentCourseID;
 	
-	if ($r = mysql_fetch_row(db_query("SELECT cat_title FROM catagories WHERE cat_id=$id", $currentCourseID))) {
+	if ($r = mysql_fetch_row(db_query("SELECT cat_title FROM catagories WHERE cat_id=".mysql_real_escape_string($id)."", $currentCourseID))) {
 		return $r[0];
 	} else {
 		return FALSE;

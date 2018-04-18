@@ -80,7 +80,7 @@ include "functions.php";
 if ($is_adminOfCourse || $is_admin) {
 	$tool_content .= "<div id='operations_container'>
 	<ul id='opslist'>
-	<li><a href='../forum_admin/forum_admin.php'>$langAdm</a></li>
+	<li><a href='../forum_admin/forum_admin.php'>".htmlspecialchars($langAdm)."</a></li>
 	</ul></div><br />";
 }
 
@@ -92,7 +92,7 @@ if(isset($forumcatnotify)) { // modify forum category notification
 				WHERE user_id = ".mysql_real_escape_string($uid)." AND cat_id = ".mysql_real_escape_string($cat_id)." AND course_id = ".mysql_real_escape_string($cours_id)."", $mysqlMainDb);
 	} else {
 		db_query("INSERT INTO forum_notify SET user_id = ".mysql_real_escape_string($uid).",
-		cat_id = ."mysql_real_escape_string($cat_id).", notify_sent = 1, course_id = ".mysql_real_escape_string($cours_id)."", $mysqlMainDb);
+		cat_id = ".mysql_real_escape_string($cat_id).", notify_sent = 1, course_id = ".mysql_real_escape_string($cours_id)."", $mysqlMainDb);
 	}
 } elseif(isset($forumnotify)) { // modify forum notification
 	$rows = mysql_num_rows(db_query("SELECT * FROM forum_notify 
@@ -121,11 +121,11 @@ if ($total_categories) {
 	$tool_content .= "<table width='99%' class='ForumSum'>
 	<thead>
 	<tr>
-	<td colspan='2' class='forum_category'>$langForums</td>
-	<td class='forum_category'>$langSubjects</td>
-	<td class='forum_category'>$langPosts</td>
-	<td class='forum_category'>$langLastPost</td>
-	<td class='forum_category' width='5%'>$langNotifyActions</td>
+	<td colspan='2' class='forum_category'>".htmlspecialchars($langForums)."</td>
+	<td class='forum_category'>".htmlspecialchars($langSubjects)."</td>
+	<td class='forum_category'>".htmlspecialchars($langPosts)."</td>
+	<td class='forum_category'>".htmlspecialchars($langLastPost)."</td>
+	<td class='forum_category' width='5%'>".htmlspecialchars($langNotifyActions)."</td>
 	</tr>
 	</thead>";
 
@@ -141,11 +141,11 @@ if ($total_categories) {
 	}
 	$limit_forums = "";
 	if ($viewcat != -1) {
-		$limit_forums = "WHERE f.cat_id = $viewcat";
+		$limit_forums = "WHERE f.cat_id = ".mysql_real_escape_string($viewcat)."";
 	}
 	$sql = "SELECT f.*, p.post_time, p.nom, p.prenom, p.topic_id
 		FROM forums f LEFT JOIN posts p ON p.post_id = f.forum_last_post_id
-		".mysql_real_escape_string($limit_forums)." ORDER BY f.cat_id, f.forum_id";
+		$limit_forums ORDER BY f.cat_id, f.forum_id";
 	$f_res = db_query($sql, $currentCourseID); 
 	$tool_content .= "<tbody>";
 	while ($forum_data = mysql_fetch_array($f_res)) {
@@ -162,7 +162,7 @@ if ($total_categories) {
 		$title = stripslashes($categories[$i]["cat_title"]);
 		$catNum = $categories[$i]["cat_id"];
 		list($action_notify) = mysql_fetch_row(db_query("SELECT notify_sent FROM forum_notify 
-				WHERE user_id = $uid AND cat_id = $catNum AND course_id = $cours_id", $mysqlMainDb));
+				WHERE user_id = ".mysql_real_escape_string($uid)." AND cat_id = ".mysql_real_escape_string($catNum)." AND course_id = ".mysql_real_escape_string($cours_id)."", $mysqlMainDb));
 		if (!isset($action_notify)) {
 			$link_notify = FALSE;
 			$icon = '_off';
@@ -172,8 +172,8 @@ if ($total_categories) {
 		}
 		$tool_content .= "<tr><td colspan='5' class='Forum'>&nbsp;".htmlspecialchars($title)."</td>
 			<td class='Forum' style='text-align:center'>
-			<a href='$_SERVER[PHP_SELF]?forumcatnotify=$link_notify&amp;cat_id=$catNum'>	
-			<img src='../../template/classic/img/announcements$icon.gif' title='$langNotify' alt='$langNotify' /></a></td></tr>";
+			<a href='$_SERVER[PHP_SELF]?forumcatnotify=$link_notify&amp;cat_id=".htmlspecialchars($catNum)."'>	
+			<img src='../../template/classic/img/announcements$icon.gif' title='".htmlspecialchars($langNotify)."' alt='".htmlspecialchars($langNotify)."' /></a></td></tr>";
 			
 		@reset($forum_row);
 		for ($x=0; $x < count($forum_row); $x++) {
@@ -197,9 +197,9 @@ if ($total_categories) {
 				}
 				if(@$last_post_time > $last_visit && $last_post != $langNoPosts) {
 					$tool_content .= "<td width='1' class='left'>
-					<img src='$newposts_image' /></td>";
+					<img src='".htmlspecialchars($newposts_image)."' /></td>";
 				} else {
-					$tool_content .= "<td width='2%' class='center'><img src='$folder_image' /></td>";
+					$tool_content .= "<td width='2%' class='center'><img src='".htmlspecialchars($folder_image)."' /></td>";
 				}
 				$name = stripslashes($forum_row[$x]["forum_name"]);
 				$last_post_nom = stripslashes($forum_row[$x]["nom"]);
@@ -212,40 +212,40 @@ if ($total_categories) {
 				$forum = $forum_row[$x]["forum_id"];
 				if ($is_adminOfCourse) { // admin
 					$sqlTutor = db_query("SELECT id FROM student_group
-						WHERE forumId='$forum' AND tutor='$uid'", $currentCourseID );
+						WHERE forumId='".mysql_real_escape_string($forum)."' AND tutor='".mysql_real_escape_string($uid)."'", $currentCourseID );
 					$countTutor = mysql_num_rows($sqlTutor);
 					if ($countTutor == 0) {
-						$tool_content .= "<a href='viewforum.php?forum=" . $forum . "'>".htmlspecialchars($name)."</a>";
+						$tool_content .= "<a href='viewforum.php?forum=" . htmlspecialchars($forum) . "'>".htmlspecialchars($name)."</a>";
 					} else {
-						$tool_content .= "<a href='viewforum.php?forum=" . $forum . "'>".htmlspecialchars($name)."</a>&nbsp;($langOneMyGroups)";
+						$tool_content .= "<a href='viewforum.php?forum=" . htmlspecialchars($forum) . "'>".htmlspecialchars($name)."</a>&nbsp;($langOneMyGroups)";
 					}
 				} elseif ($catNum == 1) { // student view
 					if (@$forum == @$myGroupForum) {
-						$tool_content .= "<a href='viewforum.php?forum=".$forum."'>".htmlspecialchars($name)."</a>&nbsp;&nbsp;($langMyGroup)";
+						$tool_content .= "<a href='viewforum.php?forum=".htmlspecialchars($forum)."'>".htmlspecialchars($name)."</a>&nbsp;&nbsp;($langMyGroup)";
 					} else {
 						if(@$privProp == 1) {
 							$tool_content .= "".htmlspecialchars($name)."";
 						} else {
-							$tool_content .= "<a href='viewforum.php?forum=".$forum."'>".htmlspecialchars($name)."</a>";
+							$tool_content .= "<a href='viewforum.php?forum=".htmlspecialchars($forum)."'>".htmlspecialchars($name)."</a>";
 						}
 					}
 				} else { // OTHER FORUMS
-					$tool_content .= "<a href='viewforum.php?forum=".$forum."'>".htmlspecialchars($name)."</a>";
+					$tool_content .= "<a href='viewforum.php?forum=".htmlspecialchars($forum)."'>".htmlspecialchars($name)."</a>";
 				}
 				$tool_content .= "<br />".htmlspecialchars($desc)."";
 				$tool_content .= "</td>";
-				$tool_content .= "<td width='65' class='Forum_leftside'>$total_topics</td>";
-				$tool_content .= "<td width='65' class='Forum_leftside'>$total_posts</td>";
+				$tool_content .= "<td width='65' class='Forum_leftside'>".htmlspecialchars($total_topics)."</td>";
+				$tool_content .= "<td width='65' class='Forum_leftside'>".htmlspecialchars($total_posts)."</td>";
 				$tool_content .= "<td width='200' class='Forum_post'>";
 				if ($total_topics > 0 && $total_posts > 0) {
-					$tool_content .= "$last_post_prenom $last_post_nom
-					<a href='viewtopic.php?topic=$last_post_topic_id&amp;forum=$forum'>
-					<img src='$icon_topic_latest' /></a><br />$human_last_post_time</td>";
+					$tool_content .= "".htmlspecialchars($last_post_prenom)." ".htmlspecialchars($last_post_nom)." 
+					<a href='viewtopic.php?topic=".htmlspecialchars($last_post_topic_id)."&amp;forum=".htmlspecialchars($forum)."'>
+					<img src='".htmlspecialchars($icon_topic_latest)."' /></a><br />".htmlspecialchars($human_last_post_time)."</td>";
 				} else {
-					$tool_content .= "<font color='#CAC3B5'>$langNoPosts</font></td>";
+					$tool_content .= "<font color='#CAC3B5'>".htmlspecialchars($langNoPosts)."</font></td>";
 				}
 				list($forum_action_notify) = mysql_fetch_row(db_query("SELECT notify_sent FROM forum_notify 
-					WHERE user_id = $uid AND forum_id = $forum AND course_id = $cours_id", $mysqlMainDb));
+					WHERE user_id = ".mysql_real_escape_string($uid)." AND forum_id = ".mysql_real_escape_string($forum)." AND course_id = ".mysql_real_escape_string($cours_id)."", $mysqlMainDb));
 				if (!isset($forum_action_notify)) {
 					$forum_link_notify = FALSE;
 					$forum_icon = '_off';
@@ -254,14 +254,14 @@ if ($total_categories) {
 					$forum_icon = toggle_icon($forum_action_notify);
 				}
 				$tool_content .= "<td class='Forum_leftside' style='text-align:center'>
-					<a href='$_SERVER[PHP_SELF]?forumnotify=$forum_link_notify&amp;forum_id=$forum'>	
-					<img src='../../template/classic/img/announcements$forum_icon.gif' title='$langNotify' alt='$langNotify' /></a></td>";
+					<a href='$_SERVER[PHP_SELF]?forumnotify=".htmlspecialchars($forum_link_notify)."&amp;forum_id=".htmlspecialchars($forum)."'>	
+					<img src='../../template/classic/img/announcements".htmlspecialchars($forum_icon).".gif' title='".htmlspecialchars($langNotify)."' alt='".htmlspecialchars($langNotify)."' /></a></td>";
 				$tool_content .= "</tr>";
 			}
 		}
 	}
 } else {
-	$tool_content .= "<p class='alert1'>$langNoForums</p>";
+	$tool_content .= "<p class='alert1'>".htmlspecialchars($langNoForums)."</p>";
 }
 $tool_content .= "</tbody></table>";
 

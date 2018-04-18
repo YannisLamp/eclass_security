@@ -92,9 +92,9 @@ include("functions.php"); // application logic for phpBB
  *****************************************************************************/
 
 $sql = "SELECT forum_name, forum_access, forum_type FROM forums
-	WHERE (forum_id = '$forum')";
+	WHERE (forum_id = '".mysql_real_escape_string($forum)."')";
 if (!$result = db_query($sql, $currentCourseID)) {
-	$tool_content .= $langErrorDataForum;
+	$tool_content .= htmlspecialchars($langErrorDataForum);
 	draw($tool_content, 2, 'phpbb', $head_content);
 	exit;
 }
@@ -106,7 +106,7 @@ $forum_id = $forum;
 
 $nameTools = $langNewTopic;
 $navigation[]= array ("url"=>"index.php", "name"=> $langForums);
-$navigation[]= array ("url"=>"viewforum.php?forum=$forum_id", "name"=> $forum_name);
+$navigation[]= array ("url"=>"viewforum.php?forum=".htmlspecialchars($forum_id)."", "name"=> htmlspecialchars($forum_name));
 
 if (!does_exists($forum, $currentCourseID, "forum")) {
 	//XXX: Error message in specified language
@@ -116,16 +116,16 @@ if (!does_exists($forum, $currentCourseID, "forum")) {
 if (isset($submit) && $submit && !empty($_POST['token']) && (strcmp($_SESSION['token'], $_POST['token']) === 0)) {
 	$subject = strip_tags($subject);
 	if (trim($message) == '' || trim($subject) == '') {
-		$tool_content .= $langEmptyMsg;
+		$tool_content .= htmlspecialchars($langEmptyMsg);
 		draw($tool_content, 2, 'phpbb', $head_content);
 		exit;
 	}
 	if (!isset($username)) {
-		$username = $langAnonymous;
+		$username = htmlspecialchars($langAnonymous);
 	}
 
 	if($forum_access == 3 && $user_level < 2) {
-		$tool_content .= $langNoPost;
+		$tool_content .= htmlspecialchars($langNoPost);
 		draw($tool_content, 2, 'phpbb', $head_content);
 		exit;
 	}
@@ -133,7 +133,7 @@ if (isset($submit) && $submit && !empty($_POST['token']) && (strcmp($_SESSION['t
 	// Check that, if this is a private forum, the current user can post here.
 	if ($forum_type == 1) {
 		if (!check_priv_forum_auth($uid, $forum, TRUE, $currentCourseID)) {
-			$tool_content .= "$langPrivateForum $langNoPost";
+			$tool_content .= "".htmlspecialchars($langPrivateForum)." ".htmlspecialchars($langNoPost)."";
 			draw($tool_content, 2, 'phpbb', $head_content);
 			exit();
 		}
@@ -150,40 +150,40 @@ if (isset($submit) && $submit && !empty($_POST['token']) && (strcmp($_SESSION['t
 	$subject = strip_tags($subject);
 	$poster_ip = $REMOTE_ADDR;
 	$time = date("Y-m-d H:i");
-	$nom = addslashes($nom);
-	$prenom = addslashes($prenom);
+	//$nom = addslashes($nom);
+	//$prenom = addslashes($prenom);
 
 	if (isset($sig) && $sig) {
 		$message .= "\n[addsig]";
 	}
 	$sql = "INSERT INTO topics (topic_title, topic_poster, forum_id, topic_time, topic_notify, nom, prenom)
-			VALUES (" . autoquote(mysql_real_escape_string($subject)) . ", '".mysql_real_escape_string($uid)."',
+			VALUES ('" . mysql_real_escape_string($subject) . "', '".mysql_real_escape_string($uid)."',
 			 '".mysql_real_escape_string($forum)."', '".mysql_real_escape_string($time)."', 1,
 			 '".mysql_real_escape_string($nom)."', '".mysql_real_escape_string($prenom)."')";
 	$result = db_query($sql, $currentCourseID);
 
 	$topic_id = mysql_insert_id();
 	$sql = "INSERT INTO posts (topic_id, forum_id, poster_id, post_time, poster_ip, nom, prenom)
-			VALUES ('$topic_id', '$forum', '$uid', '$time', '$poster_ip', '$nom', '$prenom')";
+			VALUES ('".mysql_real_escape_string($topic_id)."', '".mysql_real_escape_string($forum)."', '".mysql_real_escape_string($uid)."', '".mysql_real_escape_string($time)."', '".mysql_real_escape_string($poster_ip)."', '".mysql_real_escape_string($nom)."', '".mysql_real_escape_string($prenom)."')";
 	if (!$result = db_query($sql, $currentCourseID)) {
-		$tool_content .= $langErrorEnterPost;
+		$tool_content .= htmlspecialchars($langErrorEnterPost);
 		draw($tool_content, 2, 'phpbb', $head_content);
 		exit();
 	} else {
 		$post_id = mysql_insert_id();
 		if ($post_id) {
 			$sql = "INSERT INTO posts_text (post_id, post_text)
-					VALUES ($post_id, " . autoquote($message) . ")";
+					VALUES (".mysql_real_escape_string($post_id).", '" . mysql_real_escape_string($message) . "')";
 			$result = db_query($sql, $currentCourseID);
 			$sql = "UPDATE topics
-				SET topic_last_post_id = $post_id
-				WHERE topic_id = '$topic_id'";
+				SET topic_last_post_id = ".mysql_real_escape_string($post_id)." 
+				WHERE topic_id = '".mysql_real_escape_string($topic_id)."'";
 			$result = db_query($sql, $currentCourseID);
 		}
 	}
 	$sql = "UPDATE forums
-		SET forum_posts = forum_posts+1, forum_topics = forum_topics+1, forum_last_post_id = $post_id
-		WHERE forum_id = '$forum'";
+		SET forum_posts = forum_posts+1, forum_topics = forum_topics+1, forum_last_post_id = ".mysql_real_escape_string($post_id)." 
+		WHERE forum_id = '".mysql_real_escape_string($forum)."'";
 	$result = db_query($sql, $currentCourseID);
 
 	$topic = $topic_id;
@@ -199,8 +199,8 @@ if (isset($submit) && $submit && !empty($_POST['token']) && (strcmp($_SESSION['t
 	$category_id = forum_category($forum);
 	$cat_name = category_name($category_id);
 	$sql = db_query("SELECT DISTINCT user_id FROM forum_notify
-			WHERE (forum_id = $forum OR cat_id = $category_id)
-			AND notify_sent = 1 AND course_id = $cours_id", $mysqlMainDb);
+			WHERE (forum_id = ".mysql_real_escape_string($forum)." OR cat_id = ".mysql_real_escape_string($category_id).")
+			AND notify_sent = 1 AND course_id = ".mysql_real_escape_string($cours_id)."", $mysqlMainDb);
 	$c = course_code_to_title($currentCourseID);
 	$body_topic_notify = "$langCourse: '$c'\n\n$langBodyForumNotify $langInForums '$forum_name' $langInCat '$cat_name' \n\n$gunet";
 	while ($r = mysql_fetch_array($sql)) {
@@ -211,19 +211,19 @@ if (isset($submit) && $submit && !empty($_POST['token']) && (strcmp($_SESSION['t
 
 	$tool_content .= "<table width='99%'><tbody>
 	<tr><td class='success'>
-	<p><b>$langStored</b></p>
-	<p>$langClick <a href='viewtopic.php?topic=$topic_id&amp;forum=$forum&amp;$total_topic'>$langHere</a>$langViewMsg</p>
-	<p>$langClick <a href='viewforum.php?forum=$forum_id&amp;total_forum'>$langHere</a> $langReturnTopic</p>
+	<p><b>".htmlspecialchars($langStored)."</b></p>
+	<p>".htmlspecialchars($langClick)." <a href='viewtopic.php?topic=".htmlspecialchars($topic_id)."&amp;forum=".htmlspecialchars($forum)."&amp;".htmlspecialchars($total_topic)."'>".htmlspecialchars($langHere)."</a>".htmlspecialchars($langViewMsg)."</p>
+	<p>".htmlspecialchars($langClick)." <a href='viewforum.php?forum=".htmlspecialchars($forum_id)."&amp;total_forum'>".htmlspecialchars($langHere)."</a> ".htmlspecialchars($langReturnTopic)."</p>
 	</td>
 	</tr>
 	</tbody></table>";
 } else {
 	if (!$uid AND !$fakeUid) {
 		$tool_content .= "<center><br /><br />
-		$langLoginBeforePost1
+		".htmlspecialchars($langLoginBeforePost1)." 
 		<br />
-		$langLoginBeforePost2
-		<a href='../../index.php'>$langLoginBeforePost3.</a>
+		".htmlspecialchars($langLoginBeforePost2)." 
+		<a href='../../index.php'>".htmlspecialchars($langLoginBeforePost3).".</a>
 		</center>";
 		draw($tool_content, 2, 'phpbb', $head_content);
 		exit();
@@ -234,14 +234,14 @@ if (isset($submit) && $submit && !empty($_POST['token']) && (strcmp($_SESSION['t
 	<tbody>
 	<tr>
 	<th width='220'>&nbsp;</th>
-	<td><b>$langTopicData</b></td>
+	<td><b>".htmlspecialchars($langTopicData)."</b></td>
 	</tr>
 	<tr>
-	<th class='left'>$langSubject:</th>
+	<th class='left'>".htmlspecialchars($langSubject).":</th>
 	<td><input type='text' name='subject' size='53' maxlength='100' class='FormData_InputText' /></td>
 	</tr>
 	<tr>
-	<th class='left'>$langBodyMessage:</th>
+	<th class='left'>".htmlspecialchars($langBodyMessage).":</th>
 	<td>
 	<table class='xinha_editor'>
 	<tr>
@@ -251,9 +251,9 @@ if (isset($submit) && $submit && !empty($_POST['token']) && (strcmp($_SESSION['t
 	</tr>
 	<tr>
 	<th>&nbsp;</th>
-	<td><input type='hidden' name='forum' value='$forum' />
-	<input type='submit' name='submit' value='$langSubmit' />&nbsp;
-	<input type='submit' name='cancel' value='$langCancelPost' />
+	<td><input type='hidden' name='forum' value='".htmlspecialchars($forum)."' />
+	<input type='submit' name='submit' value='".htmlspecialchars($langSubmit)."' />&nbsp;
+	<input type='submit' name='cancel' value='".htmlspecialchars($langCancelPost)."' />
 	</td></tr>
 	</tbody>
 	</table>

@@ -77,9 +77,9 @@ $tool_content .= "<div id=\"operations_container\"><ul id=\"opslist\">";
 
 if ($is_adminOfCourse || $is_admin) {
 	$tool_content .= "
-        <li><a href='../forum_admin/forum_admin.php'>$langAdm</a></li>";
+        <li><a href='../forum_admin/forum_admin.php'>".htmlspecialchars($langAdm)."</a></li>";
 }
-$tool_content .= "<li><a href='newtopic.php?forum=$forum'>$langNewTopic</a></li></ul></div><br />";
+$tool_content .= "<li><a href='newtopic.php?forum=".htmlspecialchars($forum)."'>".htmlspecialchars($langNewTopic)."</a></li></ul></div><br />";
 
 /*
 * Retrieve and present data from course's forum
@@ -109,17 +109,17 @@ if (isset($_GET['start'])) {
 }
 
 if ($total_topics > $topics_per_page) { // navigation
-	$base_url = "viewforum.php?forum=$forum&amp;start="; 
+	$base_url = "viewforum.php?forum=".htmlspecialchars($forum)."&amp;start="; 
 	$tool_content .= "<table width='99%'><tr>";
 	$tool_content .= "<td width='50%' align='left'><span class='row'><strong class='pagination'>
-		<span class='pagination'>$langPages:&nbsp;";
+		<span class='pagination'>".htmlspecialchars($langPages).":&nbsp;";
 	$current_page = $first_topic / $topics_per_page + 1; // current page 
 	for ($x = 1; $x <= $pages; $x++) { // display navigation numbers
 		if ($current_page == $x) {
-			$tool_content .= "$x";
+			$tool_content .= "".htmlspecialchars($x)."";
 		} else { 
 			$start = ($x-1)*$topics_per_page;
-			$tool_content .= "<a href='$base_url&amp;start=$start'>$x</a>";
+			$tool_content .= "<a href='$base_url&amp;start=".htmlspecialchars($start)."'>".htmlspecialchars($x)."</a>";
 		}
 	}
 	$tool_content .= "</span></strong></span></td>";
@@ -132,12 +132,12 @@ if ($total_topics > $topics_per_page) { // navigation
 	}
 	
 	if ($first_topic == 0) { // beginning
-		$tool_content .= "<a href='$base_url$next'>$langNextPage</a>";
+		$tool_content .= "<a href='$base_url".htmlspecialchars($next)."'>".htmlspecialchars($langNextPage)."</a>";
 	} elseif ($first_topic + $topics_per_page < $total_topics) { 
-		$tool_content .= "<a href='$base_url$prev'>$langPreviousPage</a>&nbsp|&nbsp;
-		<a href='$base_url$next'>$langNextPage</a>";	
+		$tool_content .= "<a href='$base_url".htmlspecialchars($prev)."'>".htmlspecialchars($langPreviousPage)."</a>&nbsp|&nbsp;
+		<a href='$base_url".htmlspecialchars($next)."'>".htmlspecialchars($langNextPage)."</a>";	
 	} elseif ($start - $topics_per_page < $total_topics) { // end
-		$tool_content .= "<a href='$base_url$prev'>$langPreviousPage</a>";
+		$tool_content .= "<a href='$base_url".htmlspecialchars($prev)."'>".htmlspecialchars($langPreviousPage)."</a>";
 	} 
 	$tool_content .= "</td></tr></table>";
 }
@@ -148,21 +148,21 @@ if(isset($topicnotify)) { // modify topic notification
 	if ($rows > 0) {
 		db_query("UPDATE forum_notify SET notify_sent = '".mysql_real_escape_string($topicnotify)."' 
 			WHERE user_id = $uid AND topic_id = ".mysql_real_escape_string($topic_id)." 
-			AND course_id = $cours_id", $mysqlMainDb);
+			AND course_id = ".mysql_real_escape_string($cours_id)."", $mysqlMainDb);
 	} else {
-		db_query("INSERT INTO forum_notify SET user_id = $uid,
+		db_query("INSERT INTO forum_notify SET user_id = ".mysql_real_escape_string($uid).",
 		topic_id = ".mysql_real_escape_string($topic_id).", notify_sent = 1, course_id = ".mysql_real_escape_string($cours_id), $mysqlMainDb);
 	}
 }
 
 // header 
 $tool_content .= "<table width='99%' class='ForumSum'><thead><tr>
-<td class='ForumHead' colspan='2'>&nbsp;$langSubject</td>
-<td class='ForumHead' width='100'>$langAnswers</td>
-<td class='ForumHead' width='100'>$langSender</td>
-<td class='ForumHead' width='100'>$langSeen</td>
-<td class='ForumHead' width='100'>$langLastMsg</td>
-<td class='ForumHead' width='20'>$langNotifyActions</td>
+<td class='ForumHead' colspan='2'>&nbsp;".htmlspecialchars($langSubject)."</td>
+<td class='ForumHead' width='100'>".htmlspecialchars($langAnswers)."</td>
+<td class='ForumHead' width='100'>".htmlspecialchars($langSender)."</td>
+<td class='ForumHead' width='100'>".htmlspecialchars($langSeen)."</td>
+<td class='ForumHead' width='100'>".htmlspecialchars($langLastMsg)."</td>
+<td class='ForumHead' width='20'>".htmlspecialchars($langNotifyActions)."</td>
 </tr></thead><tbody>";
 
 $sql = "SELECT t.*, p.post_time, p.nom AS nom1, p.prenom AS prenom1
@@ -176,7 +176,7 @@ $result = db_query($sql, $currentCourseID);
 if (mysql_num_rows($result) > 0) { // topics found
 	while($myrow = mysql_fetch_array($result)) {
 		$tool_content .= "<tr>";
-		$replys = htmlspecialchars($myrow["topic_replies"]);
+		$replys = $myrow["topic_replies"];
 		$last_post = $myrow["post_time"];
 		$last_post_datetime = $myrow["post_time"];
 		list($last_post_date, $last_post_time) = split(" ", $last_post_datetime);
@@ -201,22 +201,22 @@ if (mysql_num_rows($result) > 0) { // topics found
 				$image = $locked_image;
 			}
 		}
-		$tool_content .= "<td width='1'><img src='$image' /></td>";
-		$topic_title = own_stripslashes($myrow["topic_title"]);
+		$tool_content .= "<td width='1'><img src='".htmlspecialchars($image)."' /></td>";
+		$topic_title = htmlspecialchars(own_stripslashes($myrow["topic_title"]));
 		$pagination = '';
 		$start = '';
-		$topiclink = "viewtopic.php?topic=" . $myrow["topic_id"] . "&amp;forum=".htmlspecialchars(stripslashes($forum));
+		$topiclink = "viewtopic.php?topic=" . htmlspecialchars($myrow["topic_id"]) . "&amp;forum=".htmlspecialchars(stripslashes($forum));
 		if($replys+1 > $posts_per_page) {
-			$pagination .= "\n<strong class='pagination'><span>\n<img src='$posticon_more' />";
+			$pagination .= "\n<strong class='pagination'><span>\n<img src='".htmlspecialchars($posticon_more)."' />";
 			$pagenr = 1;
 			$skippages = 0;
 			for($x = 0; $x < $replys + 1; $x += $posts_per_page) {
 				$lastpage = (($x + $posts_per_page) >= $replys + 1);
 				if ($lastpage) {
-					$start = "&amp;start=$x";
+					$start = "&amp;start=".htmlspecialchars($x)."";
 				} else {
 					if ($x != 0) {
-						$start = "&amp;start=$x";
+						$start = "&amp;start=".htmlspecialchars($x)."";
 					}
 				}
 				if($pagenr > 3 && $skippages != 1) {
@@ -225,7 +225,7 @@ if (mysql_num_rows($result) > 0) { // topics found
 				}
 				if ($skippages != 1 || $lastpage) {
 					if ($x != -1) {
-						$pagination .= "<a href=\"$topiclink$start\">$pagenr</a>";
+						$pagination .= "<a href=\"".htmlspecialchars($topiclink).htmlspecialchars($start)."\">".htmlspecialchars($pagenr)."</a>";
 						$pagination .= "<span class='page-sep'>,</span>";
 					}
 					$pagenr++;
@@ -234,12 +234,12 @@ if (mysql_num_rows($result) > 0) { // topics found
 			$pagination .= "&nbsp;</span></strong>";
 		}
 		$tool_content .= "<td><a href='$topiclink'>$topic_title</a>$pagination</td>\n";
-		$tool_content .= "<td class='Forum_leftside'>$replys</td>\n";
-		$tool_content .= "<td class='Forum_leftside1'>".stripslashes($myrow[prenom]).stripslashes($myrow[nom])."</td>\n";
-		$tool_content .= "<td class='Forum_leftside'>$myrow[topic_views]</td>\n";
-		$tool_content .= "<td class='Forum_leftside1'>".stripslashes($myrow[prenom1]).stripslashes($myrow[nom1])."<br />$last_post</td>";
+		$tool_content .= "<td class='Forum_leftside'>".htmlspecialchars($replys)."</td>\n";
+		$tool_content .= "<td class='Forum_leftside1'>".htmlspecialchars(stripslashes($myrow[prenom])).htmlspecialchars(stripslashes($myrow[nom]))."</td>\n";
+		$tool_content .= "<td class='Forum_leftside'>".htmlspecialchars($myrow[topic_views])."</td>\n";
+		$tool_content .= "<td class='Forum_leftside1'>".htmlspecialchars(stripslashes($myrow[prenom1])).htmlspecialchars(stripslashes($myrow[nom1]))."<br />".htmlspecialchars($last_post)."</td>";
 		list($topic_action_notify) = mysql_fetch_row(db_query("SELECT notify_sent FROM forum_notify 
-			WHERE user_id = $uid AND topic_id = ".mysql_real_escape_string($myrow[topic_id])." AND course_id = $cours_id", $mysqlMainDb));
+			WHERE user_id = ".mysql_real_escape_string($uid)." AND topic_id = ".mysql_real_escape_string($myrow[topic_id])." AND course_id = ".mysql_real_escape_string($cours_id)."", $mysqlMainDb));
 		if (!isset($topic_action_notify)) {
 			$topic_link_notify = FALSE;
 			$topic_icon = '_off';
@@ -249,16 +249,16 @@ if (mysql_num_rows($result) > 0) { // topics found
 		}
 		$tool_content .= "<td class='Forum_leftside' style='text-align:center'>";
 		if (isset($_GET['start']) and $_GET['start'] > 0) {
-			$tool_content .= "<a href='$_SERVER[PHP_SELF]?forum=".htmlspecialchars(stripslashes($forum))."&start=$_GET[start]&amp;topicnotify=$topic_link_notify&amp;topic_id=".htmlspecialchars(stripslashes($myrow[topic_id]))."'>
-			<img src='../../template/classic/img/announcements$topic_icon.gif' title='$langNotify'></img></a>";
+			$tool_content .= "<a href='$_SERVER[PHP_SELF]?forum=".htmlspecialchars(stripslashes($forum))."&start=".htmlspecialchars($_GET[start])."&amp;topicnotify=".htmlspecialchars($topic_link_notify)."&amp;topic_id=".htmlspecialchars(stripslashes($myrow[topic_id]))."'>
+			<img src='../../template/classic/img/announcements".htmlspecialchars($topic_icon).".gif' title='".htmlspecialchars($langNotify)."'></img></a>";
 		} else {
-			$tool_content .= "<a href='$_SERVER[PHP_SELF]?forum=".htmlspecialchars(stripslashes($forum))."&amp;topicnotify=$topic_link_notify&amp;topic_id=".htmlspecialchars(stripslashes($myrow[topic_id]))."'>
-			<img src='../../template/classic/img/announcements$topic_icon.gif' title='$langNotify'></img></a>";
+			$tool_content .= "<a href='$_SERVER[PHP_SELF]?forum=".htmlspecialchars(stripslashes($forum))."&amp;topicnotify=".htmlspecialchars($topic_link_notify)."&amp;topic_id=".htmlspecialchars(stripslashes($myrow[topic_id]))."'>
+			<img src='../../template/classic/img/announcements".htmlspecialchars($topic_icon).".gif' title='".htmlspecialchars($langNotify)."'></img></a>";
 		}
 		$tool_content .= "</td></tr>";
 	} // end of while
 } else {
-	$tool_content .= "\n<td colspan=6>$langNoTopics</td></tr>\n";
+	$tool_content .= "\n<td colspan=6>".htmlspecialchars($langNoTopics)."</td></tr>\n";
 }
 $tool_content .= "</tbody></table>";
 draw($tool_content, 2, 'phpbb');
