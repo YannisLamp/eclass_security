@@ -99,7 +99,7 @@ $forum_id = $forum;
 
 $nameTools = $langReply;
 $navigation[]= array ("url"=>"index.php", "name"=> htmlspecialchars($langForums));
-$navigation[]= array ("url"=>"viewforum.php?forum=."htmlspecialchars($forum)."", "name"=> htmlspecialchars($forum_name));
+$navigation[]= array ("url"=>"viewforum.php?forum=".htmlspecialchars($forum)."", "name"=> htmlspecialchars($forum_name));
 $navigation[]= array ("url"=>"viewtopic.php?&topic=".htmlspecialchars($topic)."&forum=".htmlspecialchars($forum)."", "name"=> htmlspecialchars($topic_title));
 
 
@@ -159,15 +159,15 @@ if (isset($submit) && $submit) {
 	}
 	$message = format_message($message);
 	$time = date("Y-m-d H:i");
-	$nom = addslashes($nom);
-	$prenom = addslashes($prenom);
+	//$nom = addslashes($nom);
+	//$prenom = addslashes($prenom);
 
 	//to prevent [addsig] from getting in the way, let's put the sig insert down here.
 	if (isset($sig) && $sig) {
 		$message .= "\n[addsig]";
 	}
 	$sql = "INSERT INTO posts (topic_id, forum_id, poster_id, post_time, poster_ip, nom, prenom)
-			VALUES ('".mysql_real_escape_string($topic)."', '".mysql_real_escape_string($forum)."', '".mysql_real_escape_string($uid)."','".mysql_real_escape_string($time)."', '".mysql_real_escape_string($poster_ip."', '".mysql_real_escape_string($nom)."', '".mysql_real_escape_string($prenom)."')";
+			VALUES ('".mysql_real_escape_string($topic)."', '".mysql_real_escape_string($forum)."', '".mysql_real_escape_string($uid)."','".mysql_real_escape_string($time)."', '".mysql_real_escape_string($poster_ip)."', '".mysql_real_escape_string($nom)."', '".mysql_real_escape_string($prenom)."')";
 	$result = db_query($sql, $currentCourseID);
 	$this_post = mysql_insert_id();
 	if ($this_post) {

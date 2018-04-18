@@ -140,7 +140,7 @@ if (isset($submit) && $submit && !empty($_POST['token']) && (strcmp($_SESSION['t
 	}
 	$is_html_disabled = false;
 	if ((isset($allow_html) && $allow_html == 0) || isset($html)) {
-		$message = htmlspecialchars($message);
+		//$message = htmlspecialchars($message);
 		$is_html_disabled = true;
 	}
 	if ((isset($allow_bbcode) && $allow_bbcode == 1) && !($_POST['bbcode'])) {
