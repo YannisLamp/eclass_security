@@ -67,7 +67,7 @@ if (isset($_POST["submit"])) {
                         } else {
                                 db_query("DELETE FROM cours_user
                                                 WHERE statut <> 1 AND statut <> 10 AND
-                                                user_id = ".mysql_real_escape_string($uid). " AND cours_id = "mysql_real_escape_string($cid)."");
+                                                user_id = ".mysql_real_escape_string($uid). " AND cours_id = ".mysql_real_escape_string($cid)."");
                         }
                 }
         }

@@ -93,7 +93,7 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 	$submit = isset($_POST['submit'])?$_POST['submit']:'';
 	$auth = get_auth_active_methods();
 	$is_eclass_unique = is_eclass_unique();
-	print($uname);
+	//print($uname);
 	if(!empty($submit)) {
 		unset($uid);
 		// EDO GINETAI POLI EUKOLA NA KOLLISEIS SQL ENTOLI PX INSERT

@@ -363,14 +363,14 @@ function group_secret($gid)
 function selection($entries, $name, $default = '', $extra = '')
 {
 	$retString = "";
-	$retString .= "\n<select name='".htmlspecialchars($name)."'". htmlspecialchars($extra)." class='auth_input'>\n";
+	$retString .= "\n<select name='".$name."'".$extra." class='auth_input'>\n";
 	foreach ($entries as $value => $label) {
 		if ($value == $default) {
-			$retString .= "<option selected value='" . htmlspecialchars($value) . "'>" .
-			htmlspecialchars($label) . "</option>\n";
+			$retString .= "<option selected value='" . $value . "'>" .
+			$label . "</option>\n";
 		} else {
-			$retString .= "<option value='" . htmlspecialchars($value) . "'>" .
-			htmlspecialchars($label) . "</option>\n";
+			$retString .= "<option value='" . $value . "'>" .
+			$label . "</option>\n";
 		}
 	}
 	$retString .= "</select>\n";
@@ -386,14 +386,14 @@ $name: the name of the selection element
 $default: if it matches one of the values, specifies the default entry
  ***********************************************************************/
 function selection3($entries, $name, $default = '') {
-	$select_box = "<select name='".htmlspecialchars($name)."'>\n";
+	$select_box = "<select name='".$name."'>\n";
 	foreach ($entries as $value => $label)  {
 	    if ($value == $default) {
-		$select_box .= "<option selected value='" . htmlspecialchars($value) . "'>" .
-				htmlspecialchars($label) . "</option>\n";
+		$select_box .= "<option selected value='" . $value . "'>" .
+				$label . "</option>\n";
 		}  else {
-		$select_box .= "<option value='" . htmlspecialchars($value) . "'>" .
-				htmlspecialchars($label) . "</option>\n";
+		$select_box .= "<option value='" . $value . "'>" .
+				$label . "</option>\n";
 		}
 	}
 	$select_box .= "</select>\n";
