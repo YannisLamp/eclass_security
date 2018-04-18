@@ -77,7 +77,7 @@ function work_secret($id)
 {
 	global $currentCourseID, $workPath, $tool_content, $coursePath;
 	
-	$res = db_query("SELECT secret_directory FROM assignments WHERE id = '$id'", $currentCourseID);
+	$res = db_query("SELECT secret_directory FROM assignments WHERE id = '".mysql_real_escape_string($id)."'", $currentCourseID);
 	if ($res) {
 		$secret = mysql_fetch_row($res);
 		if (!empty($secret[0])) {
@@ -104,7 +104,7 @@ function work_secret($id)
 function is_group_assignment($id)
 {
 	global $tool_content;
-	$res = db_query("SELECT group_submissions FROM assignments WHERE id = '$id'");
+	$res = db_query("SELECT group_submissions FROM assignments WHERE id = '".mysql_real_escape_string($id)."'");
 	if ($res) {
 		$row = mysql_fetch_row($res);
 		if ($row[0] == 0) {
@@ -113,7 +113,7 @@ function is_group_assignment($id)
 			return TRUE;
 		}
 	} else {
-		die("Error: assignment $id doesn't exist");
+		die("Error: assignment ".htmlspecialchars($id)." doesn't exist");
 	}
 }
 
@@ -125,21 +125,21 @@ function delete_submissions_by_uid($uid, $gid, $id, $new_filename = '')
 	global $m, $tool_content;
 	$return="";
 	$res = db_query("SELECT * FROM assignment_submit WHERE
-		uid = '$uid' AND assignment_id = '$id'");
+		uid = '$uid' AND assignment_id = '".mysql_real_escape_string($id)."'");
 	while ($row = mysql_fetch_array($res)) {
                 if ($row['file_path'] != $new_filename) {
         		@unlink("$GLOBALS[workPath]/$row[file_path]");
                 }
-		db_query("DELETE FROM assignment_submit WHERE id = '$row[id]'");
+		db_query("DELETE FROM assignment_submit WHERE id = '".mysql_real_escape_string($row[id])."'");
 		$return .= "$m[deleted_work_by_user] \"$row[file_name]\"";
 	}
 	$res = db_query("SELECT * FROM assignment_submit WHERE
-		group_id = '$gid' AND assignment_id = '$id'");
+		group_id = '".mysql_real_escape_string($gid)."' AND assignment_id = '".mysql_real_escape_string($id)."'");
 	while ($row = mysql_fetch_array($res)) {
                 if ($row['file_path'] != $new_filename) {
                         @unlink("$GLOBALS[workPath]/$row[file_path]");
                 }
-		db_query("DELETE FROM assignment_submit WHERE id = '$row[id]'");
+		db_query("DELETE FROM assignment_submit WHERE id = '".mysql_real_escape_string($row[id])."'");
 		$return .= "$m[deleted_work_by_group] \"$row[file_name]\".";
 	}
 	return $return;
@@ -172,7 +172,7 @@ function group_members($gid)
 	global $currentCourseID, $tool_content;
 
 	$members = array();
-	$res = db_query("SELECT user FROM user_group WHERE team = '$gid'",
+	$res = db_query("SELECT user FROM user_group WHERE team = '".mysql_real_escape_string($gid)."'",
 		$currentCourseID);
 	while ($user = mysql_fetch_row($res)) {
 		$members[] = $user[0];
@@ -210,11 +210,11 @@ function find_submission($uid, $id)
 	if (is_group_assignment($id)) {
 		$gid = user_group($uid);
 		$res = db_query("SELECT id FROM assignment_submit
-				WHERE assignment_id = '$id'
-				AND (uid = '$uid' OR group_id = '$gid')");
+				WHERE assignment_id = '".mysql_real_escape_string($id)."'
+				AND (uid = '".mysql_real_escape_string($uid)."' OR group_id = '".mysql_real_escape_string($gid)."')");
 	} else {
 		$res = db_query("SELECT id FROM assignment_submit
-				WHERE assignment_id = '$id' AND uid = '$uid'");
+				WHERE assignment_id = '".mysql_real_escape_string($id)."' AND uid = '".mysql_real_escape_string($uid)."'");
 	}
 	if ($res) {
 		$row = mysql_fetch_row($res);
@@ -234,7 +234,7 @@ function submission_grade($subid)
 	global $m, $tool_content;
 
 	$res = mysql_fetch_row(db_query("SELECT grade, grade_comments
-		FROM assignment_submit WHERE id = '$subid'"));
+		FROM assignment_submit WHERE id = '".mysql_real_escape_string($subid)."'"));
 	if ($res) {
 		$grade = trim($res[0]);
 		if (!empty($grade)) {
@@ -259,8 +259,8 @@ function was_graded($uid, $id, $ret_val = FALSE)
 	global $tool_content;
 	$gid = user_group($uid);
 	$res = db_query("SELECT * FROM assignment_submit
-			WHERE assignment_id = '$id'
-			AND (uid = '$uid' OR group_id = '$gid')");
+			WHERE assignment_id = '".mysql_real_escape_string($id)."'
+			AND (uid = '".mysql_real_escape_string($uid)."' OR group_id = '".mysql_real_escape_string($gid)."')");
 	if ($res) {
 		while ($row = mysql_fetch_array($res)) {
 			if ($row['grade']) {
@@ -284,7 +284,7 @@ function show_submission_details($id)
 
 	$sub = mysql_fetch_array(
 		db_query("SELECT * FROM assignment_submit
-			WHERE id = '$id'"));
+			WHERE id = '".mysql_real_escape_string($id)."'"));
 	if (!$sub) {
 		die("Error: submission $id doesn't exist.");
 	}
@@ -297,9 +297,9 @@ function show_submission_details($id)
 	}
 	
 	if ($sub['uid'] != $uid) {
-		$sub_notice = "$m[submitted_by_other_member] ".
-			"<a href='../group/group_space.php?userGroupId=$sub[group_id]'>".
-			"$m[your_group]</a> (".uid_to_name($sub['uid']).")";
+		$sub_notice = "".htmlspecialchars($m[submitted_by_other_member])." ".
+			"<a href='../group/group_space.php?userGroupId=".htmlspecialchars($sub[group_id])."'>".
+			"".htmlspecialchars($m[your_group])."</a> (".htmlspecialchars(uid_to_name($sub['uid'])).")";
 	} else $sub_notice = "";
 	
 	$tool_content .= "
@@ -309,11 +309,11 @@ function show_submission_details($id)
 	$tool_content .= "
     <tr>
       <th width=\"220\">&nbsp;</th>
-      <td><b>$m[SubmissionWorkInfo]</b></td>
+      <td><b>".htmlspecialchars($m[SubmissionWorkInfo])."</b></td>
     </tr>
     <tr>
-      <th class=\"left\">$m[SubmissionStatusWorkInfo]:</th>
-      <td>$notice</td>
+      <th class=\"left\">".htmlspecialchars($m[SubmissionStatusWorkInfo]).":</th>
+      <td>".htmlspecialchars($notice)."</td>
     </tr>";
 	table_row($m['grade'], $sub['grade']);
 	table_row($m['gradecomments'], $sub['grade_comments']);
@@ -334,13 +334,13 @@ function was_submitted($uid, $gid, $id)
 {
 	global $tool_content;
 	if (mysql_num_rows(db_query(
-		"SELECT id FROM assignment_submit WHERE assignment_id = '$id'
-			AND uid = '$uid'"))) {
+		"SELECT id FROM assignment_submit WHERE assignment_id = '".mysql_real_escape_string($id)."'
+			AND uid = '".mysql_real_escape_string($uid)."'"))) {
 		return 'user';
 	}
 	if (mysql_num_rows(db_query(
-		"SELECT id FROM assignment_submit WHERE assignment_id = '$id'
-			AND group_id = '$gid'"))) {
+		"SELECT id FROM assignment_submit WHERE assignment_id = '".mysql_real_escape_string($id)."'
+			AND group_id = '".mysql_real_escape_string($gid)."'"))) {
 		return 'group';
 	}
 	return FALSE;

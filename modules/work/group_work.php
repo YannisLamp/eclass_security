@@ -104,31 +104,31 @@ function show_assignments()
 	}
 
 
-
-$tool_content .= <<<cData
-	<form action="group_work.php" method="post">
-	<input type="hidden" name="file" value="${_GET['submit']}">
-    <table class="FormData" width="99%">
+	//<<<cData
+$tool_content .= " 
+	<form action=\"group_work.php\" method=\"post\">
+	<input type=\"hidden\" name=\"file\" value=\"".htmlspecialchars(${_GET['submit']})."\">
+    <table class=\"FormData\" width=\"99%\">
     <tbody>
     <tr>
-      <th class="left" width="170">&nbsp;</th>
+      <th class=\"left\" width=\"170\">&nbsp;</th>
       <td>&nbsp;</td>
     </tr>
     <tr>
-      <th class="left">$langWorks (${m['select']}):</th>
+      <th class=\"left\">".htmlspecialchars($langWorks)." (".htmlspecialchars(${m['select']})."):</th>
       <td>
 
-    <table width="99%" class="WorkSum align="left">
+    <table width=\"99%\" class=\"WorkSum\" align=\"left\">
     <thead>
     <tr>
-		<th class="left" colspan="2">${m['title']}</th>
-		<th align="center" width="30%">${m['deadline']}</th>
-		<th align="center" width="10%">${m['submitted']}</th>
-		<th align="center" width="10%">${m['select']}</th>
+		<th class=\"left\" colspan=\"2\">".htmlspecialchars(${m['title']})."</th>
+		<th align=\"center\" width=\"30%\">".htmlspecialchars(${m['deadline']})."</th>
+		<th align=\"center\" width=\"10%\">".htmlspecialchars(${m['submitted']})."</th>
+		<th align=\"center\" width=\"10%\">".htmlspecialchars(${m['select']})."</th>
 		</tr>
 	</thead>
-	<tbody>
-cData;
+	<tbody>";
+//cData;
 	while ($row = mysql_fetch_array($res)) {
 		if (!$row['active']) {
 			continue;
@@ -137,28 +137,28 @@ cData;
 $tool_content .= "
     <tr>
       <td width=\"1%\"><img style='border:0px; padding-top:2px;' src='../../template/classic/img/arrow_grey.gif' title='bullet'></td>
-      <td><div align=\"left\"><a href=\"work.php?id=".$row['id']."\">".htmlspecialchars($row['title'])."</a></td>
+      <td><div align=\"left\"><a href=\"work.php?id=".htmlspecialchars($row['id'])."\">".htmlspecialchars($row['title'])."</a></td>
       <td align=\"center\">".nice_format($row['deadline']);
 
 				if ($row['days'] > 1) {
-					$tool_content .=  " ($m[in]&nbsp;$row[days]&nbsp;$langDays";
+					$tool_content .=  " (".htmlspecialchars($m[in])."&nbsp;".htmlspecialchars($row[days])."&nbsp;".htmlspecialchars($langDays)."";
 				} elseif ($row['days'] < 0) {
-					$tool_content .=  " ($m[expired])";
+					$tool_content .=  " (".htmlspecialchars($m[expired]).")";
 				} elseif ($row['days'] == 1) {
-					$tool_content .=  " ($m[tomorrow])";
+					$tool_content .=  " (".htmlspecialchars($m[tomorrow]).")";
 				} else {
-					$tool_content .=  " ($m[today])";
+					$tool_content .=  " (".htmlspecialchars($m[today]).")";
 				}
 
 				$tool_content .= "</div></td>\n      <td align=\"center\">";
 
 						$subm = was_submitted($uid, user_group($uid), $row['id']);
 						if ($subm == 'user') {
-							$tool_content .=  $m['yes'];
+							$tool_content .=  htmlspecialchars($m['yes']);
 						} elseif ($subm == 'group') {
-							$tool_content .=  $m['by_groupmate'];
+							$tool_content .=  htmlspecialchars($m['by_groupmate']);
 						} else {
-							$tool_content .=  $m['no'];
+							$tool_content .=  htmlspecialchars($m['no']);
 						}
 
 
@@ -167,7 +167,7 @@ $tool_content .= "
 						if ($row['days'] >= 0
 							and !was_graded($uid, $row['id'])
 							and is_group_assignment($row['id'])) {
-							$tool_content .=  "<input type='radio' name='assign' value='$row[id]'>";
+							$tool_content .=  "<input type='radio' name='assign' value='".htmlspecialchars($row[id])."'>";
 						} else {
 							$tool_content .=  '-';
 						}
@@ -185,12 +185,12 @@ $tool_content .= "
       </td>
     </tr>
     <tr>
-      <th class=\"left\">".$m['comments'].":</th>
+      <th class=\"left\">".htmlspecialchars($m['comments']).":</th>
       <td><textarea name=\"comments\" rows=\"4\" cols=\"60\">"."</textarea></td>
     </tr>
     <tr>
       <th>&nbsp;</th>
-      <td><input type=\"submit\" name=\"submit\" value=\"".$langSubmit."\"></td>
+      <td><input type=\"submit\" name=\"submit\" value=\"".htmlspecialchars($langSubmit)."\"></td>
     </tr>
     </tbody>
     </table>
@@ -211,7 +211,7 @@ function submit_work($uid, $id, $file) {
 	$local_name = greek_to_latin('Group '. $group . (empty($ext)? '': '.' . $ext));
 
         $r = mysql_fetch_row(db_query('SELECT filename FROM group_documents WHERE path = ' .
-                                      autoquote(mysql_real_escape_string($file))));
+                                      mysql_real_escape_string($file)));
         $original_filename = $r[0];
 
 	$source = $groupPath.$file;
@@ -223,13 +223,13 @@ function submit_work($uid, $id, $file) {
 		db_query("INSERT INTO assignment_submit (uid, assignment_id, submission_date,
 			             submission_ip, file_path, file_name, comments, group_id)
                           VALUES ('".mysql_real_escape_string($uid)."','".mysql_real_escape_string($id)."', NOW(), '".mysql_real_escape_string($_SERVER[REMOTE_ADDR])."', '".mysql_real_escape_string($destination)."'," .
-				quote(mysql_real_escape_string($original_filename)) . ', ' .
-                                autoquote($_POST['comments']) . ", $group)",
+				mysql_real_escape_string($original_filename) . ', ' .
+				mysql_real_escape_string($_POST['comments']) . ", $group)",
                         $currentCourseID);
 
-		$tool_content .="<p class=\"success_small\">$langUploadSuccess<br />$m[the_file] \"$original_filename\" $m[was_submitted]<br /><a href='work.php'>$langBack</a></p><br />";
+		$tool_content .="<p class=\"success_small\">".htmlspecialchars($langUploadSuccess)."<br />".htmlspecialchars($m[the_file])." \"".htmlspecialchars($original_filename)."\" ".htmlspecialchars($m[was_submitted])."<br /><a href='work.php'>".htmlspecialchars($langBack)."</a></p><br />";
 	} else {
-		$tool_content .="<p class=\"caution_small\">$langUploadError<br /><a href='work.php'>$langBack</a></p><br />";
+		$tool_content .="<p class=\"caution_small\">".htmlspecialchars($langUploadError)."<br /><a href='work.php'>".htmlspecialchars($langBack)."</a></p><br />";
 	}
 }
 
