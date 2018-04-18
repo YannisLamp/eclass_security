@@ -159,7 +159,7 @@ if(isset($forumgo)) {
 		$nameTools = $langEditForum;
 		$navigation[]= array ("url"=>"../forum_admin/forum_admin.php", "name"=> $langOrganisation);
 		$result = db_query("SELECT forum_id, forum_name, forum_desc, forum_access, forum_moderator,
-    		cat_id, forum_type FROM forums WHERE forum_id='"mysql_real_escape_string($forum_id)."'", $currentCourseID);
+    		cat_id, forum_type FROM forums WHERE forum_id='".mysql_real_escape_string($forum_id)."'", $currentCourseID);
 		list($forum_id, $forum_name, $forum_desc, $forum_access, $forum_moderator, $cat_id_1,
 		$forum_type) = mysql_fetch_row($result);
 		$tool_content .= "
@@ -326,7 +326,7 @@ if(isset($forumgo)) {
 		$result = db_query("SELECT cat_id, cat_title FROM catagories ORDER BY cat_id", $currentCourseID);
 		$i=1;
 		while(list($cat_id, $cat_title) = mysql_fetch_row($result)) {
-			$gets = db_query("SELECT COUNT(*) AS total FROM forums WHERE cat_id="mysql_real_escape_string($cat_id)."", $currentCourseID);
+			$gets = db_query("SELECT COUNT(*) AS total FROM forums WHERE cat_id=".mysql_real_escape_string($cat_id)."", $currentCourseID);
 			$numbers = mysql_fetch_array($gets);
 			list($forum_cat_action_notify) = mysql_fetch_row(db_query("SELECT notify_sent FROM forum_notify 
 				WHERE user_id = ".mysql_real_escape_string($uid)." AND cat_id = ".mysql_real_escape_string($cat_id)." AND course_id = ".mysql_real_escape_string($cours_id)."", $mysqlMainDb));

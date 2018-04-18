@@ -58,7 +58,7 @@ if (isset($submit) && isset($changePass) && ($changePass == "do")) {
 	}
 
 	// check if passwd is too easy
-	$sql = "SELECT `nom`,`prenom` ,`username`,`email`,`am` FROM `user`WHERE `user_id`=".$_SESSION["uid"]." ";
+	$sql = "SELECT `nom`,`prenom` ,`username`,`email`,`am` FROM `user`WHERE `user_id`=".mysql_real_escape_string($_SESSION["uid"])." ";
 	$result = db_query($sql, $mysqlMainDb);
 	$myrow = mysql_fetch_array($result);
 
@@ -72,7 +72,7 @@ if (isset($submit) && isset($changePass) && ($changePass == "do")) {
 	}
 
 	//all checks ok. Change password!
-	$sql = "SELECT `password` FROM `user` WHERE `user_id`=".$_SESSION["uid"]." ";
+	$sql = "SELECT `password` FROM `user` WHERE `user_id`=".mysql_real_escape_string($_SESSION["uid"])." ";
 	$result = db_query($sql, $mysqlMainDb);
 	$myrow = mysql_fetch_array($result);
 
@@ -82,7 +82,7 @@ if (isset($submit) && isset($changePass) && ($changePass == "do")) {
 
 	if($old_pass == $old_pass_db) {
 
-		$sql = "UPDATE `user` SET `password` = '$new_pass' WHERE `user_id` = ".$_SESSION["uid"]."";
+		$sql = "UPDATE `user` SET `password` = '".mysql_real_escape_string($new_pass)."' WHERE `user_id` = ".mysql_real_escape_string($_SESSION["uid"])."";
 		db_query($sql, $mysqlMainDb);
 		header("location:". $passurl."?msg=4");
 		exit();
@@ -143,12 +143,12 @@ if(isset($msg)) {
 		default:die("invalid message id");
 
 	}
-	$tool_content .=  "<p class=\"$type\">$message<br><a href=\"$urlServer\">$urlText</a></p><br/>";
+	$tool_content .=  "<p class=\"".htmlspecialchars($type)."\">".htmlspecialchars($message)."<br><a href=\"".htmlspecialchars($urlServer)."\">".htmlspecialchars($urlText)."</a></p><br/>";
 }
 
 if (!isset($changePass)) {
 	$tool_content .= "
-<form method=\"post\" action=\"$passurl?submit=yes&changePass=do\">
+<form method=\"post\" action=\"".htmlspecialchars($passurl)."?submit=yes&changePass=do\">
   <table width=\"99%\">
   <tbody>
   <tr>

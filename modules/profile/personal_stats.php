@@ -48,7 +48,7 @@ if (!extension_loaded('gd')) {
         $sql = "SELECT a.code code, a.intitule intitule
                 FROM cours AS a LEFT JOIN cours_user AS b
                      ON a.cours_id = b.cours_id
-                WHERE b.user_id = '$uid' ORDER BY a.intitule";
+                WHERE b.user_id = '".mysql_real_escape_string($uid)."' ORDER BY a.intitule";
 	$result = db_query($sql);
 	if (mysql_num_rows($result) > 0) {  // found courses ?
 		while ($row = mysql_fetch_assoc($result)) {
@@ -57,14 +57,14 @@ if (!extension_loaded('gd')) {
 		}
 		mysql_free_result($result);
 		foreach ($course_codes as $course_code) {
-			$sql = "SELECT COUNT(*) AS cnt FROM actions WHERE user_id = '$uid'";
+			$sql = "SELECT COUNT(*) AS cnt FROM actions WHERE user_id = '".mysql_real_escape_string($uid)."'";
 			$result = db_query($sql, $course_code);
 			while ($row = mysql_fetch_assoc($result)) {
 				$totalHits += $row['cnt'];
 				$hits[$course_code] = $row['cnt'];
 			}
 			mysql_free_result($result);
-			$sql = "SELECT SUM(duration) FROM actions WHERE user_id = '$uid'";
+			$sql = "SELECT SUM(duration) FROM actions WHERE user_id = '".mysql_real_escape_string($uid)."'";
 			$result = db_query($sql, $course_code);
 			list($duration[$course_code]) = mysql_fetch_row($result);
                         $totalDuration += $duration[$course_code];
@@ -87,7 +87,7 @@ if (!extension_loaded('gd')) {
 		$chart_path = 'courses/temp/chart_'.md5(serialize($chart)).'.png';
 		$chart->render($webDir.$chart_path);
 		if ($chart_content) {
-		$tool_content .= '<p><img src="'.$urlServer.$chart_path.'" /></p>';
+		$tool_content .= '<p><img src="'.htmlspecialchars($urlServer.$chart_path).'" /></p>';
 		}
 		$made_chart = true;
 
@@ -101,11 +101,11 @@ if (!extension_loaded('gd')) {
   </tr>
   <tr>
     <th width='220' class='left'>$langTotalVisitsCourses:</th>
-    <td>$totalHits</td>
+    <td>".htmlspecialchars($totalHits)."</td>
   </tr>
   <tr>
     <th width='220' class='left'>$langDurationVisits:</th>
-    <td>$totalDuration</td>
+    <td>".htmlspecialchars($totalDuration)."</td>
   </tr>
   <tr>
     <th width='220' class='left'>$langDurationVisitsPerCourse:</th>
@@ -141,7 +141,7 @@ if (!extension_loaded('gd')) {
 
 
 $sql = "SELECT * FROM loginout
-    WHERE id_user = '".$_SESSION["uid"]."' ORDER by idLog DESC LIMIT 10";
+    WHERE id_user = '".mysql_real_escape_string($_SESSION["uid"])."' ORDER by idLog DESC LIMIT 10";
 
 $leResultat = db_query($sql, $mysqlMainDb);
 
