@@ -94,7 +94,7 @@ if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_
 
 	$result = mysql_query("SELECT DISTINCT * FROM (
 		SELECT  cours.code, cours.intitule, cours.course_keywords, cours.titulaires
-		FROM cours, cours_user  WHERE cours.cours_id = cours_user.cours_id AND cours_user.user_id = $uid
+		FROM cours, cours_user  WHERE cours.cours_id = cours_user.cours_id AND cours_user.user_id = ".mysql_real_escape_string($uid)."
 		UNION
 		SELECT  cours.code, cours.intitule, cours.course_keywords, cours.titulaires
 		FROM cours
@@ -136,9 +136,9 @@ if(empty($search_terms_title) && empty($search_terms_keywords) && empty($search_
           }
 
             $tbl_content .= "\n      <td><img src=\"../../template/classic/img/arrow_grey.gif\" alt=\"\" border=\"0\" /></td>";
-            $tbl_content .= "\n      <td><a href=\"../../courses/".$mycours['code']."/\">".$mycours['intitule']."</a> (".$mycours['code'].")</td>";
-            $tbl_content .= "\n      <td>".$mycours['titulaires']."</td>";
-            $tbl_content .= "\n      <td>".$mycours['course_keywords']."</td>";
+            $tbl_content .= "\n      <td><a href=\"../../courses/".htmlspecialchars($mycours['code'])."/\">".htmlspecialchars($mycours['intitule'])."</a> (".htmlspecialchars($mycours['code']).")</td>";
+            $tbl_content .= "\n      <td>".htmlspecialchars($mycours['titulaires'])."</td>";
+            $tbl_content .= "\n      <td>".htmlspecialchars($mycours['course_keywords'])."</td>";
             $tbl_content .= "\n    </tr>";
 			//afkhsh tou arithmou apotelesmatwn
 			$results_found++;

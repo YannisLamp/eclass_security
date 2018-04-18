@@ -167,7 +167,7 @@ if(empty($or_search_terms) && empty($not_search_terms)) {
 	}
 
 	//ektypwsh mhnymatwn anazhthshs
-	if (@!empty($not_search_terms)) $tool_content .= "<p>$langNOT: $not_search_terms</p><br>";
+	if (@!empty($not_search_terms)) $tool_content .= "<p>$langNOT: ".htmlspecialchars($not_search_terms)."</p><br>";
 
 	/******************************************************************************************************
 		ektelesh erwthmatwn gia anazhthsh
@@ -188,7 +188,7 @@ if(empty($or_search_terms) && empty($not_search_terms)) {
       <td><div class=\"Results\">";
 		//anazhthsh sthn kentrikh vash - epilogh ths kentrikhs DB
 		mysql_select_db("$mysqlMainDb");
-		$myquery = "SELECT * FROM annonces WHERE cours_id = $cours_id AND MATCH (contenu)".$query;
+		$myquery = "SELECT * FROM annonces WHERE cours_id = ".mysql_real_escape_string($cours_id)." AND MATCH (contenu)".$query;
 		$result = db_query($myquery);
 
 		$c = 0;
@@ -288,11 +288,11 @@ if(empty($or_search_terms) && empty($not_search_terms)) {
 				{
 					$c++;
 					$tmp_result .= "\n<li><b>
-					<a href='$link_document'>".htmlspecialchars($res['filename'])."</a></b>$add_comment</li>";
+					<a href='$link_document'>".htmlspecialchars($res['filename'])."</a></b>".htmlspecialchars($add_comment)."</li>";
 				} elseif ($res['visibility'] == "v") {
 					$c++;
 					$tmp_result .= "\n<li><b>
-					<a href='$link_document'>".htmlspecialchars($res['filename'])."</a></b>$add_comment</li>";
+					<a href='$link_document'>".htmlspecialchars($res['filename'])."</a></b>".htmlspecialchars($add_comment)."</li>";
 				}
 			}
 		}
@@ -322,7 +322,7 @@ if(empty($or_search_terms) && empty($not_search_terms)) {
 					$link_exercise =" ${urlServer}/modules/exercice/exercice_submit.php?exerciseId=".htmlspecialchars($res[id]);
 					$c++;
 					$tmp_result .= "\n<li>
-					<a href='$link_exercise'>".htmlspecialchars($res['titre'])."</a>$desc_text</li>";
+					<a href='$link_exercise'>".htmlspecialchars($res['titre'])."</a>".htmlspecialchars($desc_text)."</li>";
 				}
 			}
 		if ($c != 0) {
@@ -370,7 +370,7 @@ if(empty($or_search_terms) && empty($not_search_terms)) {
 					}
 					$link_posts = "${urlServer}/modules/phpbb/viewforum.php?forum=".htmlspecialchars($res[forum_id]);
 					$c++;
-					$tmp_result .= "\n<li><a href='$link_posts'>".htmlspecialchars($res['forum_name'])."</a> $desc_text</li>";
+					$tmp_result .= "\n<li><a href='$link_posts'>".htmlspecialchars($res['forum_name'])."</a>".htmlspecialchars($desc_text)."</li>";
 				}
 			}
 		if ($c != 0) {
@@ -399,7 +399,7 @@ if(empty($or_search_terms) && empty($not_search_terms)) {
 					$desc_text = "(".htmlspecialchars($res[description]).")";
 				}
 				// URLS MPOREI NA GINEI VLAKIA
-				$link_url = "{$urlServer}modules/link/link_goto.php?link_id=".htmlspecialchars($res[id])."&link_url=$res[url]"; 
+				$link_url = "{$urlServer}modules/link/link_goto.php?link_id=".htmlspecialchars($res[id])."&link_url=".htmlspecialchars($res[url]).""; 
 				$c++;
 				$tmp_result .= "\n<li><a href='$link_url' target=_blank>".$res['url']."</a>: ".htmlspecialchars($res['titre']).htmlspecialchars($desc_text)."</li>";
 			}
