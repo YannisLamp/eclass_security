@@ -192,8 +192,8 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 		// for extra content on the left and right bar.
 
 		if ($homePage  && !isset($_SESSION['uid'])) {
-			$t->set_var ( 'ECLASS_HOME_EXTRAS_LEFT', htmlspecialchars($langExtrasLeft) );
-			$t->set_var ( 'ECLASS_HOME_EXTRAS_RIGHT', htmlspecialchars($langExtrasRight) );
+			$t->set_var ( 'ECLASS_HOME_EXTRAS_LEFT', $langExtrasLeft );
+			$t->set_var ( 'ECLASS_HOME_EXTRAS_RIGHT', $langExtrasRight );
 		}
 
 		//show user's name and surname on the user bar

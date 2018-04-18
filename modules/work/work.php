@@ -679,7 +679,7 @@ function assignment_details($id, $row, $message = null)
     <div id=\"operations_container\">
       <ul id=\"opslist\">
         <li><form id='myform5' action='work.php?' style='display:inline;' method='post'>
-    		<a href='javascript:;' onclick=\"if(confirmation('".addslashes($row['title'])."'))document.getElementById('myform5').submit();\">
+    		<a href='javascript:;' onclick=\"if(confirmation('".htmlspecialchars(addslashes($row['title']))."'))document.getElementById('myform5').submit();\">
     		<b>".htmlspecialchars($langDelAssign)."</b></a>
     		<input type='hidden' name='choice' value='do_delete'/>
         <input type='hidden' name='id' value='".htmlspecialchars($id)."' />
@@ -1068,7 +1068,7 @@ function show_student_assignments()
             }
 			$tool_content .= "
         <td width='1'><img style='padding-top:3px;' src='${urlServer}/template/classic/img/arrow_grey.gif' title='bullet' /></td>
-        <td><a href='work.php?id=".htmlspecialchars($row['id'])."'>".htmlspecialchars($title_temp)."</a></td>
+        <td><a href='work.php?id=".htmlspecialchars($row['id'])."'>".$title_temp."</a></td>
         <td width='30%'>".nice_format($row['deadline']);
 
 			if ($row['days'] > 1) {
