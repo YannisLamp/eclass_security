@@ -137,8 +137,8 @@ if ($is_adminOfCourse) {
 	$tool_content .= "<table width='99%' class='FormData' style='border: 1px solid #CAC3B5;'>
 	<tbody><tr>
 	<td class='odd'>
-	<p>$langThereAre <b>$teachers</b> $langTeachers, <b>$students</b> $langStudents, <b>$visitors</b> $langVisitors</p>
-	<div align='right'>$langTotal: <b>$countUser</b> $langUsers</div>
+	<p>".htmlspecialchars($langThereAre)."<b>".htmlspecialchars($teachers)."</b> ".htmlspecialchars($langTeachers).", <b>".htmlspecialchars($students)."</b> $langStudents, <b>".htmlspecialchars($visitors)."</b> $langVisitors</p>
+	<div align='right'>$langTotal: <b>".htmlspecialchars($countUser)."</b> $langUsers</div>
 	</td>
 	</tr></tbody>
 	</table><p>&nbsp;</p>";
@@ -274,26 +274,26 @@ while ($myrow = mysql_fetch_array($result)) {
         }
         // show public list of users
         $tool_content .= "<td valign='top' align='right'>$i.</td>\n" .
-                "<td valign='top'>$myrow[nom]<br />$myrow[prenom]</td>\n";
+                "<td valign='top'>".htmlspecialchars($myrow[nom])."<br />".htmlspecialchars($myrow[prenom])."</td>\n";
 
         if (isset($status) and ($status[$currentCourseID] == 1 or $status[$currentCourseID] == 2))  {
-                $tool_content .= "<td valign='top' align='center'><a href='mailto:$myrow[email]'>$myrow[email]</a></td>";
+                $tool_content .= "<td valign='top' align='center'><a href='mailto:".htmlspecialchars($myrow[email])."'>".htmlspecialchars($myrow[email])."</a></td>";
         }
-        $tool_content .= "<td valign='top' align='center'>$myrow[am]</td>\n" .
+        $tool_content .= "<td valign='top' align='center'>".htmlspecialchars($myrow[am])."</td>\n" .
                 "<td valign=top align='center'>\n";
 
         // NULL and not '0' because team may not exist
         if ($myrow['team'] == NULL) {
                 $tool_content .= $langUserNoneMasc;
         } else {
-                $tool_content .= gid_to_name($myrow['team']);
+                $tool_content .= htmlspecialchars(gid_to_name($myrow['team']));
         }
         $tool_content .= "</td>" .
                 "<td align='center'>";
         if ($myrow['reg_date'] == '0000-00-00') {
                 $tool_content .= $langUnknownDate;
         } else {
-                $tool_content .= nice_format($myrow['reg_date']);
+                $tool_content .= htmlspecialchars(nice_format($myrow['reg_date']));
         }
         $tool_content .= "</td>";
 
@@ -301,28 +301,28 @@ while ($myrow = mysql_fetch_array($result)) {
         if(isset($status) && ($status["$currentCourseID"]=='1' OR $status["$currentCourseID"]=='2')) {
                 // tutor right
                 if ($myrow['tutor'] == '0') {
-                        $tool_content .= "<td valign='top' align='center' class='add_user'><a href='$_SERVER[PHP_SELF]?giveTutor=$myrow[user_id]' title='$langGiveTutor'>$langAdd</a></td>";
+                        $tool_content .= "<td valign='top' align='center' class='add_user'><a href='$_SERVER[PHP_SELF]?giveTutor=".htmlspecialchars($myrow[user_id])."' title='$langGiveTutor'>$langAdd</a></td>";
                 } else {
-                        $tool_content .= "<td class='highlight' align='center'>$langTutor<br /><a href='$_SERVER[PHP_SELF]?removeTutor=$myrow[user_id]' title='$langRemoveRight'>$langRemove</a></td>";
+                        $tool_content .= "<td class='highlight' align='center'>$langTutor<br /><a href='$_SERVER[PHP_SELF]?removeTutor=".htmlspecialchars($myrow[user_id])."' title='$langRemoveRight'>$langRemove</a></td>";
                 }
 
                 // admin right
                 if ($myrow['user_id'] != $_SESSION["uid"]) {
                         if ($myrow['statut']=='1') {
-                                $tool_content .= "<td class='highlight' align='center'>$langAdministrator<br /><a href='$_SERVER[PHP_SELF]?removeAdmin=$myrow[user_id]' title='$langRemoveRight'>$langRemove</a></td>";
+                                $tool_content .= "<td class='highlight' align='center'>$langAdministrator<br /><a href='$_SERVER[PHP_SELF]?removeAdmin=".htmlspecialchars($myrow[user_id])."' title='$langRemoveRight'>$langRemove</a></td>";
                         } else {
-                                $tool_content .= "<td valign='top' align='center' class='add_user'><a href='$_SERVER[PHP_SELF]?giveAdmin=$myrow[user_id]' title='$langGiveAdmin'>$langAdd</a></td>";
+                                $tool_content .= "<td valign='top' align='center' class='add_user'><a href='$_SERVER[PHP_SELF]?giveAdmin=".htmlspecialchars($myrow[user_id])."' title='$langGiveAdmin'>$langAdd</a></td>";
                         }
                 } else {
                         if ($myrow['statut']=='1') {
                                 $tool_content .= "<td valign='top' class='highlight' align='center' title='$langAdmR'><b>$langAdministrator</b></td>";
                         } else {
-                                $tool_content .= "<td valign='top' align='center'><a href='$_SERVER[PHP_SELF]?giveAdmin=$myrow[user_id]'>$langGiveAdmin</a></td>";
+                                $tool_content .= "<td valign='top' align='center'><a href='$_SERVER[PHP_SELF]?giveAdmin=".htmlspecialchars($myrow[user_id])."'>$langGiveAdmin</a></td>";
                         }
                 }
                 $tool_content .= "<td valign='top' align='center'>";
                 $alert_uname = $myrow['prenom'] . " " . $myrow['nom'];
-                $tool_content .= "<a href='$_SERVER[PHP_SELF]?unregister=$myrow[user_id]' onClick=\"return confirmation('".addslashes($alert_uname)."');\"><img src='../../template/classic/img/delete.gif' title='$langDelete' /></a>";
+                $tool_content .= "<a href='$_SERVER[PHP_SELF]?unregister=".htmlspecialchars($myrow[user_id])."' onClick=\"return confirmation('".htmlspecialchars(addslashes($alert_uname))."');\"><img src='../../template/classic/img/delete.gif' title='$langDelete' /></a>";
         }	// admin only
         $tool_content .= "</td></tr>";$i++;
 } 	// end of while
