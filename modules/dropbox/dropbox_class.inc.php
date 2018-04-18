@@ -190,7 +190,7 @@ class Dropbox_Work {
 		$sql="SELECT uploaderId, filename, filesize, title, description, author,
 			DATE_FORMAT(uploadDate, '%Y-%m-%d / %H:%i') AS uploadDate, 
 			DATE_FORMAT(lastUploadDate, '%Y-%m-%d / %H:%i') AS lastUploadDate
-			FROM `".mysql_real_escape_string($dropbox_cnf["fileTbl"]."`
+			FROM `".mysql_real_escape_string($dropbox_cnf["fileTbl"])."`
 			WHERE id='".mysql_real_escape_string($id)."'";
 	}
 	        $result = db_query($sql, $currentCourseID);

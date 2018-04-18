@@ -259,9 +259,9 @@ if (!isset($_GET['mailing']))  // RH: Mailing detail: no received files
       <table width='99%' class='dropbox'>
       <thead>
       <tr>
-         <th colspan='2' class='left'>&nbsp;".htmlspecialchars($dropbox_lang)."[file]</th>
-         <th width='130' class='left'>".htmlspecialchars($dropbox_lang)."[authors]</th>
-         <th width='130'>".htmlspecialchars($dropbox_lang)."[date]</th>
+         <th colspan='2' class='left'>&nbsp;".htmlspecialchars($dropbox_lang[file])."</th>
+         <th width='130' class='left'>".htmlspecialchars($dropbox_lang[authors])."</th>
+         <th width='130'>".htmlspecialchars($dropbox_lang[date])."</th>
          <th width='20'>".htmlspecialchars($langDelete)."</th>
       </tr>
       </thead>
@@ -294,17 +294,17 @@ if (!isset($_GET['mailing']))  // RH: Mailing detail: no received files
 
 		$fSize = ceil(($w->filesize)/1024);
 		//$tool_content .= <<<tCont9
-		$tool_content .= "tCont9
+		$tool_content .= "
         <small>&nbsp;&nbsp;&nbsp;(".htmlspecialchars($fSize)." kB)</small>
         <br />
         <small>".htmlspecialchars($w->description)."</small>
-        </td>"
+        </td>";
 //tCont9;
-		$tool_content .= "<td>".htmlspecialchars($w->author</td><td>)."".htmlspecialchars($w->uploadDate);
+		$tool_content .= "<td>".htmlspecialchars($w->author)."</td><td>".htmlspecialchars($w->uploadDate);
 
 		if ($w->uploadDate != $w->lastUploadDate)
 		{
-			$tool_content .= " (".htmlspecialchars($dropbox_lang['lastUpdated']. htmlspecialchars($w->lastUploadDate).")";
+			$tool_content .= " (".htmlspecialchars($dropbox_lang['lastUpdated']). htmlspecialchars($w->lastUploadDate).")";
 		}
 
 		$tool_content .= "
@@ -350,9 +350,9 @@ $tool_content .= "
 	if ($numSent > 0) {
 	$tool_content .= "
         <th width='3' style='border: 1px solid #edecdf'>
-            <a href='dropbox_submit.php?deleteSent=all&amp;dropbox_unid=".urlencode( $dropbox_unid).$mailingInUrl."'
-	onClick='return confirmationall('".addslashes(htmlspecialchars($dropbox_lang["all"]))."');'>
-            <img src='../../images/delete.gif' title='$langDelete' /></a>
+            <a href=\"dropbox_submit.php?deleteSent=all&amp;dropbox_unid=".urlencode( $dropbox_unid).$mailingInUrl."\"
+	onClick='return confirmationall(\"".addslashes(htmlspecialchars($dropbox_lang["all"]))."\");'>
+            <img src='../../images/delete.gif' title='".htmlspecialchars($langDelete)."' /></a>
         </th>";
 	}
 
@@ -458,8 +458,8 @@ foreach ($dropbox_person -> sentWork as $w)
 	        } else {
 	           $tool_content .= "\n       <tr class=\"odd\">";
             	}
-	$tool_content .= ' 
 	//<<<tCont12
+		$tool_content .= ' 
 
 		<td width="3"><img src="../../template/classic/img/outbox.gif" title="'.htmlspecialchars($w->title).'" /></td>
 		<td ><a href="'.htmlspecialchars($ahref).'" target="_blank">
@@ -467,7 +467,7 @@ foreach ($dropbox_person -> sentWork as $w)
         <small>&nbsp;&nbsp;&nbsp;('.htmlspecialchars($fSize).' kB)</small>
         <br />
         <small>'.htmlspecialchars($w->description).'</small></td>
-'
+';
 //tCont12;
 	$tool_content .="<td>";
 
