@@ -74,12 +74,11 @@ function show_edit_form($id, $sid, $assign)
 						"<a href='../group/group_space.php?userGroupId=".htmlspecialchars($sub[group_id])."'>".
 						htmlspecialchars($m[ofgroup]). htmlspecialchars($sub[group_id])."</a>)";
 			} else $group_submission = "";
-    $tool_content .= ' 
     //<<<cData
-
+      $tool_content .= ' 
     <form method="post" action="work.php">
-    <input type="hidden" name="assignment" value="'.htmlspecialchars(${id}).'">
-    <input type="hidden" name="submission" value="'.htmlspecialchars(${sid}).'">
+    <input type="hidden" name="assignment" value="'.htmlspecialchars($id).'">
+    <input type="hidden" name="submission" value="'.htmlspecialchars($sid).'">
 
     <table width="99%" class="FormData">
     <tbody>
@@ -88,31 +87,29 @@ function show_edit_form($id, $sid, $assign)
        <td><b>'.htmlspecialchars($m[addgradecomments]).'</b></td>
     </tr>
     <tr>
-      <th class="left">'htmlspecialchars(${m['username']}).':</th>
-      <td>'.htmlspecialchars(${uid_2_name}). htmlspecialchars($group_submission).'</td></tr>
+      <th class="left">'.htmlspecialchars($m['username']).':</th>
+      <td>'.htmlspecialchars($uid_2_name). htmlspecialchars($group_submission).'</td></tr>
     <tr>
-      <th class="left">'.htmlspecialchars(${m['sub_date']}).':</th>
-      <td>'.htmlspecialchars(${sub['submission_date']}).'</td></tr>
+      <th class="left">'.htmlspecialchars($m['sub_date']).':</th>
+      <td>'.htmlspecialchars($sub['submission_date']).'</td></tr>
     <tr>
-      <th class="left">'.htmlspecialchars(${m['filename']}).':</th>
-      <td><a href=\'work.php?get='.htmlspecialchars(${sub['id']}).'\'>'.htmlspecialchars(${sub['file_name']}).'</a></td>
+      <th class="left">'.htmlspecialchars($m['filename']).':</th>
+      <td><a href=\'work.php?get='.htmlspecialchars($sub['id']).'\'>'.htmlspecialchars($sub['file_name']).'</a></td>
     </tr>';
 //cData;
 
   $tool_content .=  '
-  //<<<cData
-
     <tr>
-      <th class='.htmlspecialchars("left").'>'.htmlspecialchars(${m['grade']}).':</th>
-      <td><input type="text" name="grade" maxlength="3" size="3" value="'.htmlspecialchars(${sub['grade']}).'" class="FormData_InputText"></td>
+      <th class="left">'.htmlspecialchars($m['grade']).':</th>
+      <td><input type="text" name="grade" maxlength="3" size="3" value="'.htmlspecialchars($sub['grade']).'" class="FormData_InputText"></td>
     </tr>
     <tr>
-      <th class="left">'.htmlspecialchars(${m['gradecomments']}).':</th>
-      <td><textarea cols="60" rows="3" name="comments" class="FormData_InputText">'.htmlspecialchars(${sub['grade_comments']}).'</textarea></td>
+      <th class="left">'.htmlspecialchars($m['gradecomments']).':</th>
+      <td><textarea cols="60" rows="3" name="comments" class="FormData_InputText">'.htmlspecialchars($sub['grade_comments']).'</textarea></td>
     </tr>
     <tr>
       <th class="left">&nbsp;</th>
-      <td><input type="submit" name="grade_comments" value="'.htmlspecialchars(${langGradeOk}).'"></td>
+      <td><input type="submit" name="grade_comments" value="'.htmlspecialchars($langGradeOk).'"></td>
     </tr>
     </tbody>
     </table>

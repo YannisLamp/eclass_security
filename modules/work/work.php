@@ -255,8 +255,8 @@ function add_assignment($title, $comments, $desc, $deadline, $group_submissions)
 	db_query("INSERT INTO assignments
 		(title, description, comments, deadline, submission_date, secret_directory,
 			group_submissions) VALUES
-		(".mysql_real_escape_string($title).", ".mysql_real_escape_string($desc).", ".mysql_real_escape_string($comments).", ".mysql_real_escape_string($deadline).", NOW(), '".mysql_real_escape_string($secret)."',
-			".mysql_real_escape_string($group_submissions).")");
+		('".mysql_real_escape_string($title)."', '".mysql_real_escape_string($desc)."', '".mysql_real_escape_string($comments)."', '".mysql_real_escape_string($deadline)."', NOW(), '".mysql_real_escape_string($secret)."',
+			'".mysql_real_escape_string($group_submissions)."')");
 	mkdir("$workPath/$secret",0777);
 }
 
@@ -477,28 +477,28 @@ function show_edit_assignment($id)
     <tbody>
     <tr>
       <th width="150">&nbsp;</th>
-      <td><b>'htmlspecialchars($m[WorkInfo]).'</b></td>
+      <td><b>'.htmlspecialchars($m[WorkInfo]).'</b></td>
     </tr>
     <tr>
       <th class="left">'.htmlspecialchars($m[title]).':</th>
-      <td><input type="text" name="title" size="45" value="'.htmlspecialchars(${row['title']}).'" class=\'FormData_InputText\' /></td>
+      <td><input type="text" name="title" size="45" value="'.htmlspecialchars($row['title']).'" class=\'FormData_InputText\' /></td>
     </tr>
     <tr>
-      <th class="left">'htmlspecialchars(${m['description']}).':</th>
+      <th class="left">'.htmlspecialchars($m['description']).':</th>
       <td>
         <table class=\'xinha_editor\'>
         <tr>
-          <td><textarea id=\'xinha\' name=\'desc\' value=\'$description\' style=\'width:100%\'>'htmlspecialchars(${row['description']}).'</textarea></td>
+          <td><textarea id=\'xinha\' name=\'desc\' value=\'$description\' style=\'width:100%\'>'.htmlspecialchars($row['description']).'</textarea></td>
         </tr>
         </table>
       </td>
     </tr>
     <tr>
-      <th class="left">'htmlspecialchars(${m['comments']}).':</th>
-      <td><textarea name="comments" rows="5" cols="65" class=\'FormData_InputText\'>'.htmlspecialchars(${row['comments']}).'</textarea></td>
+      <th class="left">'.htmlspecialchars($m['comments']).':</th>
+      <td><textarea name="comments" rows="5" cols="65" class=\'FormData_InputText\'>'.htmlspecialchars($row['comments']).'</textarea></td>
     </tr>
     <tr>
-      <th class="left">'.htmlspecialchars(${m['deadline']}).':</th>
+      <th class="left">'.htmlspecialchars($m['deadline']).':</th>
       <td>';
 //cData;
 
@@ -547,11 +547,11 @@ function edit_assignment($id)
 	$nav[] = array("url"=>"work.php", "name"=> $langWorks);
 	$nav[] = array("url"=>"work.php?id=$id", "name"=> $_POST['title']);
 
-	if (db_query("UPDATE assignments SET title=".mysql_real_escape_string($_POST['title']).",
-		description=".mysql_real_escape_string($_POST['desc']).", group_submissions=".mysql_real_escape_string($_POST['group_submissions']).",
-		comments=".mysql_real_escape_string($_POST['comments']).", deadline=".mysql_real_escape_string($_POST['WorkEnd'])." WHERE id='".mysql_real_escape_string($id)."'")) {
+	if (db_query("UPDATE assignments SET title='".mysql_real_escape_string($_POST['title'])."',
+		description='".mysql_real_escape_string($_POST['desc'])."', group_submissions='".mysql_real_escape_string($_POST['group_submissions'])."',
+		comments='".mysql_real_escape_string($_POST['comments'])."', deadline='".mysql_real_escape_string($_POST['WorkEnd'])."' WHERE id='".mysql_real_escape_string($id)."'")) {
 
-        $title = mysql_real_escape_string($_POST['title']);
+        $title = $_POST['title'];
 	$tool_content .="<p class='success_small'>".htmlspecialchars($langEditSuccess)."<br /><a href='work.php?id=".htmlspecialchars($id)."'>".htmlspecialchars($langBackAssignment)." '".htmlspecialchars($title)."'</a></p><br />";
 	} else {
 	$tool_content .="<p class='caution_small'>".htmlspecialchars($langEditError)."<br /><a href='work.php?id=".htmlspecialchars($id)."'>".htmlspecialchars($langBackAssignment)." '".htmlspecialchars($title)."'</a></p><br />";
@@ -635,25 +635,25 @@ function show_submission_form($id)
 		$tool_content .= "
 
     <form enctype=\"multipart/form-data\" action=\"work.php\" method=\"post\">
-    <input type=\"hidden\" name=\"id\" value=\"".htmlspecialchars(${id})."\" />
+    <input type=\"hidden\" name=\"id\" value=\"".htmlspecialchars($id)."\" />
     <br />
     <table width=\"99%\" align=\"left\" class=\"FormData\">
     <tbody>
     <tr>
       <th width=\"220\">&nbsp;</th>
-      <td><b>".htmlspecialchars(${langSubmit})."</b></td>
+      <td><b>".htmlspecialchars($langSubmit)."</b></td>
     </tr>
     <tr>
-      <th class=\"left\">".htmlspecialchars(${langWorkFile}).":</th>
+      <th class=\"left\">".htmlspecialchars($langWorkFile).":</th>
       <td><input type=\"file\" name=\"userfile\" class=\"FormData_InputText\" /></td>
     </tr>
     <tr>
-      <th class=\"left\">".htmlspecialchars(${m['comments']}).":</th>
+      <th class=\"left\">".htmlspecialchars($m['comments']).":</th>
       <td><textarea name=\"stud_comments\" rows=\"5\" cols=\"55\" class=\"FormData_InputText\"></textarea></td>
     </tr>
     <tr>
       <th>&nbsp;</th>
-      <td><input type=\"submit\" value=\"".htmlspecialchars(${langSubmit})."\" name=\"work_submit\" /><br />".htmlspecialchars($langNotice3)."</td>
+      <td><input type=\"submit\" value=\"".htmlspecialchars($langSubmit)."\" name=\"work_submit\" /><br />".htmlspecialchars($langNotice3)."</td>
     </tr>
     </tbody>
     </table>
@@ -924,7 +924,7 @@ function show_assignment($id, $message = FALSE)
 			//professor comments
 			if (trim($row['grade_comments'] != '')) {
 				$prof_comment = "".htmlspecialchars($row['grade_comments']).
-				" (<a href='grade_edit.php?assignment="htmlspecialchars($id)."&submission=".htmlspecialchars($row[id])."'>".
+				" (<a href='grade_edit.php?assignment=".htmlspecialchars($id)."&submission=".htmlspecialchars($row[id])."'>".
 				"".htmlspecialchars($m[edit])."</a>)";
 			} else {
 				$prof_comment = "
@@ -938,9 +938,9 @@ function show_assignment($id, $message = FALSE)
 
       <tr>
         <td align='right' width='4'>".htmlspecialchars($i).".</td>
-        <td>".htmlspecialchars(${uid_2_name})." ".htmlspecialchars($subContentGroup)."</td>
-        <td width=\"75\" align=\"left\">".htmlspecialchars(${stud_am[0]})."</td>
-        <td width=\"180\"><a href=\"work.php?get=".htmlspecialchars(${row['id']})."\">".htmlspecialchars(${row['file_name']})."</a>";
+        <td>".htmlspecialchars($uid_2_name)." ".$subContentGroup."</td>
+        <td width=\"75\" align=\"left\">".htmlspecialchars($stud_am[0])."</td>
+        <td width=\"180\"><a href=\"work.php?get=".htmlspecialchars($row['id'])."\">".htmlspecialchars($row['file_name'])."</a>";
 //cData;
 			if (trim($row['comments'] != '')) {
 				$tool_content .= "
@@ -958,12 +958,12 @@ function show_assignment($id, $message = FALSE)
         </td>
         <td width='75' align='center'>".nice_format($row['submission_date'])."</td>
         <td width='180' align='left' class='grade'>
-            <div align='center'><input type='text' value='".htmlspecialchars({$row['grade']})."' maxlength='3' size='3' name='grades[{".htmlspecialchars($row['id'])"}]' class='grade_input'></div>
+            <div align='center'><input type='text' value='".htmlspecialchars($row['grade'])."' maxlength='3' size='3' name='grades[".htmlspecialchars($row['id'])."]' class='grade_input'></div>
             <table align='left' width='100%' class='Info'>
             <tbody>
             <tr>
               <td width='1' class='left'><img src='../../template/classic/img/forum_on.gif' alt='".htmlspecialchars($m[comments])."' title='".htmlspecialchars($m[comments])."' /></td>
-              <td>".htmlspecialchars($prof_comment)."</td>
+              <td>".$prof_comment."</td>
             <tr>
             </tbody>
             </table>
@@ -981,7 +981,7 @@ function show_assignment($id, $message = FALSE)
     <tbody>
     <tr>
       <th class='left' width='220'>&nbsp;</th>
-      <td><input type='submit' name='submit_grades' value='".htmlspecialchars(${langGradeOk})."'></td>
+      <td><input type='submit' name='submit_grades' value='".htmlspecialchars($langGradeOk)."'></td>
     </tr>
     </tbody>
     </table>
@@ -1050,10 +1050,10 @@ function show_student_assignments()
       <table class=\"WorkSum\" align=\"left\" width=\"99%\">
       <thead>
       <tr>
-        <th colspan=\"2\"><div align=\"left\">&nbsp;&nbsp;".htmlspecialchars(${m['title']})."</div></th>
-        <th><div align=\"left\">".htmlspecialchars(${m['deadline']})."</div></th>
-        <th>".htmlspecialchars(${m['submitted']})."</th>
-        <th>".htmlspecialchars(${m['grade']})."</th>
+        <th colspan=\"2\"><div align=\"left\">&nbsp;&nbsp;".htmlspecialchars($m['title'])."</div></th>
+        <th><div align=\"left\">".htmlspecialchars($m['deadline'])."</div></th>
+        <th>".htmlspecialchars($m['submitted'])."</th>
+        <th>".htmlspecialchars($m['grade'])."</th>
       </tr>
       </thead>
       <tbody>";
@@ -1068,7 +1068,7 @@ function show_student_assignments()
             }
 			$tool_content .= "
         <td width='1'><img style='padding-top:3px;' src='${urlServer}/template/classic/img/arrow_grey.gif' title='bullet' /></td>
-        <td><a href='work.php?id=".htmlspecialchars(${row['id']})."'>".htmlspecialchars(${title_temp})."</a></td>
+        <td><a href='work.php?id=".htmlspecialchars($row['id'])."'>".htmlspecialchars($title_temp)."</a></td>
         <td width='30%'>".nice_format($row['deadline']);
 
 			if ($row['days'] > 1) {
@@ -1078,7 +1078,7 @@ function show_student_assignments()
 			} elseif ($row['days'] == 1) {
 				$tool_content .= " (<span class='expired_today'>".htmlspecialchars($m[tomorrow])."</span>)";
 			} else {
-				$tool_content .= " (<span class='expired_today'>".htmlspecialchars(<b>$m[today])."</b></span>)";
+				$tool_content .= " (<span class='expired_today'><b>".htmlspecialchars($m[today])."</b></span>)";
 			}
 			$tool_content .= "</td>
         <td width='10%' align='center'>";
@@ -1135,8 +1135,8 @@ function show_assignments($message = null)
     <table width=\"99%\" class=\"WorkSum\" align=\"left\">
     <thead>
     <tr>
-      <th colspan=\"2\"><div align=\"left\">&nbsp;&nbsp;&nbsp;&nbsp;".htmlspecialchars(${m['title']})."</div></th>
-      <th width=\"150\">".htmlspecialchars(${m['deadline']})."</th>
+      <th colspan=\"2\"><div align=\"left\">&nbsp;&nbsp;&nbsp;&nbsp;".htmlspecialchars($m['title'])."</div></th>
+      <th width=\"150\">".htmlspecialchars($m['deadline'])."</th>
       <th width=\"110\"><div align=\"right\">".htmlspecialchars($langCommands)." &nbsp;</div></th>
     </tr>
     </thead>
@@ -1339,7 +1339,7 @@ function create_zip_index($path, $id, $online = FALSE)
 			</tr>');
 		if (trim($row['comments'] != '')) {
 			fputs($fp, "
-			<tr><td colspan='6'><b>"htmlspecialchars($m[comments]).": ".
+			<tr><td colspan='6'><b>".htmlspecialchars($m[comments]).": ".
 			"</b>".htmlspecialchars($row[comments])."</td></tr>");
 		}
 		if (trim($row['grade_comments'] != '')) {
