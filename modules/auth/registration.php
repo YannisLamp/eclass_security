@@ -67,7 +67,7 @@ if (isset($close_user_registration) and $close_user_registration) {
 
 $tool_content .= "</font></strong></td>
   </tr>
-    <td><p><img style='border:0px;' src='${urlServer}/template/classic/img/arrow_grey.gif' title='bullet'>&nbsp;&nbsp;<a href=\"$newuser\">$langNewAccount</a></p>";
+    <td><p><img style='border:0px;' src='${urlServer}/template/classic/img/arrow_grey.gif' title='bullet'>&nbsp;&nbsp;<a href=\"".htmlspecialchars($newuser)."\">$langNewAccount</a></p>";
 
 if(!empty($auth)) {
         if (count($auth) > 1) {
@@ -76,7 +76,7 @@ if(!empty($auth)) {
 
         foreach($auth as $k => $v) {
                 if($v!=1) {
-                        $tool_content .= "\n      <p><img src='../../images/arrow_blue.gif'>&nbsp;&nbsp;$langNewAccount&nbsp;(<a href=\"ldapnewuser.php?auth=".$v."\">".get_auth_info($v)."</a>)</p>";
+                        $tool_content .= "\n      <p><img src='../../images/arrow_blue.gif'>&nbsp;&nbsp;$langNewAccount&nbsp;(<a href=\"ldapnewuser.php?auth=".htmlspecialchars($v)."\">".htmlspecialchars(get_auth_info($v))."</a>)</p>";
                 } else {
                         continue;
                 }
@@ -99,7 +99,7 @@ if(!empty($auth)) {
                         $auth_method_settings = get_auth_settings($v);
                         $tool_content .= "<p><img src='../../images/arrow_blue.gif'>&nbsp;&nbsp;
                         $langNewAccount
-                                &nbsp;(<a href='ldapnewuser.php?p=TRUE&auth=".$v."'>".get_auth_info($v)."</a>)</p>";
+                                &nbsp;(<a href='ldapnewuser.php?p=TRUE&auth=".htmlspecialchars($v)."'>".htmlspecialchars(get_auth_info($v))."</a>)</p>";
                 }
         }
 } else {

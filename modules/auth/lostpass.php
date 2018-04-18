@@ -67,10 +67,10 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
 	if (mysql_num_rows($res) == 1) {
 		$myrow = mysql_fetch_array($res);
 		//copy pass hash (md5) from reset_pass to user table
-		$sql = "UPDATE `user` SET `password` = '".$myrow['hash']."' WHERE `user_id` = ".$myrow['user_id']."";
+		$sql = "UPDATE `user` SET `password` = '".mysql_real_escape_string($myrow['hash'])."' WHERE `user_id` = ".mysql_real_escape_string($myrow['user_id'])."";
 		if(db_query($sql, $mysqlMainDb)) {
 			//send email to the user of his new pass (not hashed)
-			$res = db_query("SELECT `email` FROM user WHERE `user_id` = ".$myrow['user_id']."", $mysqlMainDb);
+			$res = db_query("SELECT `email` FROM user WHERE `user_id` = ".mysql_real_escape_string($myrow['user_id'])."", $mysqlMainDb);
 			$myrow2 = mysql_fetch_array($res);
 			$text = "$langPassEmail1 <em>$myrow[password]</em><br>$langPassEmail2";
 			$tool_content .= "<table width=\"99%\"><tbody>
@@ -79,7 +79,7 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
     				<p><a href=\"../../index.php\">$langHome</a></p>
 				</td>
 				</tr></tbody></table>";
-			db_query("DELETE FROM `passwd_reset` WHERE `user_id` = '$myrow[user_id]'", $mysqlMainDb);
+			db_query("DELETE FROM `passwd_reset` WHERE `user_id` = '".mysql_real_escape_string($myrow[user_id])."'", $mysqlMainDb);
 			// delete passws_reset entries older from 2 days
 			db_query("DELETE FROM `passwd_reset` 
 				WHERE DATE_SUB(CURDATE(),INTERVAL 2 DAY) > `datetime`", $mysqlMainDb);
@@ -148,7 +148,7 @@ if (isset($_REQUEST['do']) && $_REQUEST['do'] == "go") {
 				$new_pass = create_pass();
 				//TODO: add a query to check if the newly generated password already exists in the
 				//reset-pass table. If yes, attempt to generate another one.
-				$sql = "INSERT INTO `passwd_reset` (`user_id`, `hash`, `password`, `datetime`) VALUES ('".$s['user_id']."',  '".md5($new_pass)."', '$new_pass', NOW())";
+				$sql = "INSERT INTO `passwd_reset` (`user_id`, `hash`, `password`, `datetime`) VALUES ('".mysql_real_escape_string($s['user_id'])."',  '".md5($new_pass)."', '".mysql_real_escape_string($new_pass)."', NOW())";
 				db_query($sql, $mysqlMainDb);
 				//prepare instruction for password reset
 				$text .= $langPassResetGoHere;

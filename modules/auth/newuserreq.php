@@ -51,7 +51,7 @@ if($submit) {
   $lang = langname_to_code($localize);	
 
       // check if user name exists
-  $username_check=mysql_query("SELECT username FROM `$mysqlMainDb`.user WHERE username='$uname'");
+  $username_check=mysql_query("SELECT username FROM `".mysql_real_escape_string($mysqlMainDb)."`.user WHERE username='".mysql_real_escape_string($uname)."'");
   while ($myusername = mysql_fetch_array($username_check)) {
     $user_exist=$myusername[0];
   }
@@ -101,18 +101,18 @@ send_mail('', '', '', $email_form, $emailsubject, $emailbody, $charset);
     $expires_at = time() + $durationAccount;
 
     $password_encrypted = md5($password);
-    $s = mysql_query("SELECT id FROM faculte WHERE name='$department'");
+    $s = mysql_query("SELECT id FROM faculte WHERE name='".mysql_real_escape_string($department)."'");
     $dep = mysql_fetch_array($s);
-    $inscr_user=mysql_query("INSERT INTO `$mysqlMainDb`.user
+    $inscr_user=mysql_query("INSERT INTO `".mysql_real_escape_string($mysqlMainDb)."`.user
       (user_id, nom, prenom, username, password, email, statut, department, registered_at, expires_at, lang)
-      VALUES ('NULL', '$nom_form', '$prenom_form', '$uname', '$password_encrypted', '$email_form', '5', '$dep[id]', '$registered_at', '$expires_at', '$lang')");
+      VALUES ('NULL', '".mysql_real_escape_string($nom_form)."', '".mysql_real_escape_string($prenom_form)."', '".mysql_real_escape_string($uname)."', '".mysql_real_escape_string($password_encrypted)."', '".mysql_real_escape_string($email_form)."', '5', '".mysql_real_escape_string($dep[id])."', '".mysql_real_escape_string($registered_at)."', '".mysql_real_escape_string($expires_at)."', '".mysql_real_escape_string($lang)."')");
 
     // close request
         $rid = intval($_POST['rid']);
         db_query("UPDATE prof_request set status = '2',
          date_closed = NOW() WHERE rid = '$rid'");
 
-    $tool_content .= "<tr><td valign='top' align='center' class='alert1'>$usersuccess
+    $tool_content .= "<tr><td valign='top' align='center' class='alert1'>".htmlspecialchars($usersuccess)."
     <br><br><a href='../admin/listreq.php?type=user' class='mainpage'>$langBack</a>";
   }
 
@@ -135,17 +135,17 @@ $tool_content .= "<table width=\"99%\"><tbody>
 	<thead>
     <tr>
     <th class='left' width=20%>$langSurname</th>
-	 <td><input type='text' class=auth_input_admin name='nom_form' value='".@$ps."' >
+	 <td><input type='text' class=auth_input_admin name='nom_form' value='".htmlspecialchars(@$ps)."' >
 	<small>&nbsp;(*)</small></td>
 	  </tr>
 	  <tr>
 	  <th class='left'>$langName</th>
-	  <td><input type='text' class=auth_input_admin name='prenom_form' value='".@$pn."' >
+	  <td><input type='text' class=auth_input_admin name='prenom_form' value='".htmlspecialchars(@$pn)."' >
 	<small>&nbsp;(*)</small></td>
 	  </tr>
 	  <tr>
 	  <th class='left'>$langUsername</th>
-	  <td><input type='text' class=auth_input_admin name='uname' value='".@$pu."'>
+	  <td><input type='text' class=auth_input_admin name='uname' value='".htmlspecialchars(@$pu)."'>
 		<small>&nbsp;(*)</small></td>
 	  </tr>
 	  <tr>
@@ -154,7 +154,7 @@ $tool_content .= "<table width=\"99%\"><tbody>
 	  </tr>
 	  <tr>
     	<th class='left'>$langEmail</th>
-	  <td><input type='text' class=auth_input_admin name='email_form' value='".@$pe."'>
+	  <td><input type='text' class=auth_input_admin name='email_form' value='".htmlspecialchars(@$pe)."'>
 		<small>&nbsp;(*)</small></td>
 	  </tr>
 	  <tr>
@@ -179,7 +179,7 @@ $tool_content .= "<table width=\"99%\"><tbody>
 		<tr><td>&nbsp;</td>
 		<td><input type=\"submit\" name=\"submit\" value=\"".$langSubmit."\" ></td>
 		</tr></thead></table>
-		<input type='hidden' name='rid' value='".@$id."'>
+		<input type='hidden' name='rid' value='".htmlspecialchars(@$id)."'>
 		</tbody></table></form>";
     $tool_content .= "<center><p><a href=\"../admin/index.php\">$langBack</p></center>";
 
@@ -194,7 +194,7 @@ function error_screen($message) {
 
 	global $langTryAgain;
 
-	return "<tr height='80'><td colspan='3' valign='top' align='center' class=alert1>$message</td></tr><br><br>
+	return "<tr height='80'><td colspan='3' valign='top' align='center' class=alert1>".htmlspecialchars($message)."</td></tr><br><br>
       <tr height='30' valign='top' align='center'><td align=center>
       <a href='../admin/listreq.php?type=user' class=mainpage>$langTryAgain</a><br><br></td></tr>";
 }

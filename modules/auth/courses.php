@@ -63,11 +63,11 @@ if (isset($_POST["submit"])) {
                 if (!in_array($cid, $selectCourse)) {
                         // check if user tries to unregister from restricted course
                         if (is_restricted($cid)) {
-                                $tool_content .= "(restricted unsub $cid) ";
+                                $tool_content .= "(restricted unsub ".htmlspecialchars($cid).") ";
                         } else {
                                 db_query("DELETE FROM cours_user
                                                 WHERE statut <> 1 AND statut <> 10 AND
-                                                user_id = $uid AND cours_id = $cid");
+                                                user_id = ".mysql_real_escape_string($uid). " AND cours_id = "mysql_real_escape_string($cid)."");
                         }
                 }
         }
@@ -75,7 +75,7 @@ if (isset($_POST["submit"])) {
 	$errorExists = false;
         foreach ($selectCourse as $key => $value) {
                 $cid = intval($value);
-                $course_info = db_query("SELECT fake_code, password FROM cours WHERE cours_id = $cid");
+                $course_info = db_query("SELECT fake_code, password FROM cours WHERE cours_id = ".mysql_real_escape_string($cid)."");
                 if ($course_info) {
                         $row = mysql_fetch_array($course_info);
                         if (!empty($row['password']) and $row['password'] != autounquote($_POST['pass' . $cid])) {
@@ -88,7 +88,7 @@ if (isset($_POST["submit"])) {
                                 $restrictedCourses[] = $row['fake_code'];
                         } else {
                                 db_query("INSERT IGNORE INTO `cours_user` (`cours_id`, `user_id`, `statut`, `reg_date`)
-                                                 VALUES ($cid, $uid, 5, CURDATE())");
+                                                 VALUES (".mysql_real_escape_string($cid).", ".mysql_real_escape_string($uid).", 5, CURDATE())");
                         }
                 }
         }
@@ -127,10 +127,10 @@ if (isset($_POST["submit"])) {
 					$tool_content .= "\n        <tr class='odd'>";
 				}
 				$tool_content .= "\n<td>&nbsp;<img src='../../images/arrow_blue.gif' />&nbsp;
-					<a href='$_SERVER[PHP_SELF]?fc=$fac[id]'>" . htmlspecialchars($fac['name']) . "</a> <small><font color='#a33033'>($fac[code])</font></small>";
-				$n=db_query("SELECT COUNT(*) FROM cours_faculte WHERE facid='$fac[id]'");
+					<a href='$_SERVER[PHP_SELF]?fc=$fac[id]'>" . htmlspecialchars($fac['name']) . "</a> <small><font color='#a33033'>(".htmlspecialchars($fac[code]).")</font></small>";
+				$n=db_query("SELECT COUNT(*) FROM cours_faculte WHERE facid='".mysql_real_escape_string($fac[id])."'");
 				$r=mysql_fetch_array($n);
-				$tool_content .= "&nbsp;<small><font color=#a5a5a5>($r[0]  ". ($r[0] == 1? $langAvCours: $langAvCourses) . ")</font><small></td></tr>";
+				$tool_content .= "&nbsp;<small><font color=#a5a5a5>($r[0]  ". htmlspecialchars(($r[0] == 1? $langAvCours: $langAvCourses)) . ")</font><small></td></tr>";
 				$k++;
 			}
 			$tool_content .= "\n</tbody>\n</table>";
@@ -159,7 +159,7 @@ if (isset($_POST["submit"])) {
 			if ($fac) {
 				$tool_content .= "<table width='99%' align='left'>
 				<tr>
-				<td><a name='top'>&nbsp;</a>$langFaculty:&nbsp;<b>$fac</b></td>
+				<td><a name='top'>&nbsp;</a>$langFaculty:&nbsp;<b>".htmlspecialchars($fac)."</b></td>
 				<td>&nbsp;</td>
 				</tr></table>";
 				$tool_content .= "<br /><br />
@@ -175,7 +175,7 @@ draw($tool_content, 1);
 function getfacfromfc( $dep_id) {
 	$dep_id = intval( $dep_id);
 
-	$fac = mysql_fetch_row(db_query("SELECT name FROM faculte WHERE id = '$dep_id'"));
+	$fac = mysql_fetch_row(db_query("SELECT name FROM faculte WHERE id = '".mysql_real_escape_string($dep_id)."'"));
 	if (isset($fac[0]))
 		return $fac[0];
 	else
@@ -183,7 +183,7 @@ function getfacfromfc( $dep_id) {
 }
 
 function getfcfromuid($uid) {
-	$res = mysql_fetch_row(db_query("SELECT department FROM user WHERE user_id = '$uid'"));
+	$res = mysql_fetch_row(db_query("SELECT department FROM user WHERE user_id = '".mysql_real_escape_string($uid)."'"));
 	if (isset($res[0]))
 		return $res[0];
 	else
@@ -194,7 +194,7 @@ function getdepnumcourses($fac) {
 	$res = mysql_fetch_row(db_query(
 	"SELECT count(code)
 	FROM cours_faculte
-	WHERE facid='$fac'" ));
+	WHERE facid='".mysql_real_escape_string($fac)."'" ));
 	return $res[0];
 }
 
@@ -209,17 +209,17 @@ function expanded_faculte($fac_name, $facid, $uid) {
 	$usercourses = db_query("SELECT cours.code code_cours, cours.fake_code fake_code,
                                         cours.cours_id cours_id, statut
                                  FROM cours_user, cours
-                                 WHERE cours_user.cours_id = cours.cours_id AND user_id = ".$uid);
+                                 WHERE cours_user.cours_id = cours.cours_id AND user_id = ".mysql_real_escape_string($uid));
 	while ($row = mysql_fetch_array($usercourses)) {
 	 	$myCourses[$row['cours_id']] = $row;
 	}
 
 	$retString .= "<table width='99%' align='left'><tbody>
-                       <tr><td><a name='top'> </a>$langFaculty: <b>$fac_name</b>&nbsp;&nbsp;</td></tr>";
+                       <tr><td><a name='top'> </a>$langFaculty: <b>".htmlspecialchars($fac_name)."</b>&nbsp;&nbsp;</td></tr>";
 
 	// get the different course types available for this faculte
 	$typesresult = db_query("SELECT DISTINCT type FROM cours
-                                 WHERE cours.faculteid = '$facid' AND cours.visible <> 0
+                                 WHERE cours.faculteid = '".mysql_real_escape_string($facid)."' AND cours.visible <> 0
                                  ORDER BY cours.type");
 
 	// count the number of different types
@@ -262,8 +262,8 @@ function expanded_faculte($fac_name, $facid, $uid) {
                                         cours.password password
                                   FROM cours_faculte, cours
                                   WHERE cours.code = cours_faculte.code AND
-                                        cours.type = '$type' AND
-                                        cours_faculte.facid = '$facid' AND
+                                        cours.type = '".mysql_real_escape_string($type)."' AND
+                                        cours_faculte.facid = '".mysql_real_escape_string($facid)."' AND
                                         cours.visible <> '0'
                                   ORDER BY cours.intitule, cours.titulaires");
 
@@ -276,7 +276,7 @@ function expanded_faculte($fac_name, $facid, $uid) {
                         $retString .= "\n    <table width='99%'>";
                         $retString .= "\n    <tbody>";
                         $retString .= "\n    <tr>";
-                        $retString .= "\n      <td><a name='$type'></a><b>$message</b></td>";
+                        $retString .= "\n      <td><a name='".htmlspecialchars($type)."'></a><b>".htmlspecialchars($message)."</b></td>";
                         $retString .= "\n      <td align='right'><a href='#top'>$langBegin</a>&nbsp;</td>";
                         $retString .= "\n    </tr>";
                         $retString .= "\n    </tbody>";
@@ -286,7 +286,7 @@ function expanded_faculte($fac_name, $facid, $uid) {
                         $retString .= "\n    <table width='99%'>";
                         $retString .= "\n    <thead>";
                         $retString .= "\n    <tr>";
-                        $retString .= "\n      <td><a name='$type'></a><b>$message</b></td>";
+                        $retString .= "\n      <td><a name='".htmlspecialchars($type)."'></a><b>".htmlspecialchars($message)."</b></td>";
                         $retString .= "\n      <td>&nbsp;</td>";
                         $retString .= "\n    </tr>";
                         $retString .= "\n    </thead>";
@@ -298,7 +298,7 @@ function expanded_faculte($fac_name, $facid, $uid) {
                 $retString .= "\n  <tr>";
                 $retString .= "\n    <td>\n";
                 $retString .= "\n    <script type='text/javascript' src='sorttable.js'></script>";
-                $retString .= "\n    <table class='sortable' id='t1$type' width='100%'>";
+                $retString .= "\n    <table class='sortable' id='t1".htmlspecialchars($type)."' width='100%'>";
                 $retString .= "\n    <thead>";
                 $retString .= "\n    <tr>";
                 $retString .= "\n      <th width='10%'>$langRegistration</th>";
@@ -383,14 +383,14 @@ function collapsed_facultes_vert($fc) {
 		FROM cours, faculte
 		WHERE (cours.visible = '1' OR cours.visible = '2')
 			AND faculte.name = cours.faculte
-			AND faculte.id <> '$fc'
+			AND faculte.id <> '".mysql_real_escape_string($fc)."'
 		ORDER BY cours.faculte");
 
 	while ($fac = mysql_fetch_array($result)) {
-		$retString .= "<a href='?fc=$fac[id]' class='normal'>$fac[f]</a>";
+		$retString .= "<a href='?fc=".htmlspecialchars($fac[id])."' class='normal'>".htmlspecialchars($fac[f])."</a>";
 
 		$n = db_query("SELECT COUNT(*) FROM cours
-			WHERE cours.faculte='$fac[f]' AND cours.visible <> '0'");
+			WHERE cours.faculte='".mysql_real_escape_string($fac[f])."' AND cours.visible <> '0'");
                 $r = mysql_fetch_array($n);
                 $retString .= " <span style='font-size: 10pt'>($r[0] "
                         . ($r[0] == 1? $langAvLesson: $langAvCourses) . ")</span><br />\n";
@@ -440,7 +440,7 @@ function dep_selection($fc) {
 // check if a course is restricted
 function is_restricted($cours_id)
 {
-	$res = mysql_fetch_row(db_query("SELECT visible FROM cours WHERE cours_id = $cours_id"));
+	$res = mysql_fetch_row(db_query("SELECT visible FROM cours WHERE cours_id = ".mysql_real_escape_string($cours_id).""));
 	if ($res[0] == 0) {
 		return true;
 	} else {

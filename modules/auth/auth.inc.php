@@ -340,9 +340,9 @@ function auth_user_login ($auth, $test_username, $test_password)  {
 	    if($link) {
 		$db_ext = mysql_select_db($dbname,$link);
 		if($db_ext) {
-		    	$qry = "SELECT * FROM ".$dbname.".".$dbtable." 
-				WHERE ".$dbfielduser."='".mysql_real_escape_string($test_username)."' 
-				AND ".$dbfieldpass."='".mysql_real_escape_string($test_password)."'";
+		    	$qry = "SELECT * FROM ".mysql_real_escape_string($dbname).".".mysql_real_escape_string($dbtable)." 
+				WHERE ".mysql_real_escape_string($dbfielduser)."='".mysql_real_escape_string($test_username)."' 
+				AND ".mysql_real_escape_string($dbfieldpass)."='".mysql_real_escape_string($test_password)."'";
 		    	$res = mysql_query($qry,$link);
 		    	if($res) {
 				if(mysql_num_rows($res)>0) {
@@ -407,7 +407,7 @@ return $testauth (boolean: true-is authenticated, false-is not)
 function check_activity($userid)
 {
 	global $db;
-	$qry = "SELECT registered_at,expires_at FROM user WHERE user_id=".$userid;
+	$qry = "SELECT registered_at,expires_at FROM user WHERE user_id=".mysql_real_escape_string($userid);
 	$res = mysql_query($qry,$db);
 	if(($res) && (mysql_num_rows($res)==1))
 	{

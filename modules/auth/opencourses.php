@@ -47,7 +47,7 @@ if (!isset($fc)) {
 }
 // security check
 $fc = intval($fc);
-$fac = mysql_fetch_row(mysql_query("SELECT name FROM faculte WHERE id = " . $fc));
+$fac = mysql_fetch_row(mysql_query("SELECT name FROM faculte WHERE id = " . mysql_real_escape_string($fc)));
 if (!($fac = $fac[0])) {
     die("ERROR: no faculty with id $fc");
 }
@@ -69,7 +69,7 @@ $tool_content .= "
     <td><a name='top'>&nbsp;</a>$langFaculty:&nbsp;<b>$fac</b></td>
     <td><div align='right'>";
 // get the different course types available for this faculte
-$typesresult = db_query("SELECT DISTINCT cours.type types FROM cours WHERE cours.faculteid = $fc ORDER BY cours.type");
+$typesresult = db_query("SELECT DISTINCT cours.type types FROM cours WHERE cours.faculteid = ".mysql_real_escape_string($fc)." ORDER BY cours.type");
 // count the number of different types
 $numoftypes = mysql_num_rows($typesresult);;
 // output the nav bar only if we have more than 1 types of courses
@@ -112,8 +112,8 @@ foreach (array("pre" => $langpres,
 			cours.titulaires t
 			FROM cours_faculte, cours
 			WHERE cours.code = cours_faculte.code
-			AND cours.type = '$type'
-			AND cours_faculte.facid = '$fc'
+			AND cours.type = '".mysql_real_escape_string($type)."'
+			AND cours_faculte.facid = '".mysql_real_escape_string($fc)."'
 			ORDER BY cours.intitule, cours.titulaires");
 
     if (mysql_num_rows($result) == 0) {
@@ -125,10 +125,10 @@ foreach (array("pre" => $langpres,
   <tr>
     <td>";
     // We changed the style a bit here and we output types as the title
-    $tool_content .= "<a name='$type'>&nbsp;</a><b>$message</b></td>\n";
+    $tool_content .= "<a name='".htmlspecialchars($type)."'>&nbsp;</a><b>".htmlspecialchars($message)."</b></td>\n";
     // output a top href link if necessary
     if ($numoftypes > 1) {
-        $tool_content .= "\n<td align='right'><a href='#top' class='mainpage'>$m[begin]</a>&nbsp;</td>";
+        $tool_content .= "\n<td align='right'><a href='#top' class='mainpage'>".htmlspecialchars($m[begin])."</a>&nbsp;</td>";
         // or a space for beautifying reasons
     } else {
         $tool_content .= "    <td>&nbsp;</td>\n";
@@ -144,8 +144,8 @@ foreach (array("pre" => $langpres,
         <table width=100% class='sortable' id='t1'>
         <thead>
         <tr>
-            <th class='left' colspan='2'>$m[lessoncode]</th>
-            <th class='left' width='200'>$m[professor]</th>
+            <th class='left' colspan='2'>".htmlspecialchars($m[lessoncode])."</th>
+            <th class='left' width='200'>".htmlspecialchars($m[professor])."</th>
             <th width='30'>$langType</th>
         </tr>
         </thead>
@@ -154,9 +154,9 @@ foreach (array("pre" => $langpres,
     $k = 0;
     while ($mycours = mysql_fetch_array($result)) {
         if ($mycours['visible'] == 2) {
-            $codelink = "<a href='../../courses/$mycours[k]/'>$mycours[i]</a>&nbsp;<small>(" . $mycours['c'] . ")</small>";
+            $codelink = "<a href='../../courses/".htmlspecialchars($mycours[k])."/'>".htmlspecialchars($mycours[i])."</a>&nbsp;<small>(" . htmlspecialchars($mycours['c']) . ")</small>";
         } else {
-            $codelink = "$mycours[i]&nbsp;<small>(" . $mycours['c'] . ")</small>";
+            $codelink = "".htmlspecialchars($mycours[i])."&nbsp;<small>(" . htmlspecialchars($mycours['c']) . ")</small>";
         }
 
         if ($k % 2 == 0) {
@@ -166,7 +166,7 @@ foreach (array("pre" => $langpres,
         }
         $tool_content .= "\n          <td width='1%'><img style='border:0px;' src='${urlServer}/template/classic/img/arrow_grey.gif' title='bullet'></td>";
         $tool_content .= "\n          <td>" . $codelink . "</td>";
-        $tool_content .= "\n          <td><small>$mycours[t]</small></td>";
+        $tool_content .= "\n          <td><small>".htmlspecialchars($mycours[t])."</small></td>";
         $tool_content .= "\n          <td align='center'>";
         // show the necessary access icon
         foreach ($icons as $visible => $image) {
@@ -186,7 +186,7 @@ foreach (array("pre" => $langpres,
     $tool_content .= "\n        </tbody>\n        </table>\n        </td>\n    </tr>\n    </table>\n    <br />\n";
     if ($numoftypes == 0) {
         $tool_content .= "\n    <br/>";
-        $tool_content .= "\n    <br/>\n    <p class='alert1'>$m[nolessons]</p>";
+        $tool_content .= "\n    <br/>\n    <p class='alert1'>".htmlspecialchars($m[nolessons])."</p>";
     }
 }
 $tool_content .= "\n    <br>";

@@ -99,7 +99,7 @@ if (!isset($submit)) {
 		<td colspan='2'><select name='department'>";
 	$deps=mysql_query("SELECT name, id FROM faculte ORDER BY id");
 	while ($dep = mysql_fetch_array($deps)) {
-		$tool_content .= "\n<option value='".$dep[1]."'>".$dep[0]."</option>";
+		$tool_content .= "\n<option value='".htmlspecialchars($dep[1])."'>".htmlspecialchars($dep[0])."</option>";
 	}
 	$tool_content .= "\n</select>
 	</td>
@@ -201,15 +201,15 @@ if (!isset($submit)) {
 	// ALREADY ESCAPED MAGIC QUOTES
 	$q1 = "INSERT INTO `$mysqlMainDb`.user
 	(user_id, nom, prenom, username, password, email, statut, department, am, registered_at, expires_at, lang)
-	VALUES ('NULL', '.".mysql_real_escape_string($nom_form)."', 
+	VALUES ('NULL', '".mysql_real_escape_string($nom_form)."', 
 		'".mysql_real_escape_string($prenom_form)."', '".mysql_real_escape_string($uname)."', '".mysql_real_escape_string($password_encrypted)."', 
 		'".mysql_real_escape_string($email)."','5', 
 		'".mysql_real_escape_string($department)."','".mysql_real_escape_string($am)."',"
 		.mysql_real_escape_string($registered_at).",".mysql_real_escape_string($expires_at).",'".mysql_real_escape_string($lang)."')";
-	print($q1);
+	//print($q1);
 	$inscr_user = mysql_query($q1);
 	$last_id = mysql_insert_id();
-	$result=mysql_query("SELECT user_id, nom, prenom FROM `$mysqlMainDb`.user WHERE user_id='".mysql_real_escape_string($last_id)."'");
+	$result=mysql_query("SELECT user_id, nom, prenom FROM `".mysql_real_escape_string($mysqlMainDb)."`.user WHERE user_id='".mysql_real_escape_string($last_id)."'");
 	while ($myrow = mysql_fetch_array($result)) {
 		$uid=$myrow[0];
 		$nom=$myrow[1];
@@ -238,7 +238,7 @@ if (!isset($submit)) {
 		foreach ($registration_errors as $error) {
 			$tool_content .= "<p>$error</p>";
 		}
-		$tool_content .= "<p><a href='$_SERVER[PHP_SELF]?prenom_form=$_POST[prenom_form]&nom_form=$_POST[nom_form]&uname=$_POST[uname]&email=$_POST[email]&am=$_POST[am]'>$langAgain</a></p>" .
+		$tool_content .= "<p><a href='$_SERVER[PHP_SELF]?prenom_form=".htmlspecialchars($_POST[prenom_form])."&nom_form=".htmlspecialchars($_POST[nom_form])."&uname=".htmlspecialchars($_POST[uname])."&email=".htmlspecialchars($_POST[email])."&am=".htmlspecialchars($_POST[am])."'>".htmlspecialchars($langAgain)."</a></p>" .
 					"</td></tr></tbody></table><br /><br />";
 	}
 

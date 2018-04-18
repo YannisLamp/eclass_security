@@ -101,7 +101,7 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 		// DEN DOULEUEI KANEI ESCAPE ' " \ OPWS KAI NA XEI PREPARED STATEMENTS
 		// ALLA The only reliable way to prevent SQL injection is to use parameterized queries!!!!
 		$sqlLogin= "SELECT user_id, nom, username, password, prenom, statut, email, perso, lang
-			FROM user WHERE username='".escapeSimple($uname)."'";
+			FROM user WHERE username='".mysql_real_escape_string($uname)."'";
 		//print $sqlLogin;
 		$result = mysql_query($sqlLogin);
 		$check_passwords = array("pop3","imap","ldap","db");
@@ -158,7 +158,7 @@ if (isset($_SESSION['shib_uname'])) { // authenticate via shibboleth
 			$_SESSION['is_admin'] = $is_admin;
 			$_SESSION['uid'] = $uid;
 			mysql_query("INSERT INTO loginout (loginout.idLog, loginout.id_user, loginout.ip, loginout.when, loginout.action)
-			VALUES ('', '".escapeSimple($uid)."', '".escapeSimple($_SERVER[REMOTE_ADDR])."', NOW(), 'LOGIN')");
+			VALUES ('', '".mysql_real_escape_string($uid)."', '".mysql_real_escape_string($_SERVER[REMOTE_ADDR])."', NOW(), 'LOGIN')");
 		}
 	
 		##[BEGIN personalisation modification]############
@@ -211,7 +211,7 @@ if (isset($uid) AND !isset($logout)) {
 			//if the user is a guest send him straight to the corresponding lesson
 			$guestSQL = db_query("SELECT code FROM cours_user, cours
 				              WHERE cours.cours_id = cours_user.cours_id AND
-                                                    user_id = ".escapeSimple($uid)."", $mysqlMainDb);
+                                                    user_id = ".mysql_real_escape_string($uid)."", $mysqlMainDb);
 			if (mysql_num_rows($guestSQL) > 0) {
 				$sql_row = mysql_fetch_row($guestSQL);
 				$dbname=$sql_row[0];
@@ -237,7 +237,7 @@ elseif ((isset($logout) && isset($uid)) OR (1==1)) {
 	if (isset($logout) && isset($uid)) {
 		mysql_query("INSERT INTO loginout (loginout.idLog, loginout.id_user,
 			loginout.ip, loginout.when, loginout.action)
-			VALUES ('', '".escapeSimple($uid)."', '".escapeSimple($REMOTE_ADDR)."', NOW(), 'LOGOUT')");
+			VALUES ('', '".mysql_real_escape_string($uid)."', '".mysql_real_escape_string($REMOTE_ADDR)."', NOW(), 'LOGOUT')");
 		unset($prenom);
 		unset($nom);
 		unset($statut);

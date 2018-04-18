@@ -81,7 +81,7 @@ if (!isset($submit)) {
         $deps=mysql_query("SELECT id, name FROM faculte order by id");
         while ($dep = mysql_fetch_array($deps))
         {
-        	$tool_content .= "<option value='$dep[id]'>$dep[name]</option>\n";
+        	$tool_content .= "<option value='".htmlspecialchars($dep[id])."'>".htmlspecialchars($dep[name])."</option>\n";
         }
         $tool_content .= "</select>
     </td>
@@ -140,18 +140,18 @@ $registration_errors = array();
                     }
             }
 
-            db_query('INSERT INTO prof_request SET
-                                profname = ' . autoquote(escapeSimple($prenom_form)). ',
-                                profsurname = ' . autoquote(escapeSimple($nom_form)). ',
-                                profuname = ' . autoquote(escapeSimple($uname)). ',
-                                profemail = ' . autoquote(escapeSimple($email_form)). ',
-                                proftmima = ' . autoquote(escapeSimple($department)). ',
-                                profcomm = ' . autoquote(escapeSimple($userphone)). ',
+            db_query("INSERT INTO prof_request SET
+                                profname = '" . mysql_real_escape_string($prenom_form). "',
+                                profsurname = '" . mysql_real_escape_string($nom_form). "',
+                                profuname = '" . mysql_real_escape_string($uname). "',
+                                profemail = '" . mysql_real_escape_string($email_form). "',
+                                proftmima = '" . mysql_real_escape_string($department). "',
+                                profcomm = '" . mysql_real_escape_string($userphone). "',
                                 status = 1,
                                 statut = 1,
                                 date_open = NOW(),
-                                comment = ' . autoquote(escapeSimple($usercomment)). ',
-                                lang = ' . autoquote($proflang),
+                                comment = '" . mysql_real_escape_string($usercomment). "',
+                                lang = '" . mysql_real_escape_string($proflang). "'",
                      $mysqlMainDb);
 
             //----------------------------- Email Message --------------------------
@@ -166,7 +166,7 @@ $registration_errors = array();
                     $tool_content .= "<table width='99%'>
                             <tbody><tr>
                             <td class='caution' height='60'>
-                            <p>$langMailErrorMessage &nbsp; <a href='mailto:$emailhelpdesk'>$emailhelpdesk</a></p>
+                            <p>$langMailErrorMessage &nbsp; <a href='mailto:$emailhelpdesk'>".htmlspecialchars($emailhelpdesk)."</a></p>
                             </td>
                             </tr></tbody></table>";
                     draw($tool_content,0);
@@ -177,7 +177,7 @@ $registration_errors = array();
             $tool_content .= "<table width='99%'><tbody>
                     <tr>
                     <td class='well-done' height='60'>
-                    <p>$langDearProf</p><p>$success</p><p>$infoprof</p>
+                    <p>$langDearProf</p><p>$success</p><p>".htmlspecialchars($infoprof)."</p>
                     <p><a href='$urlServer'>$langBack</a></p>
                     </td>
                     </tr></tbody></table>";
@@ -187,9 +187,9 @@ $registration_errors = array();
             $tool_content .= "<table width='99%'><tbody><tr>" .
                               "<td class='caution' height='60'>";
                 foreach ($registration_errors as $error) {
-                        $tool_content .= "<p>$error</p>";
+                        $tool_content .= "<p>".htmlspecialchars($error)."</p>";
                 }
-	       $tool_content .= "<p><a href='$_SERVER[PHP_SELF]?prenom_form=$_POST[prenom_form]&amp;nom_form=$_POST[nom_form]&amp;userphone=$_POST[userphone]&amp;uname=$_POST[uname]&amp;email_form=$_POST[email_form]&amp;usercomment=$_POST[usercomment]'>$langAgain</a></p>" .
+	       $tool_content .= "<p><a href='$_SERVER[PHP_SELF]?prenom_form=".htmlspecialchars($_POST[prenom_form])."&amp;nom_form=".htmlspecialchars($_POST[nom_form])."&amp;userphone=".htmlspecialchars($_POST[userphone])."&amp;uname=".htmlspecialchars($_POST[uname])."&amp;email_form=".htmlspecialchars($_POST[email_form])."&amp;usercomment=".htmlspecialchars($_POST[usercomment])."'>".htmlspecialchars($langAgain)."</a></p>" .
                 "</td></tr></tbody></table><br /><br />";
 	}
 

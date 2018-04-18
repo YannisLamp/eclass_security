@@ -72,14 +72,14 @@ if ($all_set) {
                         (profname, profsurname, profuname, profemail,
                          proftmima, profcomm, status, date_open,
                          comment, lang, statut)
-                  VALUES (".
-                  autoquote($name) .', '.
-                  autoquote($surname) .', '.
-                  autoquote($username) .', '.
-                  autoquote($usermail) .', '.
-                  intval($department) .', '.
-                  autoquote($userphone) .', 1, NOW(), '.
-                  autoquote($usercomment) .", '$lang', 5)");
+                  VALUES ('".
+                  mysql_real_escape_string($name) ."', '".
+                  mysql_real_escape_string($surname) ."', '".
+                  mysql_real_escape_string($username) ."', '".
+                  mysql_real_escape_string($usermail) ."', '".
+                  intval($department) ."', '".
+                  mysql_real_escape_string($userphone) ."', 1, NOW(), '".
+                  mysql_real_escape_string($usercomment) .", '$lang', 5)");
 
         //----------------------------- Email Message --------------------------
         $department = find_faculty_by_id($department);
@@ -92,14 +92,14 @@ if ($all_set) {
         if (!send_mail('', $emailhelpdesk, '', $emailhelpdesk, $mailsubject2, $MailMessage, $charset)) {
                 $tool_content .= "<table width='99%'><tbody><tr>
                         <td class='caution' height='60'>
-                        <p>$langMailErrorMessage&nbsp; <a href='mailto:$emailhelpdesk' class='mainpage'>$emailhelpdesk</a>.</p>
+                        <p>$langMailErrorMessage&nbsp; <a href='mailto:$emailhelpdesk' class='mainpage'>".htmlspecialchars($emailhelpdesk)."</a>.</p>
                         </td>
                         </tr></tbody></table><br /><br />";
         }
 
         // User Message
-        $tool_content .= "<div class='well-done'><p>$langDearUser!</p><p>$success</p></div>
-                <p>$infoprof</p><p>$click <a href='$urlServer' class='mainpage'>$langHere</a> $langBackPage</p>";
+        $tool_content .= "<div class='well-done'><p>$langDearUser!</p><p>".htmlspecialchars($success)."</p></div>
+                <p>".htmlspecialchars($infoprof)."</p><p>".htmlspecialchars($click)." <a href='$urlServer' class='mainpage'>$langHere</a> $langBackPage</p>";
 
         draw($tool_content, 0);
         exit();
@@ -118,30 +118,30 @@ if ($all_set) {
   <thead>
   <tr>
     <th class='left' width='220'>$langName</th>
-    <td><input type='text' name='name' value='$name' class='FormData_InputText' size='33' />&nbsp;&nbsp;<small>(*)</small></td>
+    <td><input type='text' name='name' value='".htmlspecialchars($name)."' class='FormData_InputText' size='33' />&nbsp;&nbsp;<small>(*)</small></td>
   </tr>
   <tr>
     <th class='left'>$langSurname</th>
-    <td><input type='text' name='surname' value='$surname' class='FormData_InputText' size='33' />&nbsp;&nbsp;<small>(*)</small></td>
+    <td><input type='text' name='surname' value='".htmlspecialchars($surname)."' class='FormData_InputText' size='33' />&nbsp;&nbsp;<small>(*)</small></td>
   </tr>
   <tr>
     <th class='left'>$langPhone</th>
-    <td colspan='2'><input type='text' name='userphone' value='$userphone' class='FormData_InputText' size='33' /></td>
+    <td colspan='2'><input type='text' name='userphone' value='".htmlspecialchars($userphone)."' class='FormData_InputText' size='33' /></td>
   <tr>
     <th class='left'>$langUsername</th>
-    <td><input type='text' name='username' size='33' maxlength='20' value='$username' class='FormData_InputText' />&nbsp;&nbsp;<small>(*)&nbsp;$langUserNotice</small></td>
+    <td><input type='text' name='username' size='33' maxlength='20' value='".htmlspecialchars($username)."' class='FormData_InputText' />&nbsp;&nbsp;<small>(*)&nbsp;$langUserNotice</small></td>
   </tr>
   <tr>
     <th class='left'>$langProfEmail</th>
-    <td><input type='text' name='usermail' value='$usermail' class='FormData_InputText' size='33' />&nbsp;&nbsp;<small>(*)</small></td>
+    <td><input type='text' name='usermail' value='".htmlspecialchars($usermail)."' class='FormData_InputText' size='33' />&nbsp;&nbsp;<small>(*)</small></td>
   </tr>
   <tr>
     <th class='left'>$langAm</th>
-    <td colspan='2'><input type='text' name='am' value='$am' class='FormData_InputText' size='33' /></td>
+    <td colspan='2'><input type='text' name='am' value='".htmlspecialchars($am)."' class='FormData_InputText' size='33' /></td>
   </tr>
   <tr>
-    <th class='left'>$langComments<br /><small>$profreason</small></th>
-    <td><textarea name='usercomment' cols='30' rows='4' class='FormData_InputText'>$usercomment</textarea>&nbsp;&nbsp;<small>(*)</small></td>
+    <th class='left'>$langComments<br /><small>".htmlspecialchars($profreason)."</small></th>
+    <td><textarea name='usercomment' cols='30' rows='4' class='FormData_InputText'>".htmlspecialchars($usercomment)."</textarea>&nbsp;&nbsp;<small>(*)</small></td>
   </tr>
   <tr>
     <th class='left'>$langFaculty&nbsp;</th>
@@ -154,7 +154,7 @@ if ($all_set) {
                 } else {
                         $selected = '';
                 }
-                $tool_content .= "\n<option value='$dep[id]'$selected>$dep[name]</option>\n";
+                $tool_content .= "\n<option value='".htmlspecialchars($dep[id])."'$selected>".htmlspecialchars($dep[name])."</option>\n";
         }
 
 	 $tool_content .= "\n</select>

@@ -55,7 +55,7 @@ $userid = isset($_GET['userid'])?$_GET['userid']:(isset($_POST['id'])?$_POST['id
 $submit = isset($_POST['submit'])?$_POST['submit']:'';
 if(!empty($userid))
 {
-	$sql=mysql_query("SELECT * FROM user WHERE user_id='".$userid."'");
+	$sql=mysql_query("SELECT * FROM user WHERE user_id='".mysql_real_escape_string($userid)."'");
 	while ($m = mysql_fetch_array($sql)) 
 	{
 		$sirname = $m["nom"];
@@ -77,7 +77,7 @@ if(!empty($userid))
 		Σχόλια: $body";
 		if (!send_mail('', '', '', $to,	$emailsubject, $emailbody, $charset)) 
 		{
-				$tool_content .= "<h4>'$langEmailNotSend' '$to'!</h4>";
+				$tool_content .= "<h4>'$langEmailNotSend' '".htmlspecialchars($to)."'!</h4>";
 		}
 		else
 		{
@@ -87,17 +87,17 @@ if(!empty($userid))
 	}
 	else
 	{
-		$tool_content .= "<form action=\"./contactadmin.php?userid=".$userid."\" method=\"post\">
+		$tool_content .= "<form action=\"./contactadmin.php?userid=".htmlspecialchars($userid)."\" method=\"post\">
 	<table width=\"99%\"><caption>$langForm</caption><tbody>";
-		$tool_content .= "<tr><td width=\"3%\" nowrap valign=\"top\"><b>$langName:</b></td><td>".$firstname."</td></tr>";	
-		$tool_content .= "<tr><td width=\"3%\" nowrap valign=\"top\"><b>$langSurname:</b></td><td>".$sirname."</td></tr>";	
-		$tool_content .= "<tr><td width=\"3%\" nowrap valign=\"top\"><b>Email:</b></td><td>".$email."</td></tr>";
+		$tool_content .= "<tr><td width=\"3%\" nowrap valign=\"top\"><b>$langName:</b></td><td>".htmlspecialchars($firstname)."</td></tr>";	
+		$tool_content .= "<tr><td width=\"3%\" nowrap valign=\"top\"><b>$langSurname:</b></td><td>".htmlspecialchars($sirname)."</td></tr>";	
+		$tool_content .= "<tr><td width=\"3%\" nowrap valign=\"top\"><b>Email:</b></td><td>".htmlspecialchars($email)."</td></tr>";
 		$tool_content .= "<tr><td width=\"3%\" nowrap valign=\"top\"><b>$langComments:</b></td><td><textarea rows=\"6\" cols=\"40\" name=\"body\">
 		$langActivateAccount
 		</textarea></td></tr>";
 		$tool_content .= "<tr><td width=\"3%\" nowrap valign=\"top\">&nbsp;</td><td>
 		<input type=\"submit\" name=\"submit\" value=\"".$langSend."\">
-		<input type=\"hidden\" name=\"userid\" value=\"".$userid."\"</td></tr>";
+		<input type=\"hidden\" name=\"userid\" value=\"".htmlspecialchars($userid)."\"</td></tr>";
 		$tool_content .= "</tbody></table></form>";
 	}
 	
