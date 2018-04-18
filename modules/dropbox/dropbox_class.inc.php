@@ -111,12 +111,12 @@ class Dropbox_Work {
 		$this->isOldWork = FALSE;
 		if ($GLOBALS['language'] == 'greek') {
 			$sql="SELECT id, DATE_FORMAT(uploadDate, '%d-%m-%Y / %H:%i')
-				FROM `".$dropbox_cnf["fileTbl"]."` 
-				WHERE filename = '".addslashes($this->filename)."'";
+				FROM `".mysql_real_escape_string($dropbox_cnf["fileTbl"])."` 
+				WHERE filename = '".mysql_real_escape_string($this->filename)."'";
 		} else {
 			$sql="SELECT id, DATE_FORMAT(uploadDate, '%Y-%m-d% / %H:%i')
-				FROM `".$dropbox_cnf["fileTbl"]."` 
-				WHERE filename = '".addslashes($this->filename)."'";
+				FROM `".mysql_real_escape_string($dropbox_cnf["fileTbl"])."` 
+				WHERE filename = '".mysql_real_escape_string($this->filename)."'";
 		}
         	$result = db_query($sql,$currentCourseID);
 		$res = mysql_fetch_array($result);
@@ -128,26 +128,26 @@ class Dropbox_Work {
 		if ($this->isOldWork) {
 			$this->id = $res["id"];
 			$this->uploadDate = $res["uploadDate"];
-		    $sql = "UPDATE `".$dropbox_cnf["fileTbl"]."`
-					SET filesize = '".addslashes($this->filesize)."'
-					, title = '".addslashes($this->title)."'
-					, description = '".addslashes($this->description)."'
-					, author = '".addslashes($this->author)."'
-					, lastUploadDate = '".addslashes($this->lastUploadDate)."'
-					WHERE id='".addslashes($this->id)."'";
+		    $sql = "UPDATE `".mysql_real_escape_string($dropbox_cnf["fileTbl"])."`
+					SET filesize = '".mysql_real_escape_string($this->filesize)."'
+					, title = '".mysql_real_escape_string($this->title)."'
+					, description = '".mysql_real_escape_string($this->description)."'
+					, author = '".mysql_real_escape_string($this->author)."'
+					, lastUploadDate = '".mysql_real_escape_string($this->lastUploadDate)."'
+					WHERE id='".mysql_real_escape_string($this->id)."'";
 			$result = db_query($sql);
 		} else {
 			$this->uploadDate = $this->lastUploadDate;
-			$sql="INSERT INTO `".$dropbox_cnf["fileTbl"]."` 
+			$sql="INSERT INTO `".mysql_real_escape_string($dropbox_cnf["fileTbl"])."` 
 				(uploaderId, filename, filesize, title, description, author, uploadDate, lastUploadDate)
-				VALUES ('".addslashes($this->uploaderId)."'
-						, '".addslashes($this->filename)."'
-						, '".addslashes($this->filesize)."'
-						, '".addslashes($this->title)."'
-						, '".addslashes($this->description)."'
-						, '".addslashes($this->author)."'
-						, '".addslashes($this->uploadDate)."'
-						, '".addslashes($this->lastUploadDate)."'
+				VALUES ('".mysql_real_escape_string($this->uploaderId)."'
+						, '".mysql_real_escape_string($this->filename)."'
+						, '".mysql_real_escape_string($this->filesize)."'
+						, '".mysql_real_escape_string($this->title)."'
+						, '".mysql_real_escape_string($this->description)."'
+						, '".mysql_real_escape_string($this->author)."'
+						, '".mysql_real_escape_string($this->uploadDate)."'
+						, '".mysql_real_escape_string($this->lastUploadDate)."'
 						)";
 
         	$result = db_query($sql);		
@@ -158,10 +158,10 @@ class Dropbox_Work {
 		/*
 		* insert entries into person table
 		*/
-		$sql="INSERT INTO `".$dropbox_cnf["personTbl"]."` 
+		$sql="INSERT INTO `".mysql_real_escape_string($dropbox_cnf["personTbl"])."` 
 				(fileId, personId)
-				VALUES ('".addslashes($this->id)."'
-						, '".addslashes($this->uploaderId)."'
+				VALUES ('".mysql_real_escape_string($this->id)."'
+						, '".mysql_real_escape_string($this->uploaderId)."'
 						)";
         $result = db_query($sql);	//if work already exists no error is generated
 	}
@@ -184,14 +184,14 @@ class Dropbox_Work {
 		$sql="SELECT uploaderId, filename, filesize, title, description, author,
 			DATE_FORMAT(uploadDate, '%d-%m-%Y / %H:%i') AS uploadDate, 
 			DATE_FORMAT(lastUploadDate, '%d-%m-%Y / %H:%i') AS lastUploadDate
-			FROM `".$dropbox_cnf["fileTbl"]."`
-			WHERE id='".addslashes($id)."'";
+			FROM `".mysql_real_escape_string($dropbox_cnf["fileTbl"])."`
+			WHERE id='".mysql_real_escape_string($id)."'";
 	} else {
 		$sql="SELECT uploaderId, filename, filesize, title, description, author,
 			DATE_FORMAT(uploadDate, '%Y-%m-%d / %H:%i') AS uploadDate, 
 			DATE_FORMAT(lastUploadDate, '%Y-%m-%d / %H:%i') AS lastUploadDate
-			FROM `".$dropbox_cnf["fileTbl"]."`
-			WHERE id='".addslashes($id)."'";
+			FROM `".mysql_real_escape_string($dropbox_cnf["fileTbl"]."`
+			WHERE id='".mysql_real_escape_string($id)."'";
 	}
 	        $result = db_query($sql, $currentCourseID);
 		$res = mysql_fetch_array($result);;
@@ -280,14 +280,14 @@ class Dropbox_SentWork extends Dropbox_Work {
 		* insert data in dropbox_post and dropbox_person table for each recipient
 		*/
 		foreach ($this->recipients as $rec) {	
-			$sql="INSERT INTO `".$dropbox_cnf["postTbl"]."` 
+			$sql="INSERT INTO `".mysql_real_escape_string($dropbox_cnf["postTbl"])."` 
 				(fileId, recipientId)
-				VALUES ('".addslashes($this->id)."', '".addslashes($rec["id"])."')";
+				VALUES ('".mysql_real_escape_string($this->id)."', '".mysql_real_escape_string($rec["id"])."')";
 	        $result = db_query($sql,$currentCourseID);	//if work already exists no error is generated
 						
 			//insert entries into person table
-			$sql="INSERT INTO `".$dropbox_cnf["personTbl"]."` (fileId, personId)
-				VALUES ('".addslashes($this->id)."', '".addslashes($rec["id"])."')";
+			$sql="INSERT INTO `".mysql_real_escape_string($dropbox_cnf["personTbl"])."` (fileId, personId)
+				VALUES ('".mysql_real_escape_string($this->id)."', '".mysql_real_escape_string($rec["id"])."')";
         	// RH: do not add recipient in person table if mailing zip or just upload
 			if (!$justSubmit) $result = db_query($sql);	//if work already exists no error is generated
 		}
@@ -315,8 +315,8 @@ class Dropbox_SentWork extends Dropbox_Work {
 		*/
 		$this->recipients = array();
 		$sql="SELECT recipientId
-				FROM `".$dropbox_cnf["postTbl"]."`
-				WHERE fileId='".addslashes($id)."'";
+				FROM `".mysql_real_escape_string($dropbox_cnf["postTbl"])."`
+				WHERE fileId='".mysql_real_escape_string($id)."'";
 	        $result = db_query($sql,$currentCourseID);
 		while ($res = mysql_fetch_array($result)) {
 			/*
@@ -363,9 +363,9 @@ class Dropbox_Person {
 		* find all entries where this person is the recipient 
 		*/
 		$sql = "SELECT r.fileId FROM 
-				`".$dropbox_cnf["postTbl"]."` r
-				, `".$dropbox_cnf["personTbl"]."` p
-				WHERE r.recipientId = '".addslashes($this->userId)."' 
+				`".mysql_real_escape_string($dropbox_cnf["postTbl"])."` r
+				, `".mysql_real_escape_string($dropbox_cnf["personTbl"])."` p
+				WHERE r.recipientId = '".mysql_real_escape_string($this->userId)."' 
 					AND r.recipientId = p.personId
 					AND r.fileId = p.fileId";
         	$result = db_query($sql, $currentCourseID);
@@ -376,8 +376,8 @@ class Dropbox_Person {
 		/*
 		* find all entries where this person is the sender/uploader
 		*/
-		$sql = "SELECT f.id FROM `".$dropbox_cnf["fileTbl"]."` f, `".$dropbox_cnf["personTbl"]."` p 
-				WHERE f.uploaderId = '".addslashes($this->userId)."'
+		$sql = "SELECT f.id FROM `".mysql_real_escape_string($dropbox_cnf["fileTbl"])."` f, `".mysql_real_escape_string($dropbox_cnf["personTbl"])."` p 
+				WHERE f.uploaderId = '".mysql_real_escape_string($this->userId)."'
 				AND f.uploaderId = p.personId
 				AND f.id = p.fileId";
         $result = db_query($sql, $currentCourseID);
@@ -481,8 +481,8 @@ class Dropbox_Person {
 	
 		//delete entries in person table concerning received works
 		foreach ($this->receivedWork as $w) {
-			db_query("DELETE FROM `".$dropbox_cnf["personTbl"]."` 
-				WHERE personId='".$this->userId."' AND fileId='".$w->id."'", $currentCourseID);
+			db_query("DELETE FROM `".mysql_real_escape_string($dropbox_cnf["personTbl"])."` 
+				WHERE personId='".mysql_real_escape_string($this->userId)."' AND fileId='".mysql_real_escape_string($w->id)."'", $currentCourseID);
 		}
 		removeUnusedFiles();	//check for unused files
 
@@ -504,8 +504,8 @@ class Dropbox_Person {
 		if (! $found) die($dropbox_lang["generalError"]);
 		
 		//delete entries in person table concerning received works
-		db_query("DELETE FROM `".$dropbox_cnf["personTbl"]."` 
-			WHERE personId='".$this->userId."' AND fileId='".$id."'", $currentCourseID);
+		db_query("DELETE FROM `".mysql_real_escape_string($dropbox_cnf["personTbl"])."` 
+			WHERE personId='".mysql_real_escape_string($this->userId)."' AND fileId='".mysql_real_escape_string($id)."'", $currentCourseID);
 		
 		removeUnusedFiles();	//check for unused files
 	}
@@ -518,8 +518,8 @@ class Dropbox_Person {
 	
 		//delete entries in person table concerning sent works
 		foreach ($this->sentWork as $w) {
-			db_query("DELETE FROM `".$dropbox_cnf["personTbl"]."` 
-				WHERE personId='".$this->userId."' AND fileId='".$w->id."'", $currentCourseID);
+			db_query("DELETE FROM `".mysql_real_escape_string($dropbox_cnf["personTbl"])."` 
+				WHERE personId='".mysql_real_escape_string($this->userId)."' AND fileId='".mysql_real_escape_string($w->id)."'", $currentCourseID);
 			removeMoreIfMailing($w->id);  // RH: Mailing: see init1
 		}		
 		removeUnusedFiles();	//check for unused files
@@ -542,8 +542,8 @@ class Dropbox_Person {
 		if (!$found) die($dropbox_lang["generalError"]);
 		
 		//delete entries in person table concerning sent works
-		db_query("DELETE FROM `".$dropbox_cnf["personTbl"]."` 
-				WHERE personId='".$this->userId."' AND fileId='".$id."'", $currentCourseID);
+		db_query("DELETE FROM `".mysql_real_escape_string($dropbox_cnf["personTbl"])."` 
+				WHERE personId='".mysql_real_escape_string($this->userId)."' AND fileId='".mysql_real_escape_string($id)."'", $currentCourseID);
 		
 		removeMoreIfMailing($id);  // RH: Mailing: see init1
 		removeUnusedFiles();	//check for unused files

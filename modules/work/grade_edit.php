@@ -56,7 +56,7 @@ if ($is_adminOfCourse and isset($_GET['assignment']) and isset($_GET['submission
 // Returns an array of the details of assignment $id
 function get_assignment_details($id)
 {
-	return mysql_fetch_array(db_query("SELECT * FROM assignments WHERE id = '$id'"));
+	return mysql_fetch_array(db_query("SELECT * FROM assignments WHERE id = '".mysql_real_escape_string($id)."'"));
 }
 
 
@@ -66,61 +66,63 @@ function show_edit_form($id, $sid, $assign)
 {
 	global $m, $langGradeOk, $tool_content, $langGradeWork;
 
-	if ($sub = mysql_fetch_array(db_query("SELECT * FROM assignment_submit WHERE id = '$sid'"))) {
+	if ($sub = mysql_fetch_array(db_query("SELECT * FROM assignment_submit WHERE id = '".mysql_real_escape_string($sid)."'"))) {
 		
 		$uid_2_name = uid_to_name($sub['uid']);
 		if (!empty($sub['group_id'])) {
 					$group_submission = "($m[groupsubmit] ".
-						"<a href='../group/group_space.php?userGroupId=$sub[group_id]'>".
-						"$m[ofgroup] $sub[group_id]</a>)";
+						"<a href='../group/group_space.php?userGroupId=".htmlspecialchars($sub[group_id])."'>".
+						htmlspecialchars($m[ofgroup]). htmlspecialchars($sub[group_id])."</a>)";
 			} else $group_submission = "";
-		$tool_content .= <<<cData
+    $tool_content .= ' 
+    //<<<cData
 
     <form method="post" action="work.php">
-    <input type="hidden" name="assignment" value="${id}">
-    <input type="hidden" name="submission" value="${sid}">
+    <input type="hidden" name="assignment" value="'.htmlspecialchars(${id}).'">
+    <input type="hidden" name="submission" value="'.htmlspecialchars(${sid}).'">
 
     <table width="99%" class="FormData">
     <tbody>
     <tr>
       <th width="220">&nbsp;</th>
-       <td><b>$m[addgradecomments]</b></td>
+       <td><b>'.htmlspecialchars($m[addgradecomments]).'</b></td>
     </tr>
     <tr>
-      <th class="left">${m['username']}:</th>
-      <td>${uid_2_name} $group_submission</td></tr>
+      <th class="left">'htmlspecialchars(${m['username']}).':</th>
+      <td>'.htmlspecialchars(${uid_2_name}). htmlspecialchars($group_submission).'</td></tr>
     <tr>
-      <th class="left">${m['sub_date']}:</th>
-      <td>${sub['submission_date']}</td></tr>
+      <th class="left">'.htmlspecialchars(${m['sub_date']}).':</th>
+      <td>'.htmlspecialchars(${sub['submission_date']}).'</td></tr>
     <tr>
-      <th class="left">${m['filename']}:</th>
-      <td><a href='work.php?get=${sub['id']}'>${sub['file_name']}</a></td>
-    </tr>
-cData;
+      <th class="left">'.htmlspecialchars(${m['filename']}).':</th>
+      <td><a href=\'work.php?get='.htmlspecialchars(${sub['id']}).'\'>'.htmlspecialchars(${sub['file_name']}).'</a></td>
+    </tr>';
+//cData;
 
-	$tool_content .= <<<cData
+  $tool_content .=  '
+  //<<<cData
 
     <tr>
-      <th class="left">${m['grade']}:</th>
-      <td><input type="text" name="grade" maxlength="3" size="3" value="${sub['grade']}" class="FormData_InputText"></td>
+      <th class='.htmlspecialchars("left").'>'.htmlspecialchars(${m['grade']}).':</th>
+      <td><input type="text" name="grade" maxlength="3" size="3" value="'.htmlspecialchars(${sub['grade']}).'" class="FormData_InputText"></td>
     </tr>
     <tr>
-      <th class="left">${m['gradecomments']}:</th>
-      <td><textarea cols="60" rows="3" name="comments" class="FormData_InputText">${sub['grade_comments']}</textarea></td>
+      <th class="left">'.htmlspecialchars(${m['gradecomments']}).':</th>
+      <td><textarea cols="60" rows="3" name="comments" class="FormData_InputText">'.htmlspecialchars(${sub['grade_comments']}).'</textarea></td>
     </tr>
     <tr>
       <th class="left">&nbsp;</th>
-      <td><input type="submit" name="grade_comments" value="${langGradeOk}"></td>
+      <td><input type="submit" name="grade_comments" value="'.htmlspecialchars(${langGradeOk}).'"></td>
     </tr>
     </tbody>
     </table>
 
     </form>
-    <br/>
-cData;
+    <br/>';
+//cData;
 
 	} else {
-		$tool_content .= "<p>error - no such submission with id $sid</p>\n";
+		$tool_content .= "<p>error - no such submission with id ".htmlspecialchars($sid)."</p>\n";
 	}
 }
 

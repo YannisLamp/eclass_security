@@ -206,14 +206,14 @@ if (!isset( $_POST['authors']) || !isset( $_POST['description']))
 	} //end if(!$error)
 
 	if (!$error) {
-		$tool_content .= "<p class=\"success_small\">".$dropbox_lang["docAdd"]."<br />
-		<a href='index.php'>".$dropbox_lang['backList']."</a></p><br/>";
+		$tool_content .= "<p class=\"success_small\">".htmlspecialchars($dropbox_lang["docAdd"])."<br />
+		<a href='index.php'>".htmlspecialchars($dropbox_lang['backList'])."</a></p><br/>";
 	}
 	else
 	{
-		$tool_content .= "<p class=\"caution_small\">".$errormsg."<br />
-		<a href='index.php'>".$dropbox_lang['backList']."</a><br/>";
-		$tool_content .=  "<b><font color='#FF0000'>".$errormsg."</font></b><br><br>";
+		$tool_content .= "<p class=\"caution_small\">".htmlspecialchars($errormsg)."<br />
+		<a href='index.php'>".htmlspecialchars($dropbox_lang['backList'])."</a><br/>";
+		$tool_content .=  "<b><font color='#FF0000'>".htmlspecialchars($errormsg)."</font></b><br><br>";
 	}
 }
 
@@ -234,7 +234,7 @@ if (isset($_GET['mailingIndex']))  // examine or send
 	$mailing_item = $dropbox_person->sentWork[$i];
 	$mailing_title = $mailing_item->title;
 	$mailing_file = $dropbox_cnf["sysPath"] . '/' . $mailing_item->filename;
-	$errormsg = '<b>' . $mailing_item->recipients[0]['name'] . ' ('
+	$errormsg = '<b>' . htmlspecialchars($mailing_item->recipients[0]['name']) . ' ('
 	. "<a href='dropbox_download.php?id=".urlencode($mailing_item->id)."'>'"
 	. $mailing_title . '</a>):</b><br><br>';
 
@@ -242,10 +242,10 @@ if (isset($_GET['mailingIndex']))  // examine or send
 	{
 		$var = strtoupper($nameParts[2]);  // the variable part of the name
 		$sel = "SELECT u.user_id, u.nom, u.prenom, cu.statut
-				FROM `".$mysqlMainDb."`.`user` u
-				LEFT JOIN `".$mysqlMainDb."`.`cours_user` cu
-				ON cu.user_id = u.user_id AND cu.cours_id = $cours_id";
-		$sel .= " WHERE u.".$dropbox_cnf["mailingWhere".$var]." = '";
+				FROM `".mysql_real_escape_string($mysqlMainDb)."`.`user` u
+				LEFT JOIN `".mysql_real_escape_string($mysqlMainDb)."`.`cours_user` cu
+				ON cu.user_id = u.user_id AND cu.cours_id = ".mysql_real_escape_string($cours_id)."";
+		$sel .= " WHERE u.".mysql_real_escape_string($dropbox_cnf["mailingWhere".$var])." = '";
 
 		function getUser($thisRecip)
 		{
@@ -358,17 +358,17 @@ if (isset($_GET['mailingIndex']))  // examine or send
 				{
 					if (isset( $_GET['mailingSend']))
 					{
-						$errormsg .= $dropbox_lang["mailingFileSentTo"];
+						$errormsg .= htmlspecialchars($dropbox_lang["mailingFileSentTo"]);
 					}
 					else
 					{
-						$errormsg .= $dropbox_lang["mailingFileIsFor"];
+						$errormsg .= htmlspecialchars($dropbox_lang["mailingFileIsFor"]);
 					}
 					$errormsg .= htmlspecialchars($thisRecip[1].' '.$thisRecip[2]);
 
 					if ( is_null($thisRecip[3]))
 					{
-						$errormsg .= $dropbox_lang["mailingFileNotRegistered"];
+						$errormsg .= htmlspecialchars($dropbox_lang["mailingFileNotRegistered"]);
 					}
 					else
 					{
@@ -382,11 +382,11 @@ if (isset($_GET['mailingIndex']))  // examine or send
 			// find student course members not among the recipients
 
 			$sql = "SELECT u.nom, u.prenom
-					FROM `".$mysqlMainDb."`.`cours_user` cu
-					LEFT JOIN  `".$mysqlMainDb."`.`user` u
-					ON cu.user_id = u.user_id AND cu.cours_id = $cours_id
+					FROM `".mysql_real_escape_string($mysqlMainDb)."`.`cours_user` cu
+					LEFT JOIN  `".mysql_real_escape_string($mysqlMainDb)."`.`user` u
+					ON cu.user_id = u.user_id AND cu.cours_id = ".mysql_real_escape_string($cours_id)."
 					WHERE cu.statut = 5
-					AND u.user_id NOT IN ('" . implode("', '" , $students) . "')";
+					AND u.user_id NOT IN ('" . mysql_real_escape_string(implode("', '" , $students)) . "')";
 			$result = db_query($sql);
 
 			if ( mysql_num_rows($result) > 0)
@@ -396,7 +396,7 @@ if (isset($_GET['mailingIndex']))  // examine or send
 				{
 					$remainingUsers .= ', ' . htmlspecialchars($res[0].' '.$res[1]);
 				}
-				$errormsg .= '<br>' . $dropbox_lang["mailingNothingFor"] . substr($remainingUsers, 1) . '.<br>';
+				$errormsg .= '<br>' . htmlspecialchars($dropbox_lang["mailingNothingFor"]) . htmlspecialchars(substr($remainingUsers, 1)) . '.<br>';
 			}
 
 			if ( isset( $_GET['mailingSend']))
@@ -422,21 +422,21 @@ if (isset($_GET['mailingIndex']))  // examine or send
 
 				$sendDT = addslashes(date("Y-m-d H:i:s",time()));
 				// set filesize to zero on send, to avoid 2nd send (see index.php)
-				$sql = "UPDATE `".$dropbox_cnf["fileTbl"]."`
+				$sql = "UPDATE `".mysql_real_escape_string($dropbox_cnf["fileTbl"])."`
 						SET filesize = '0'
-						, uploadDate = '".$sendDT."', lastUploadDate = '".$sendDT."'
-						WHERE id='".addslashes($mailing_item->id)."'";
+						, uploadDate = '".mysql_real_escape_string($sendDT)."', lastUploadDate = '".mysql_real_escape_string($sendDT)."'
+						WHERE id='".mysql_real_escape_string($mailing_item->id)."'";
 				$result = mysql_query($sql) or die($dropbox_lang["queryError"]);
 			}
 			elseif ( $mailing_item->filesize != 0)
 			{
-				$errormsg .= '<br>' . $dropbox_lang["mailingNotYetSent"] . '<br>';
+				$errormsg .= '<br>' . htmlspecialchars($dropbox_lang["mailingNotYetSent"]) . '<br>';
 			}
 		}
 	}
 	else
 	{
-		$error = TRUE; $errormsg .= $dropbox_lang["mailingWrongZipfile"];
+		$error = TRUE; $errormsg .= htmlspecialchars($dropbox_lang["mailingWrongZipfile"]);
 	}
 
 
@@ -446,13 +446,13 @@ if (isset($_GET['mailingIndex']))  // examine or send
      * ========================================
      */
 	if ($error) {
-		$tool_content.="<b><font color=\"#FF0000\">$errormsg</font></b><br><br>
-		<a href=\"index.php\">".$dropbox_lang["backList"]."></a><br>";
+		$tool_content.="<b><font color=\"#FF0000\">".htmlspecialchars($errormsg)."</font></b><br><br>
+		<a href=\"index.php\">".htmlspecialchars($dropbox_lang["backList"])."></a><br>";
 	}
 	else
 	{
-		$tool_content .= "$errormsg<br><br>
-		<a href=\"index.php\">".$dropbox_lang["backList"]."</a><br>";
+		$tool_content .= "".htmlspecialchars($errormsg)."<br><br>
+		<a href=\"index.php\">".htmlspecialchars($dropbox_lang["backList"])."</a><br>";
 	}
 }
 
@@ -522,8 +522,8 @@ if (isset($_GET['deleteReceived']) || isset($_GET['deleteSent']))
      * DELETE FILE FEEDBACK
      * ========================================
      */
-	$tool_content .= "<p class=\"success_small\">".$dropbox_lang["fileDeleted"]."<br />
-	<a href='index.php'>".$dropbox_lang['backList']."</a></p><br/>";
+	$tool_content .= "<p class=\"success_small\">".htmlspecialchars($dropbox_lang["fileDeleted"])."<br />
+	<a href='index.php'>".htmlspecialchars($dropbox_lang['backList'])."</a></p><br/>";
 }
 draw($tool_content, 2, 'dropbox', $head_content);
 ?>

@@ -35,7 +35,7 @@ $tool_content = "";
 // javascript functions
 $head_content ='<script type="text/javascript">
                 function confirmation (name) {
-                if (confirm("'.$dropbox_lang['confirmDelete1'].'" + name + "'.$dropbox_lang['confirmDelete2'].'" )) {
+                if (confirm("'.htmlspecialchars($dropbox_lang['confirmDelete1']).'" + name + "'.htmlspecialchars($dropbox_lang['confirmDelete2']).'" )) {
                         return true;
                 } else {
                         return false;
@@ -44,7 +44,7 @@ $head_content ='<script type="text/javascript">
                 }
 
                 function confirmationall (name) {
-                if (confirm("'.$dropbox_lang['all'].'" )) {
+                if (confirm("'.htmlspecialchars($dropbox_lang['all']).'" )) {
                         return true;
                 } else {
                         return false;
@@ -53,7 +53,7 @@ $head_content ='<script type="text/javascript">
                 }
 
 		function confirmsend (){
-                if (confirm("'.$dropbox_lang['mailingConfirmSend'].'")) {
+                if (confirm("'.htmlspecialchars($dropbox_lang['mailingConfirmSend']).'")) {
                         return true;
                 } else {
                         return false;
@@ -63,10 +63,10 @@ $head_content ='<script type="text/javascript">
 	
 		function checkForm (frm) {
                 if (frm.elements["recipients[]"].selectedIndex < 0) {
-                        alert("'.$dropbox_lang['noUserSelected'].'");
+                        alert("'.htmlspecialchars($dropbox_lang['noUserSelected']).'");
                         return false;
                 } else if (frm.file.value == "") {
-                        alert("'.$dropbox_lang['noFileSpecified'].'");
+                        alert("'.htmlspecialchars($dropbox_lang['noFileSpecified']).'");
                         return false;
                 } else {
                         return true;
@@ -99,7 +99,7 @@ if (!is_dir($dropbox_cnf["sysPath"])) {
 } 
 	
 // get dropbox quotas from database
-$d = mysql_fetch_array(db_query("SELECT dropbox_quota FROM `".$mysqlMainDb."`.`cours` WHERE code='$currentCourseID'"));
+$d = mysql_fetch_array(db_query("SELECT dropbox_quota FROM `".mysql_real_escape_string($mysqlMainDb)."`.`cours` WHERE code='".mysql_real_escape_string($currentCourseID)."'"));
 $diskQuotaDropbox = $d['dropbox_quota'];
 $dropbox_cnf["allowJustUpload"] = false;
 $dropbox_cnf["allowStudentToStudent"] = false;
@@ -134,7 +134,7 @@ function getUserNameFromId ($id)  // RH: Mailing: return 'Mailing ' + id
     if ($mailingId > 0) return $dropbox_lang["mailingAsUsername"] . $mailingId;
 
     $sql = "SELECT CONCAT(nom,' ', prenom) AS name
-		FROM `" . $dropbox_cnf["userTbl"] . "` WHERE user_id='" . addslashes($id) . "'";
+		FROM `" . mysql_real_escape_string($dropbox_cnf["userTbl"]) . "` WHERE user_id='" . mysql_real_escape_string($id) . "'";
     $result = db_query($sql, $mysqlMainDb);
     $res = mysql_fetch_array($result);
     if ($res == FALSE) return FALSE;
@@ -148,7 +148,7 @@ function getLoginFromId ($id)
 {
     global $dropbox_cnf, $dropbox_lang, $mysqlMainDb;
 
-    $sql = "SELECT username FROM `" . $dropbox_cnf["userTbl"] . "` WHERE user_id='" . addslashes($id) . "'";
+    $sql = "SELECT username FROM `" . mysql_real_escape_string($dropbox_cnf["userTbl"]) . "` WHERE user_id='" . mysql_real_escape_string($id) . "'";
     $result = db_query($sql,$mysqlMainDb);
     $res = mysql_fetch_array($result);
     if ($res == FALSE) return FALSE;
@@ -162,8 +162,8 @@ function isCourseMember($id)
 {
     global $dropbox_cnf, $dropbox_lang, $mysqlMainDb;
 
-    $sql = "SELECT * FROM `" . $dropbox_cnf["courseUserTbl"] . "`
-		WHERE user_id = '" . addslashes( $id) . "' AND cours_id = '" . $dropbox_cnf["cid"] . "'";
+    $sql = "SELECT * FROM `" . mysql_real_escape_string($dropbox_cnf["courseUserTbl"]) . "`
+		WHERE user_id = '" . mysql_real_escape_string($id) . "' AND cours_id = '" . mysql_real_escape_string($dropbox_cnf["cid"]) . "'";
     $result = db_query($sql, $mysqlMainDb); 
     if (mysql_num_rows($result) == 1)
     {
@@ -184,16 +184,16 @@ function removeUnusedFiles()
     global $dropbox_cnf, $dropbox_lang, $currentCourseID;
     // select all files that aren't referenced anymore
     $sql = "SELECT DISTINCT f.id, f.filename
-			FROM `" . $dropbox_cnf["fileTbl"] . "` f
-			LEFT JOIN `" . $dropbox_cnf["personTbl"] . "` p ON f.id = p.fileId
+			FROM `" . mysql_real_escape_string($dropbox_cnf["fileTbl"]) . "` f
+			LEFT JOIN `" . mysql_real_escape_string($dropbox_cnf["personTbl"]) . "` p ON f.id = p.fileId
 			WHERE p.personId IS NULL";
     $result = db_query($sql, $currentCourseID);
     while ($res = mysql_fetch_array($result))
     {
 	//delete the selected files from the post and file tables
-	$sql = "DELETE FROM `" . $dropbox_cnf["postTbl"] . "` WHERE fileId='" . $res['id'] . "'";
+	$sql = "DELETE FROM `" . mysql_real_escape_string($dropbox_cnf["postTbl"]) . "` WHERE fileId='" . mysql_real_escape_string($res['id']) . "'";
         $result1 = db_query($sql, $currentCourseID);
-        $sql = "DELETE FROM `" . $dropbox_cnf["fileTbl"] . "` WHERE id='" . $res['id'] . "'";
+        $sql = "DELETE FROM `" . mysql_real_escape_string($dropbox_cnf["fileTbl"]) . "` WHERE id='" . mysql_real_escape_string($res['id']) . "'";
         $result1 = db_query($sql, $currentCourseID);
 
 		//delete file from server
@@ -216,9 +216,9 @@ function checkUserOwnsThisMailing($mailingPseudoId, $userId)
 
     global $dropbox_cnf, $dropbox_lang, $currentCourseID;
 
-    $sql = "SELECT f.uploaderId FROM `" . $dropbox_cnf["fileTbl"] . "` f
-			LEFT JOIN `" . $dropbox_cnf["postTbl"] . "` p ON f.id = p.fileId
-			WHERE p.recipientId = '" . $mailingPseudoId . "'";
+    $sql = "SELECT f.uploaderId FROM `" . mysql_real_escape_string($dropbox_cnf["fileTbl"]) . "` f
+			LEFT JOIN `" . mysql_real_escape_string($dropbox_cnf["postTbl"]) . "` p ON f.id = p.fileId
+			WHERE p.recipientId = '" . mysql_real_escape_string($mailingPseudoId) . "'";
     $result = db_query($sql, $currentCourseID);
 
     if ($res = mysql_fetch_array($result))
@@ -235,8 +235,8 @@ function removeMoreIfMailing($fileId)
 
 	global $dropbox_cnf, $dropbox_lang, $currentCourseID;
 
-    $sql = "SELECT p.recipientId FROM `" . $dropbox_cnf["postTbl"] . "` p
-		WHERE p.fileId = '" . $fileId . "'";
+    $sql = "SELECT p.recipientId FROM `" . mysql_real_escape_string($dropbox_cnf["postTbl"]) . "` p
+		WHERE p.fileId = '" . mysql_real_escape_string($fileId) . "'";
     $result = db_query($sql, $currentCourseID);
 
     if ($res = mysql_fetch_array($result))
@@ -244,7 +244,7 @@ function removeMoreIfMailing($fileId)
 	    $mailingPseudoId = $res['recipientId'];
 	    if ($mailingPseudoId > $dropbox_cnf["mailingIdBase"])
 	    {
-	        $sql = "DELETE FROM `" . $dropbox_cnf["personTbl"] . "` WHERE personId='" . $mailingPseudoId . "'";
+	        $sql = "DELETE FROM `" . mysql_real_escape_string($dropbox_cnf["personTbl"]) . "` WHERE personId='" . mysql_real_escape_string($mailingPseudoId) . "'";
 	        $result1 = db_query($sql, $currentCourseID);
         }
     }

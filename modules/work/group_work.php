@@ -211,7 +211,7 @@ function submit_work($uid, $id, $file) {
 	$local_name = greek_to_latin('Group '. $group . (empty($ext)? '': '.' . $ext));
 
         $r = mysql_fetch_row(db_query('SELECT filename FROM group_documents WHERE path = ' .
-                                      autoquote($file)));
+                                      autoquote(mysql_real_escape_string($file))));
         $original_filename = $r[0];
 
 	$source = $groupPath.$file;
@@ -222,8 +222,8 @@ function submit_work($uid, $id, $file) {
 	if (copy($source, "$workPath/$destination")) {
 		db_query("INSERT INTO assignment_submit (uid, assignment_id, submission_date,
 			             submission_ip, file_path, file_name, comments, group_id)
-                          VALUES ('$uid','$id', NOW(), '$_SERVER[REMOTE_ADDR]', '$destination'," .
-				quote($original_filename) . ', ' .
+                          VALUES ('".mysql_real_escape_string($uid)."','".mysql_real_escape_string($id)."', NOW(), '".mysql_real_escape_string($_SERVER[REMOTE_ADDR])."', '".mysql_real_escape_string($destination)."'," .
+				quote(mysql_real_escape_string($original_filename)) . ', ' .
                                 autoquote($_POST['comments']) . ", $group)",
                         $currentCourseID);
 
