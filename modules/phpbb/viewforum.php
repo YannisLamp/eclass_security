@@ -61,7 +61,7 @@ $require_help = TRUE;
 $helpTopic = 'For';
 include '../../include/baseTheme.php';
 if (!add_units_navigation(TRUE)) {
-	$navigation[]= array ("url"=>"index.php", "name"=> $langForums);
+	$navigation[]= array ("url"=>"index.php", "name"=> htmlspecialchars($langForums));
 }
 
 $tool_content = "";

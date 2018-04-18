@@ -53,7 +53,7 @@ if (isset($errorMessagePath)) {
 }
 
 if (isset($toolContent_ErrorExists)) {
-	$toolContent = $toolContent_ErrorExists;
+	$toolContent = htmlspecialchars($toolContent_ErrorExists);
 
 	$_SESSION['errMessage'] = $toolContent_ErrorExists;
 	session_write_close ();
@@ -182,7 +182,7 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 
 		//If there is a message to display, show it (ex. Session timeout)
 		if (strlen ( $messageBox ) > 1) {
-			$t->set_var ( 'EXTRA_MSG', $messageBox );
+			$t->set_var ( 'EXTRA_MSG', htmlspecialchars($messageBox) );
 		}
 
 		$t->set_var ( 'TOOL_CONTENT', $toolContent );
@@ -192,13 +192,13 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 		// for extra content on the left and right bar.
 		
 		if ($homePage  && !isset($_SESSION['uid'])) {
-			$t->set_var ( 'ECLASS_HOME_EXTRAS_LEFT', $langExtrasLeft );
-			$t->set_var ( 'ECLASS_HOME_EXTRAS_RIGHT', $langExtrasRight );
+			$t->set_var ( 'ECLASS_HOME_EXTRAS_LEFT', htmlspecialchars($langExtrasLeft) );
+			$t->set_var ( 'ECLASS_HOME_EXTRAS_RIGHT', htmlspecialchars($langExtrasRight) );
 		}
 		
 		//show user's name and surname on the user bar
 		if (isset($_SESSION['uid']) && strlen ($nom) > 0) {
-			$t->set_var ( 'LANG_USER', $langUserHeader );
+			$t->set_var ( 'LANG_USER', htmlspecialchars($langUserHeader) );
 			$t->set_var ( 'USER_NAME', htmlspecialchars($prenom) );
 			$t->set_var ( 'USER_SURNAME', htmlspecialchars($nom) . ", " );
 		} else {
@@ -208,24 +208,24 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 
 		//if user is logged in display the logout option
 		if (isset($_SESSION['uid'])) {
-			$t->set_var ('LANG_LOGOUT', $langLogout);
+			$t->set_var ('LANG_LOGOUT', htmlspecialchars($langLogout));
 		}
 
 		//set the text and icon on the third bar (header)
 		if ($menuTypeID == 2) {
-			$t->set_var ( 'THIRD_BAR_TEXT', q(ellipsize($intitule, 64)) );
+			$t->set_var ( 'THIRD_BAR_TEXT', htmlspecialchars(ellipsize($intitule, 64)) );
 			$t->set_var ( 'THIRDBAR_LEFT_ICON', 'lesson_icon' );
 		} elseif (isset ( $langUserBriefcase ) && $menuTypeID > 0 && $menuTypeID < 3 && !isset($_SESSION['user_perso_active'])) {
-			$t->set_var ( 'THIRD_BAR_TEXT', $langUserBriefcase );
+			$t->set_var ( 'THIRD_BAR_TEXT', htmlspecialchars($langUserBriefcase) );
 			$t->set_var ( 'THIRDBAR_LEFT_ICON', 'briefcase_icon' );
 		} elseif (isset ( $langPersonalisedBriefcase ) && $menuTypeID > 0 && isset($_SESSION['user_perso_active'])) {
-			$t->set_var ( 'THIRD_BAR_TEXT', $langPersonalisedBriefcase );
+			$t->set_var ( 'THIRD_BAR_TEXT', htmlspecialchars($langPersonalisedBriefcase) );
 			$t->set_var ( 'THIRDBAR_LEFT_ICON', 'briefcase_icon' );
 		} elseif ($menuTypeID == 3) {
-			$t->set_var ( 'THIRD_BAR_TEXT', $langAdmin );
+			$t->set_var ( 'THIRD_BAR_TEXT', htmlspecialchars($langAdmin) );
 			$t->set_var ( 'THIRDBAR_LEFT_ICON', 'admin_bar_icon' );
 		} else {
-			$t->set_var ( 'THIRD_BAR_TEXT', $langEclass );
+			$t->set_var ( 'THIRD_BAR_TEXT', htmlspecialchars($langEclass) );
 			$t->set_var ( 'THIRDBAR_LEFT_ICON', 'logo_icon' );
 		}
 
@@ -248,27 +248,27 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 				if (display_activation_link($module_id)) {
 					if (visible_module($module_id)) {
 						$message = $langDeactivate;
-						$mod_activation = "<a class='deactivate_module' href='".htmlspecialchars($_SERVER[PHP_SELF])."?eclass_module_id=".htmlspecialchars($module_id)."&amp;hide=0'>($langDeactivate)</a>";
+						$mod_activation = "<a class='deactivate_module' href='".htmlspecialchars($_SERVER[PHP_SELF])."?eclass_module_id=".htmlspecialchars($module_id)."&amp;hide=0'>(".htmlspecialchars($langDeactivate).")</a>";
 					} else {
 						$message = $langActivate;
-						$mod_activation = "<a class='activate_module' href='".htmlspecialchars($_SERVER[PHP_SELF])."?eclass_module_id=".htmlspecialchars($module_id)."&amp;hide=1'>($langActivate)</a>";
+						$mod_activation = "<a class='activate_module' href='".htmlspecialchars($_SERVER[PHP_SELF])."?eclass_module_id=".htmlspecialchars($module_id)."&amp;hide=1'>(".htmlspecialchars($langActivate).")</a>";
 					}
 				}
 			}
 		}
 
-		$t->set_var ( 'SEARCH_ACTION', $searchAction );
-		$t->set_var ( 'SEARCH_ADVANCED_URL', $searchAdvancedURL );
-		$t->set_var ( 'SEARCH_TITLE', $langSearch );
-		$t->set_var ( 'SEARCH_ADVANCED', $langAdvancedSearch );
+		$t->set_var ( 'SEARCH_ACTION', htmlspecialchars($searchAction) );
+		$t->set_var ( 'SEARCH_ADVANCED_URL', htmlspecialchars($searchAdvancedURL) );
+		$t->set_var ( 'SEARCH_TITLE', htmlspecialchars($langSearch) );
+		$t->set_var ( 'SEARCH_ADVANCED', htmlspecialchars($langAdvancedSearch) );
 
-		$t->set_var ( 'TOOL_NAME', $nameTools );
+		$t->set_var ( 'TOOL_NAME', htmlspecialchars($nameTools) );
 
 		if ($is_adminOfCourse) {
 			$t->set_var ( 'ACTIVATE_MODULE', $mod_activation );
 		}
 
-		$t->set_var ( 'LOGOUT_LINK', $relPath );
+		$t->set_var ( 'LOGOUT_LINK', htmlspecialchars($relPath) );
 
 		if ($menuTypeID != 2) {
 			$t->set_var ( 'LANG_SELECT', lang_selections () );
@@ -288,16 +288,16 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 
 		if ($statut != 10) {
 			if (!isset($_SESSION['uid']))
-				$t->set_var ( 'BREAD_TEXT', $langHomePage );
+				$t->set_var ( 'BREAD_TEXT', htmlspecialchars($langHomePage) );
 			elseif (isset($_SESSION['uid']) && isset($_SESSION['user_perso_active'])) {
-				$t->set_var ( 'BREAD_TEXT', $langPersonalisedBriefcase );
+				$t->set_var ( 'BREAD_TEXT', htmlspecialchars($langPersonalisedBriefcase) );
 			} elseif (isset($_SESSION['uid']) && !isset($_SESSION['user_perso_active'])) {
-				$t->set_var ( 'BREAD_TEXT', $langUserBriefcase );
+				$t->set_var ( 'BREAD_TEXT', htmlspecialchars($langUserBriefcase) );
 			}
 
 			if (! $homePage) {
 				$t->set_var ( 'BREAD_HREF_FRONT', '<a href="{BREAD_START_LINK}">' );
-				$t->set_var ( 'BREAD_START_LINK', $urlServer );
+				$t->set_var ( 'BREAD_START_LINK', htmlspecialchars($urlServer) );
 				$t->set_var ( 'BREAD_HREF_END', '</a>' );
 			}
 
@@ -311,28 +311,28 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 
 		if (isset ( $currentCourseID ) && ! $courseHome) {
 			$t->set_var ( 'BREAD_HREF_FRONT', '<a href="{BREAD_LINK}">' );
-			$t->set_var ( 'BREAD_LINK', $urlServer . 'courses/' . $currentCourseID . '/index.php' );
-			$t->set_var ( 'BREAD_TEXT', q($intitule) );
+			$t->set_var ( 'BREAD_LINK', htmlspecialchars($urlServer) . 'courses/' . htmlspecialchars($currentCourseID) . '/index.php' );
+			$t->set_var ( 'BREAD_TEXT', htmlspecialchars($intitule) );
 			if ($statut == 10)
 				$t->set_var ( 'BREAD_ARROW', '' );
 			$t->set_var ( 'BREAD_HREF_END', '</a>' );
 			$t->parse ( 'breadCrumbStart', 'breadCrumbStartBlock', true );
 			$breadIterator ++;
 			if (isset ( $pageTitle )) {
-				$pageTitle .= " | " . $intitule;
+				$pageTitle .= " | " . htmlspecialchars($intitule);
 			} else {
-				$pageTitle = $intitule;
+				$pageTitle = htmlspecialchars($intitule);
 			}
 
 		} elseif (isset ( $currentCourseID ) && $courseHome) {
 			$t->set_var ( 'BREAD_HREF_FRONT', '' );
 			$t->set_var ( 'BREAD_LINK', '' );
-			$t->set_var ( 'BREAD_TEXT', $intitule );
+			$t->set_var ( 'BREAD_TEXT', htmlspecialchars($intitule) );
 			$t->set_var ( 'BREAD_ARROW', '&#187;' );
 			$t->set_var ( 'BREAD_HREF_END', '' );
 			$t->parse ( 'breadCrumbStart', 'breadCrumbStartBlock', true );
 			$breadIterator ++;
-			$pageTitle .= " | " . $intitule;
+			$pageTitle .= " | " . htmlspecialchars($intitule);
 
 		}
 
@@ -340,8 +340,8 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 			foreach ( $page_navi as $step ) {
 
 				$t->set_var ( 'BREAD_HREF_FRONT', '<a href="{BREAD_LINK}">' );
-				$t->set_var ( 'BREAD_LINK', $step ["url"] );
-				$t->set_var ( 'BREAD_TEXT', $step ["name"] );
+				$t->set_var ( 'BREAD_LINK', htmlspecialchars($step ["url"]) );
+				$t->set_var ( 'BREAD_TEXT', htmlspecialchars($step ["name"]) );
 				$t->set_var ( 'BREAD_ARROW', '&#187;' );
 				$t->set_var ( 'BREAD_HREF_END', '</a>' );
 				$t->parse ( 'breadCrumbStart', 'breadCrumbStartBlock', true );
@@ -355,13 +355,13 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 		if (isset ( $page_name ) && ! $homePage) {
 
 			$t->set_var ( 'BREAD_HREF_FRONT', '' );
-			$t->set_var ( 'BREAD_TEXT', $page_name );
+			$t->set_var ( 'BREAD_TEXT', htmlspecialchars($page_name) );
 			$t->set_var ( 'BREAD_ARROW', '&#187;' );
 			$t->set_var ( 'BREAD_HREF_END', '' );
 
 			$t->parse ( 'breadCrumbStart', 'breadCrumbStartBlock', true );
 			$breadIterator ++;
-			$pageTitle .= " | " . $page_name;
+			$pageTitle .= " | " . htmlspecialchars($page_name);
 
 		}
 
@@ -382,7 +382,7 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 			$t->set_var ( 'TOOL_CSS', "<link href=\"{TOOL_PATH}modules/$tool_css/tool.css\" rel=\"stylesheet\" type=\"text/css\" />" );
 		}
 
-		$t->set_var ( 'TOOL_PATH', $relPath );
+		$t->set_var ( 'TOOL_PATH', htmlspecialchars($relPath) );
 
 		if (isset ( $head_content )) {
 			$t->set_var ( 'HEAD_EXTRAS', $head_content );
@@ -398,12 +398,12 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 			    (!isset($require_current_course) and !check_prof())) {
 				$helpTopic .= '_student';
 			}
-			$help_link_icon = " <a  href=\"" . $relPath . "modules/help/help.php?topic=$helpTopic&amp;language=$language\"
-        onClick=\"window.open('" . $relPath . "modules/help/help.php?topic=$helpTopic&amp;language=$language','MyWindow','toolbar=no,location=no,directories=no,status=yes,menubar=no,scrollbars=yes,resizable=yes,width=350,height=450,left=300,top=10');
-        return false;\"><img class='HelpIcon' src='" . $relPath . "template/classic/img/help_icon.gif' width='12' height='12' alt=\"$langHelp\"/></a>";
+			$help_link_icon = " <a  href=\"" . htmlspecialchars($relPath) . "modules/help/help.php?topic=".htmlspecialchars($helpTopic)."&amp;language=".htmlspecialchars($language)."\"
+        onClick=\"window.open('" . htmlspecialchars($relPath) . "modules/help/help.php?topic=".htmlspecialchars($helpTopic)."&amp;language=".htmlspecialchars($language)."','MyWindow','toolbar=no,location=no,directories=no,status=yes,menubar=no,scrollbars=yes,resizable=yes,width=350,height=450,left=300,top=10');
+        return false;\"><img class='HelpIcon' src='" . htmlspecialchars($relPath) . "template/classic/img/help_icon.gif' width='12' height='12' alt=\"".htmlspecialchars($langHelp)."\"/></a>";
 
 			$t->set_var ( 'HELP_LINK_ICON', $help_link_icon );
-			$t->set_var ( 'LANG_HELP', $langHelp );
+			$t->set_var ( 'LANG_HELP', htmlspecialchars($langHelp) );
 		} else {
 			$t->set_var ( '{HELP_LINK}', '' );
 			$t->set_var ( 'LANG_HELP', '' );
@@ -413,12 +413,12 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 		}
 
 		if ($perso_tool_content) {
-			$t->set_var ( 'LANG_MY_PERSO_LESSONS', $langMyPersoLessons );
-			$t->set_var ( 'LANG_MY_PERSO_DEADLINES', $langMyPersoDeadlines );
-			$t->set_var ( 'LANG_MY_PERSO_ANNOUNCEMENTS', $langMyPersoAnnouncements );
-			$t->set_var ( 'LANG_MY_PERSO_DOCS', $langMyPersoDocs );
-			$t->set_var ( 'LANG_MY_PERSO_AGENDA', $langMyPersoAgenda );
-			$t->set_var ( 'LANG_PERSO_FORUM', $langMyPersoForum );
+			$t->set_var ( 'LANG_MY_PERSO_LESSONS', htmlspecialchars($langMyPersoLessons) );
+			$t->set_var ( 'LANG_MY_PERSO_DEADLINES', htmlspecialchars($langMyPersoDeadlines) );
+			$t->set_var ( 'LANG_MY_PERSO_ANNOUNCEMENTS', htmlspecialchars($langMyPersoAnnouncements) );
+			$t->set_var ( 'LANG_MY_PERSO_DOCS', htmlspecialchars($langMyPersoDocs) );
+			$t->set_var ( 'LANG_MY_PERSO_AGENDA', htmlspecialchars($langMyPersoAgenda) );
+			$t->set_var ( 'LANG_PERSO_FORUM', htmlspecialchars($langMyPersoForum) );
 
 			$t->set_var ( 'LESSON_CONTENT', $lesson_content );
 			$t->set_var ( 'ASSIGN_CONTENT', $assigns_content );
