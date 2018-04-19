@@ -134,11 +134,11 @@ aCont;
 	$max_repeat_val = count($data);
  	for ($i=0; $i <$max_repeat_val; $i++) {
 		$iterator = count($data[$i][2]);
-		$assign_content .= "\n          <li class='category'>".$data[$i][0]."</li>";
+		$assign_content .= "\n          <li class='category'>".htmlspecialchars($data[$i][0])."</li>";
 		if ($iterator > 0) {
 			$assignmentsExist = true;
 			for ($j=0; $j < $iterator; $j++) {
-				$url = $urlServer . "index.php?perso=1&c=" .$data[$i][1]."&i=".$data[$i][2][$j][0];
+				$url = $urlServer . "index.php?perso=1&c=" .htmlspecialchars($data[$i][1])."&i=".htmlspecialchars($data[$i][2][$j][0]);
 
 				if($data[$i][2][$j][6] == 1) {
 					$submit_status = "&nbsp;(".$langGroupWorkSubmitted.")";
@@ -148,7 +148,7 @@ aCont;
 					$submit_status = "";
 				}
 				$assign_content .= "";
-				$assign_content .= "\n          <li><a class=\"square_bullet2\" href=\"$url\"><strong class=\"title_pos\">".$data[$i][2][$j][1]."</strong></a>  <p class=\"content_pos\">$langGroupWorkDeadline_of_Submission: <b>".nice_format($data[$i][2][$j][3])."</b>&nbsp;<span style=\"color: #CAC3B5;\">".$submit_status."</span></p></li>";
+				$assign_content .= "\n          <li><a class=\"square_bullet2\" href=\"$url\"><strong class=\"title_pos\">".htmlspecialchars($data[$i][2][$j][1])."</strong></a>  <p class=\"content_pos\">$langGroupWorkDeadline_of_Submission: <b>".nice_format($data[$i][2][$j][3])."</b>&nbsp;<span style=\"color: #CAC3B5;\">".htmlspecialchars($submit_status)."</span></p></li>";
 			}
 			//if ($i+1 <$max_repeat_val) $assign_content .= "<br>";
 		}

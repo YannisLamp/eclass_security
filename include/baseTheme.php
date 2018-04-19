@@ -182,7 +182,7 @@ function draw($toolContent, $menuTypeID, $tool_css = null, $head_content = null,
 
 		//If there is a message to display, show it (ex. Session timeout)
 		if (strlen ( $messageBox ) > 1) {
-			$t->set_var ( 'EXTRA_MSG', htmlspecialchars($messageBox) );
+			$t->set_var ( 'EXTRA_MSG', $messageBox );
 		}
 
 		$t->set_var ( 'TOOL_CONTENT', $toolContent );

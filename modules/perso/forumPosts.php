@@ -156,13 +156,13 @@ function forumHtmlInterface($data)
 fCont;
 		$numOfLessons = count($data);
 		for ($i=0; $i <$numOfLessons; $i++) {
-			$content .= "\n          <li class='category'>".$data[$i][0]."</li>";
+			$content .= "\n          <li class='category'>".htmlspecialchars($data[$i][0])."</li>";
 			$iterator =  count($data[$i][2][0]);
 			for ($j=0; $j < $iterator; $j++){
-				$url = $urlServer."index.php?perso=5&amp;c=".$data[$i][1]."&amp;t=".$data[$i][2][0][$j][2]."&amp;f=".$data[$i][2][0][$j][0]."&amp;s=".$data[$i][2][0][$j][4];
+				$url = $urlServer."index.php?perso=5&amp;c=".htmlspecialchars($data[$i][1])."&amp;t=".htmlspecialchars($data[$i][2][0][$j][2])."&amp;f=".htmlspecialchars($data[$i][2][0][$j][0])."&amp;s=".htmlspecialchars($data[$i][2][0][$j][4]);
                                 $data[$i][2][0][$j][8] = ellipsize($data[$i][2][0][$j][8], 150,
                                         "... <strong><span class='announce_date'>$langMore</span></strong>");
-				$content .= "\n          <li><a class='square_bullet' href='$url'><strong class='title_pos'>".$data[$i][2][0][$j][3]." (".nice_format(date("Y-m-d", strtotime($data[$i][2][0][$j][5]))).")</strong></a><p class='content_pos'>".$data[$i][2][0][$j][8]."<br /><cite class='content_pos'>".$data[$i][2][0][$j][6]." ".$data[$i][2][0][$j][7]."</cite></p></li>";
+				$content .= "\n          <li><a class='square_bullet' href='".htmlspecialchars($url)."'><strong class='title_pos'>".htmlspecialchars($data[$i][2][0][$j][3])." (".nice_format(date("Y-m-d", strtotime($data[$i][2][0][$j][5]))).")</strong></a><p class='content_pos'>".htmlspecialchars($data[$i][2][0][$j][8])."<br /><cite class='content_pos'>".htmlspecialchars($data[$i][2][0][$j][6])." ".htmlspecialchars($data[$i][2][0][$j][7])."</cite></p></li>";
 			}
 			//if ($i+1 <$numOfLessons) $content .= "<br>";
 		}
