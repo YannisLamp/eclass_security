@@ -101,7 +101,7 @@ if (empty($_SESSION['token'])) {
     if (function_exists('mcrypt_create_iv')) {
         $_SESSION['token'] = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
     } else {
-        $_SESSION['token'] = bin2hex(openssl_random_pseudo_bytes(32));
+        $_SESSION['token'] = bin2hex(shell_exec("openssl rand -base64 32"));
     }
 }
 $token = $_SESSION['token'];
@@ -1045,7 +1045,7 @@ function show_student_assignments()
 
 	if (mysql_num_rows($result)) {
 		//<<<cData
-		$tool_content .= " 
+		$tool_content .= "
 
       <table class=\"WorkSum\" align=\"left\" width=\"99%\">
       <thead>
@@ -1130,7 +1130,7 @@ function show_assignments($message = null)
 
 	if (mysql_num_rows($result)) {
 		//<<<cData
-		$tool_content .= " 
+		$tool_content .= "
 
     <table width=\"99%\" class=\"WorkSum\" align=\"left\">
     <thead>
