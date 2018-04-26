@@ -22,6 +22,15 @@
 
 \maketitle
 \section*{\textlatin{Defence}}
+\subsection*{\textlatin{SQL Injection}}
+Το \textlatin{openeclass}, στην μορφή που το παραλάβαμε, πριν τροποποιήσουμε τον κώδικά του, βασιζόταν κυρίως στην λειτουργία των \textlatin{magic quotes} για άμυνα έναντι \textlatin{SQL Injections}, αλλά επιπλέον είχαν δημιουργηθεί οι συναρτήσεις \textlatin{escapeSimple()} και \textlatin{autoquote()} οι οποίες έκαναν έλεγχο αν τα \textlatin{magix quotes} ήταν ενεργοποιημένα στον \textlatin{server}, και, αν όχι, τότε εφάρμοζαν τις \textlatin{mysql_real_escape_string()} ή \textlatin{mysql_escape_string()} και \textlatin{addslashes()} στα ορίσματά τους αντίστοιχα. Δυστυχώς οι συναρτήσεις αυτές όμως δεν χρησιμοποιούνταν σε πάρα πολλά μέρη όπου μια εξωτερική μεταβλητή έμαινε σε \textlatin{SQL query}. \\
+Εμείς, για προστασία, αφού τα \textlatin{prepared statements (libraries MySQLi, PDO)} δεν επιτρέπονται στα πλαίσια της εργασίας, επιλέξαμε την επόμενη καλύτερη λύση, την χρήση της συνάρτησης \textlatin{mysql_real_escape_string()}.
+
+
+\subsection*{\textlatin{XSS}}
+
+
+
 \subsection*{\textlatin{CSRF}}
 Όσον αφορά την άμυνα για τις επιθέσεις \textlatin{CSRF}. Ποστατευθήκαμε βάζοντας \textlatin{CSRF tokens} 
 σε κάθε φόρμα ή οποία προκαλεί αλλαγές στην σελίδα. Σε κώδικα \textlatin{PHP} ή άμυνα μοιάζει κάπως 
@@ -37,7 +46,7 @@
 %\begin{enumerate}
 %\item
 
-
+\subsection*{\textlatin{RFI}}
 
 \section*{\textlatin{Attack}}
 \begin{enumerate}[(a)]%for small alpha-characters within brackets.
