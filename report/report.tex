@@ -6,6 +6,7 @@
 \usepackage{relsize}
 \usepackage{enumerate}
 \usepackage[parfill]{parskip}
+\usepackage{graphicx}
 
 \makeatletter
 \renewcommand*\env@matrix[1][*\c@MaxMatrixCols c]{%
@@ -21,6 +22,18 @@
 
 \maketitle
 \section*{\textlatin{Defence}}
+\subsection*{\textlatin{CSRF}}
+Όσον αφορά την άμυνα για τις επιθέσεις \textlatin{CSRF}. Ποστατευθήκαμε βάζοντας \textlatin{CSRF tokens} 
+σε κάθε φόρμα ή οποία προκαλεί αλλαγές στην σελίδα. Σε κώδικα \textlatin{PHP} ή άμυνα μοιάζει κάπως 
+έτσι:\\
+\includegraphics[scale=0.5]{csrf}\\
+Πρώτα ενεργοποιούμε ενα \textlatin{token} και κατόπιν το βάζουμε ως \textlatin{hidden field} στην 
+φόρμα που μας ενδιαφέρει. Ο έλεγχος εγκυρότητας γίνεται ως εξης:\\
+\textlatin{if (isset(\$\_POST['hide']) and \$\_POST['hide'] == 0 and !empty(\$\_POST['token']) and (strcmp(\$\_SESSION['token'], \$\_POST['token']) === 0))}\\
+Η ίδια λογική άμυνας υπάρχει σε κάθε φόρμα της ιστοσελίδας (η οποία προκαλεί αλλαγές).
+Επίσης, επειδή δεν υπάρχει άμυνα έναντι επιθέσεων \textlatin{CSRF} σε \textlatin{GET requests}, διάφορα 
+\textlatin{GET} που άλλαζαν την σελίδα αλλάχθηκαν σε \textlatin{POST} ώστε να γίνει η ίδια άμυνα. 
+Ένα παράδειγμα είναι η διαγραφή χρήστη από την σελίδα του \textlatin{admin}.
 %\begin{enumerate}
 %\item
 
