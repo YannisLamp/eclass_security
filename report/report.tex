@@ -7,6 +7,7 @@
 \usepackage{enumerate}
 \usepackage[parfill]{parskip}
 \usepackage{graphicx}
+\usepackage{listings}
 
 \makeatletter
 \renewcommand*\env@matrix[1][*\c@MaxMatrixCols c]{%
@@ -36,7 +37,7 @@
 \textlatin{mysql\_real\_escape\_string()}.
 Η συνάρτηση αυτή εφαρμόστηκε σε κάθε μεταβλητή η οποία γινόταν \textlatin{append}
 σε \textlatin{sql query string}, σε μερικές περιπτώσεις αντικαθιστώντας τη χρήση των υπολοίπων παραπάνω
-συναρτήσεων. Ακόμη να σημειωθεί πως η λειτουργικότητα της εφαρμογής δεν άλλαξε, αφού επιτρέπεται ακριβώς το
+συναρτήσεων. Ακόμη να σημειωθεί πως η λειτουργικότητα της εφαρμογής δεν άλλαξε, αφού επιτρέπονται ακριβώς τα ίδια \section*{inputs} με προηγουμένως, κάνοντας όμως καλό \section*{escaping} στις ερωτήσεις στη βάση.
 
 
 \subsection*{\textlatin{XSS}}
@@ -67,7 +68,7 @@
 Ένα παράδειγμα είναι η διαγραφή χρήστη από την σελίδα του \textlatin{admin}.
 
 \subsection*{\textlatin{RFI}}
-
+Τέλος, για προστασία κατά
 
 
 
@@ -86,14 +87,18 @@
 
 
 \subsection*{\textlatin{SQL Injection}}
-Για επίθεση \textlatin{SQL Injection}, σε περίπτωση που βρισκόταν κάποιο \textlatin{vulnerability}, θα υπήρχε η δυνατότητα να βρεθεί το \textlatin{hashed password} του \textlatin{drunkadmin}, ή να μάθουμε το όνομα του \textlatin{directory} που δημιουργείται για την αποθήκευση των εργασιών ή τα ονόματα των αρχείων που έχουμε στείλει για ανταλλαγή αρχείων, έτσι ώστε να προσπαθήσουμε να τα κάνουμε \textlatin{request} και να επιτύχουμε \textlatin{RFI}. Ακόμη μια καλή στρατιγική θα ήταν να μετατρέψουμε τον χρήστη μας σε \textlatin{admin}, αλλάζοντας το \textlatin{userid} του \textlatin{admin} σε κάτι εκτός από 1 και κάνοντας το δικό μας 1, αφού η εφαρμογή θεωρεί ότι ο χρήστης με \textlatin{userid} 1 είναι ο \textlatin{admin}. Σημειώνεται πως δεν γνωρίζουμε το δικό μας \textlatin{userid} αλλά θα μπορούσαμε είτε να το μάθουμε, αν έχουμε βρει \textlatin{SQL Injection vulnerability}, είτε να μαντέψουμε, αφού δεν είναι και πολλές περιπτώσεις, ανάλογα και με τους συνολικούς χρήστες της εφαρμοφής. Δυστυχώς η αντίπαλη ομάδα ήταν καλά προστατευμένη έναντι σε \textlatin{SQL Injection} και δεν βρέθηκαν \textlatin{vulnerabilities}. Με την προσθήκη, για παράδειγμα, σε ένα \textlatin{search keyword} του \textlatin{string ' AND '1' = '1}   
+Για επίθεση \textlatin{SQL Injection}, σε περίπτωση που βρισκόταν κάποιο \textlatin{vulnerability}, θα υπήρχε η δυνατότητα να βρεθεί το \textlatin{hashed password} του \textlatin{drunkadmin}, ή να μάθουμε το όνομα του \textlatin{directory} που δημιουργείται για την αποθήκευση των εργασιών ή τα ονόματα των αρχείων που έχουμε στείλει για ανταλλαγή αρχείων, έτσι ώστε να προσπαθήσουμε να τα κάνουμε \textlatin{request} και να επιτύχουμε \textlatin{RFI}. Ακόμη μια καλή στρατιγική θα ήταν να μετατρέψουμε τον χρήστη μας σε \textlatin{admin}, αλλάζοντας το \textlatin{userid} του \textlatin{admin} σε κάτι εκτός από 1 και κάνοντας το δικό μας 1, αφού η εφαρμογή θεωρεί ότι ο χρήστης με \textlatin{userid} 1 είναι ο \textlatin{admin}. Σημειώνεται πως δεν γνωρίζουμε το δικό μας \textlatin{userid} αλλά θα μπορούσαμε είτε να το μάθουμε, αν έχουμε βρει \textlatin{SQL Injection vulnerability}, είτε να μαντέψουμε, αφού δεν είναι και πολλές περιπτώσεις, ανάλογα και με τους συνολικούς χρήστες της εφαρμοφής. Δυστυχώς η αντίπαλη ομάδα ήταν καλά προστατευμένη έναντι σε \textlatin{SQL Injection} και δεν βρέθηκαν \textlatin{vulnerabilities}. Με την προσθήκη, για παράδειγμα, σε ένα \textlatin{search keyword} ή σε ένα \textlatin{url GET} του \textlatin{string ' AND '1' = '1} τότε και δεν εμφανίζονταν τα ίδια αποτελέσματα με πριν, ενώ όταν η παραπάνω συμβολοσειρά έμπαινε σε \textlatin{input box} τότε εμφανιζόταν αυτούσια, πράγματα που μας έκαναν να καταλάβουμε πως η αντίπαλη εφαρμογή έκανε σωστό \textlatin{escaping}. 
 
 
 
 
 
 \subsection*{\textlatin{XSS}}
-Αντίθετα, η αντίπαλη εφαρμογή είχε πολλές ευπάθειες σε \textlatin{XSS attacks}. Aρχικά, στην ανταλλαγή αρχείων, το όνομα αλλά και η περιγραφή 
+Αντίθετα, η αντίπαλη εφαρμογή είχε πολλές ευπάθειες σε \textlatin{XSS attacks}. Aρχικά, στην ανταλλαγή αρχείων, το όνομα αλλά και η περιγραφή του αρχείου μπορούσαν να πάρουν την τιμή \textlatin{script} και να εκτελεστούν κανονικά. (στην περίπτωση του ονόματος αρχείου έπρεπε να είναι κάτι της μορφής  
+
+
+
+Επίσης στο \textlatin{calendar}, μπορεί να περαστεί \textlatin{script} μέσω \textlatin{GET}
 
 \subsection*{\textlatin{CSRF}}
 Η σελίδα ήταν γενικά πολύ ευάλωτη σε επιθέσεις \textlatin{CSRF}. Η πρώτη
@@ -108,4 +113,8 @@
 
 
 \subsection*{\textlatin{RFI}}
+
+
+
+
 \end{document}
