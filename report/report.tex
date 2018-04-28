@@ -64,13 +64,15 @@
 
 
 \subsection*{\textlatin{SQL Injection}}
-Για επίθεση \textlatin{SQL Injection}, σε περίπτωση που βρισκόταν κάποιο \textlatin{vulnerability}, 
+Για επίθεση \textlatin{SQL Injection}, σε περίπτωση που βρισκόταν κάποιο \textlatin{vulnerability}, θα υπήρχε η δυνατότητα να βρεθεί το \textlatin{hashed password} του \textlatin{drunkadmin}, ή να μάθουμε το όνομα του \textlatin{directory} που δημιουργείται για την αποθήκευση των εργασιών ή τα ονόματα των αρχείων που έχουμε στείλει για ανταλλαγή αρχείων, έτσι ώστε να προσπαθήσουμε να τα κάνουμε \textlatin{request} και να επιτύχουμε \textlatin{RFI}. Ακόμη μια καλή στρατιγική θα ήταν να μετατρέψουμε τον χρήστη μας σε \textlatin{admin}, αλλάζοντας το \textlatin{userid} του \textlatin{admin} σε κάτι εκτός από 1 και κάνοντας το δικό μας 1, αφού η εφαρμογή θεωρεί ότι ο χρήστης με \textlatin{userid} 1 είναι ο \textlatin{admin}. Σημειώνεται πως δεν γνωρίζουμε το δικό μας \textlatin{userid} αλλά θα μπορούσαμε είτε να το μάθουμε, αν έχουμε βρει \textlatin{SQL Injection vulnerability}, είτε να μαντέψουμε, αφού δεν είναι και πολλές περιπτώσεις, ανάλογα και με τους συνολικούς χρήστες της εφαρμοφής. Δυστυχώς η αντίπαλη ομάδα ήταν καλά προστατευμένη έναντι σε \textlatin{SQL Injection} και δεν βρέθηκαν \textlatin{vulnerabilities}. Με την προσθήκη, για παράδειγμα, σε ένα \textlatin{search keyword} του \textlatin{string ' AND '1' = '1}   
 
 
 
 
 
 \subsection*{\textlatin{XSS}}
+Αντίθετα, η αντίπαλη εφαρμογή είχε πολλές ευπάθειες σε \textlatin{XSS attacks}. Aρχικά, στην ανταλλαγή αρχείων, το όνομα αλλά και η περιγραφή 
+
 
 
 
