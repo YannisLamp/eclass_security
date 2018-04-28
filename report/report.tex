@@ -21,14 +21,35 @@
 \author{Λάμπρου Ιωάννης \\1115201400088\\\\ Στεφανίδης - Βοζίκης Κωνσταντίνος \\1115201400192}
 
 \maketitle
-\section*{\textlatin{Defence}}
+\section*{\textlatin{Defense}}
 \subsection*{\textlatin{SQL Injection}}
-Το \textlatin{openeclass}, στην μορφή που το παραλάβαμε, πριν τροποποιήσουμε τον κώδικά του, βασιζόταν κυρίως στην λειτουργία των \textlatin{magic quotes} για άμυνα έναντι \textlatin{SQL Injections}, αλλά επιπλέον είχαν δημιουργηθεί οι συναρτήσεις \textlatin{escapeSimple()} και \textlatin{autoquote()} οι οποίες έκαναν έλεγχο αν τα \textlatin{magix quotes} ήταν ενεργοποιημένα στον \textlatin{server}, και, αν όχι, τότε εφάρμοζαν τις \textlatin{mysql\_real\_escape\_string()} ή \textlatin{mysql\_escape\_string()} και \textlatin{addslashes()} στα ορίσματά τους αντίστοιχα. Δυστυχώς οι συναρτήσεις αυτές όμως δεν χρησιμοποιούνταν σε πάρα πολλά μέρη όπου μια εξωτερική μεταβλητή έμαινε σε \textlatin{SQL query}. Ακόμα, οι σελίδες του \textlatin{admin} ήταν απροστάτευτες, δικαιολογημένα.\\
-Εμείς, για προστασία, αφού τα \textlatin{prepared statements (libraries MySQLi, PDO)} δεν επιτρέπονται στα πλαίσια της εργασίας, επιλέξαμε την επόμενη καλύτερη λύση, την χρήση της συνάρτησης \textlatin{mysql\_real\_escape\_string()}. Η συνάρτηση αυτή εφαρμόστηκε σε κάθε μεταβλητή η οποία γινόταν \textlatin{append} σε \textlatin{sql query string}, σε μερικές περιπτώσεις αντικαθιστώντας τη χρήση των υπολοίπων παραπάνω συναρτήσεων. Ακόμη να σημειωθεί πως η λειτουργικότητα της εφαρμογής δεν άλλαξε, αφού επιτρέπεται ακριβώς το  
+Το \textlatin{openeclass}, στην μορφή που το παραλάβαμε, πριν τροποποιήσουμε τον κώδικά του, 
+βασιζόταν κυρίως στην λειτουργία των \textlatin{magic quotes} για άμυνα έναντι \textlatin{SQL Injections}, 
+αλλά επιπλέον είχαν δημιουργηθεί οι συναρτήσεις \textlatin{escapeSimple()} και \textlatin{autoquote()} οι 
+οποίες έκαναν έλεγχο αν τα \textlatin{magix quotes} ήταν ενεργοποιημένα στον \textlatin{server}, και, αν 
+όχι, τότε εφάρμοζαν τις \textlatin{mysql\_real\_escape\_string()} ή \textlatin{mysql\_escape\_string()} και 
+\textlatin{addslashes()} στα ορίσματά τους αντίστοιχα. Δυστυχώς οι συναρτήσεις αυτές όμως δεν 
+χρησιμοποιούνταν σε πάρα πολλά μέρη όπου μια εξωτερική μεταβλητή 
+έμπαινε σε \textlatin{SQL query}. Ακόμα, οι σελίδες του \textlatin{admin} ήταν απροστάτευτες, δικαιολογημένα.\\
+Εμείς, για προστασία, αφού τα \textlatin{prepared statements (libraries MySQLi, PDO)} δεν επιτρέπονται στα 
+πλαίσια της εργασίας, επιλέξαμε την επόμενη καλύτερη λύση, την χρήση της συνάρτησης 
+\textlatin{mysql\_real\_escape\_string()}. 
+Η συνάρτηση αυτή εφαρμόστηκε σε κάθε μεταβλητή η οποία γινόταν \textlatin{append} 
+σε \textlatin{sql query string}, σε μερικές περιπτώσεις αντικαθιστώντας τη χρήση των υπολοίπων παραπάνω 
+συναρτήσεων. Ακόμη να σημειωθεί πως η λειτουργικότητα της εφαρμογής δεν άλλαξε, αφού επιτρέπεται ακριβώς το  
 
 
 \subsection*{\textlatin{XSS}}
-Αρχικά, το \textlatin{openeclass} είχε πολύ λίγη προστασία ενάντια σε \textlatin{XSS} (ειδικά στα \textlatin{modules} που κληθήκαμε να προστατεύσουμε), με εξαίρεση τις σελίδες του \textlatin{admin} οι οποίες ήταν πολύ καλά προστατευμένες, (είχε οριστεί ακόμα και η συνάρτηση \textlatin{q()} ως συντόμευση της \textlatin{htmlspecialchars()}) Για την προστασία της εφαρμογής, τώρα πια κάθε ματαβλητή η τιμή της οποίας εμφανιζόταν στον τελικό \textlatin{html} κώδικα, (γινόταν \textlatin{append} στο \textlatin{$tool_content}) φιλτράρεται πρώτα μέσω της κλίσης της συνάρτησης \textlatin{htmlspecialchars()} είτε προέρχεται από ερώτηση στη βάση ή κάποιο αρχείο, είτε από τον χρήστη της εφαρμογής μέσω \textlatin{GET} ή \textlatin{POST}. Πρέπει να τονιστεί το γεγονός ότι ποτέ τα \textlatin{inputs} δεν φιλτράρονται κατά την αποθήκευση, αλλά μόνο όταν πρόκειται να εμφανιστούν σε \textlatin{html} κώδικα.
+Αρχικά, το \textlatin{openeclass} είχε πολύ λίγη προστασία ενάντια σε \textlatin{XSS} 
+(ειδικά στα \textlatin{modules} που κληθήκαμε να προστατεύσουμε), με εξαίρεση τις σελίδες του 
+\textlatin{admin} οι οποίες ήταν πολύ καλά προστατευμένες, (είχε οριστεί ακόμα και η συνάρτηση 
+\textlatin{q()} ως συντόμευση της \textlatin{htmlspecialchars()}) Για την προστασία της εφαρμογής, τώρα πια 
+κάθε ματαβλητή η τιμή της οποίας εμφανιζόταν στον τελικό \textlatin{html} κώδικα, (γινόταν 
+\textlatin{append} στο \textlatin{\$tool\_content}) φιλτράρεται πρώτα μέσω της κλίσης της συνάρτησης 
+\textlatin{htmlspecialchars()} είτε προέρχεται από ερώτηση στη βάση ή κάποιο αρχείο, είτε από τον χρήστη της 
+εφαρμογής μέσω \textlatin{GET} ή \textlatin{POST}. Πρέπει να τονιστεί το γεγονός ότι ποτέ τα 
+\textlatin{inputs} δεν φιλτράρονται κατά την αποθήκευση, αλλά μόνο όταν πρόκειται να εμφανιστούν σε 
+\textlatin{html} κώδικα.
 
 
 \subsection*{\textlatin{CSRF}}
@@ -38,7 +59,8 @@
 \includegraphics[scale=0.5]{csrf}\\
 Πρώτα ενεργοποιούμε ενα \textlatin{token} και κατόπιν το βάζουμε ως \textlatin{hidden field} στην 
 φόρμα που μας ενδιαφέρει. Ο έλεγχος εγκυρότητας γίνεται ως εξης:\\
-\textlatin{if (isset(\$\_POST['hide']) and \$\_POST['hide'] == 0 and !empty(\$\_POST['token']) and (strcmp(\$\_SESSION['token'], \$\_POST['token']) === 0))}\\
+\textlatin{if (isset(\$\_POST['hide']) and \$\_POST['hide'] == 0 and !empty(\$\_POST['token']) and 
+(strcmp(\$\_SESSION['token'], \$\_POST['token']) === 0))}\\
 Η ίδια λογική άμυνας υπάρχει σε κάθε φόρμα της ιστοσελίδας (η οποία προκαλεί αλλαγές).
 Επίσης, επειδή δεν υπάρχει άμυνα έναντι επιθέσεων \textlatin{CSRF} σε \textlatin{GET requests}, διάφορα 
 \textlatin{GET} που άλλαζαν την σελίδα αλλάχθηκαν σε \textlatin{POST} ώστε να γίνει η ίδια άμυνα. 
@@ -55,6 +77,16 @@
 
 
 \subsection*{\textlatin{XSS}}
+
+\subsection*{\textlatin{CSRF}}
+Η σελίδα ήταν γενικά πολύ ευάλωτη σε επιθέσεις \textlatin{CSRF}. Η πρώτη 
+επίθεση που δοκιμάστηκε και ήταν επιτυχής ήταν η \textlatin{malicious} εισαγωγή 
+μαθήματος απο τον διαχειριστή ο οποίος ανυποψίαστος πάτησε ένα λίνκ που του στειλαμε με 
+\textlatin{email}. Άλλες επιθέσεις με \textlatin{CSRF} δεν πραγματοποιήθηκαν καθώς μετά 
+κάναμε ολοκληρωτικό \textlatin{deface} της σελίδας οπότε και το \textlatin{CSRF} ήταν πιο 
+ανίσχυρο από τις άλλες επιθέσεις. Παρόλα αυτά είχαν βρεθεί ευπάθειες και είχαν σχεδιαστεί 
+επιθέσεις σε μια σωρεία λειτουργιών όπως η διαγραφή εργασίας, διαγραφή μαθήματος, διαγραφή 
+χρήστη, δημιουργία ανακοίνωσης, δημιουργία εργασίας σε μάθημα.
 
 
 \begin{enumerate}[(a)]%for small alpha-characters within brackets.
