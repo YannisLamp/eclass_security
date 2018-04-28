@@ -28,7 +28,7 @@
 
 
 \subsection*{\textlatin{XSS}}
-Αρχικά, το \textlatin{openeclass} είχε πολύ λίγη προστασία ενάντια σε \textlatin{XSS} (ειδικά στα \textlatin{modules} που κληθήκαμε να προστατεύσουμε), με εξαίρεση τις σελίδες του \textlatin{admin} οι οποίες ήταν πολύ καλά προστατευμένες, (είχε οριστεί ακόμα και η συνάρτηση \textlatin{q()} ως συντόμευση της \textlatin{htmlspecialchars()}) Για την προστασία της εφαρμογής, τώρα πια κάθε ματαβλητή η τιμή της οποίας εμφανιζόταν στον τελικό \textlatin{html} κώδικα, (γινόταν \textlatin{append} στο \textlatin{$tool_content}) φιλτράρεται πρώτα μέσω της κλίσης της συνάρτησης \textlatin{htmlspecialchars()} είτε προέρχεται από ερώτηση στη βάση ή κάποιο αρχείο, είτε από τον χρήστη της εφαρμογής μέσω \textlatin{GET} ή \textlatin{POST}. Πρέπει να τονιστεί το γεγονός ότι ποτέ τα \textlatin{inputs} δεν φιλτράρονται κατά την αποθήκευση, αλλά μόνο όταν πρόκειται να εμφανιστούν σε \textlatin{html} κώδικα.
+Αρχικά, το \textlatin{openeclass} είχε πολύ λίγη προστασία ενάντια σε \textlatin{XSS} (ειδικά στα \textlatin{modules} που κληθήκαμε να προστατεύσουμε), με εξαίρεση τις σελίδες του \textlatin{admin} οι οποίες ήταν πολύ καλά προστατευμένες, (είχε οριστεί ακόμα και η συνάρτηση \textlatin{q()} ως συντόμευση της \textlatin{htmlspecialchars()}) Για την προστασία της εφαρμογής, τώρα πια κάθε ματαβλητή η τιμή της οποίας εμφανιζόταν στον τελικό \textlatin{html} κώδικα, (γινόταν \textlatin{append} στο \textlatin{\$tool\_content}) φιλτράρεται πρώτα μέσω της κλίσης της συνάρτησης \textlatin{htmlspecialchars()} είτε προέρχεται από ερώτηση στη βάση ή κάποιο αρχείο, είτε από τον χρήστη της εφαρμογής μέσω \textlatin{GET} ή \textlatin{POST}. Πρέπει να τονιστεί το γεγονός ότι ποτέ τα \textlatin{inputs} δεν φιλτράρονται κατά την αποθήκευση, αλλά μόνο όταν πρόκειται να εμφανιστούν σε \textlatin{html} κώδικα.
 
 
 \subsection*{\textlatin{CSRF}}
@@ -50,7 +50,18 @@
 
 
 \section*{\textlatin{Attack}}
+
+
+
+
+
+
+
+
 \subsection*{\textlatin{SQL Injection}}
+Για επίθεση \textlatin{SQL Injection}, σε περίπτωση που βρισκόταν κάποιο \textlatin{vulnerability}, 
+
+
 
 
 
